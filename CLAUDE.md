@@ -60,7 +60,7 @@ My store was built from The Store Kit by Dr. Johnna Richardson (doctorjohnna.com
 - A kit is 10 vials priced as 8 vials. When I change a vial price, update its kit to match and tell me the new kit price.
 - Bigger sizes of the same compound must always cost less per mg than smaller sizes. If a change breaks that, tell me before you make it.
 - Research set prices are calculated from the vial prices. Never type a set price by hand.
-- Round prices to [whole dollars / the nearest $5].
+- Round prices to whole dollars.
 - [ADD ANY OTHER RULE: minimum price, supplier cost floor, anything else.]
 
 # My Stock Wording
