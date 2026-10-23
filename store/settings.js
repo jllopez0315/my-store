@@ -75,10 +75,10 @@ const SETTINGS = {
                     top of a full label design; false leaves the
                     design alone. Only used when labelImage is set. */
   brand: {
-    name: "Your Brand",
-    sub: "Labs",
+    name: "Elite Research Labs",
+    sub: "",
     tagline: "Research compounds, documented.",
-    contactEmail: "hello@example.com",
+    contactEmail: "info@eliteresearchlabss.com",
     location: "",
     logo: "",
     logoLight: "",

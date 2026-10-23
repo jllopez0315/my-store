@@ -9,9 +9,9 @@
 
 # About Me
 
-I'm [OWNER NAME]. I own [STORE NAME] ([STORE WEB ADDRESS]). I am not a developer. I run my store by telling you what I want in plain English. Do the work without explaining the code. Tell me what changed and what I need to check, nothing else.
+I'm Jose Lopez. I own Elite Research Labs (eliteresearchlabss.com). I am not a developer. I run my store by telling you what I want in plain English. Do the work without explaining the code. Tell me what changed and what I need to check, nothing else.
 
-[STORE NAME] sells research compounds for laboratory research use only. Buyers pass an entry gate, pick items, and submit an order. They pay me away from the site using the payment details shown after they submit. The store never takes card numbers.
+Elite Research Labs sells research compounds for laboratory research use only. Buyers pass an entry gate, pick items, and submit an order. They pay me away from the site using the payment details shown after they submit. The store never takes card numbers.
 
 # My Store
 
@@ -49,16 +49,15 @@ My store was built from The Store Kit by Dr. Johnna Richardson (doctorjohnna.com
 
 - `admin/index.html` is the whole admin. The `ADMIN_CONFIG` block near the top holds `storeName`, `storeUrl` (my store's web address; Preview and Open my store on the Look & layout screen need it), `supabaseUrl`, and `supabaseAnonKey`.
 - `admin/setup.sql` was run once in my Supabase SQL Editor to create the tables (`entries`, `inventory`, `store_settings`, and `restock_notify`, the shoppers waiting for a back-in-stock email), the `labels` storage bucket (Look & layout uploads), and the store's read-only lookups (`public_stock`, `restock_subscribe`). Never run it again or change it without asking.
-- The admin shows orders (Awaiting payment, Paid, Shipped, Cancelled; every website order carries the buyer's email, phone, and shipping address laid out like a label with a Copy button, and the Excel export has a column for each; an order that arrived without an address says "No shipping address on file"), inventory ("+ New compound" adds a row, and its kit row in the same go when "Also sold as a kit" is ticked; the item key must match the product's id in data.js, which it fills in from the name and size; a row at 0 shows restock controls: the phase and date the store's Restocks page shows, and how many shoppers are waiting for an email; typing the new count emails them once through the store's `/api/restock-notify`), customers, sales and expenses, reports, and Look & layout (my store's name, sub word, tagline, location, my header logo (one for each look, with uploads), dark or light, layout, font pair including a Custom pair of any two Google fonts, two colors, the home page background (built in, my picture, or my video, with uploads), the Restocks page switch, three facts, and the vial label (label name, band and text colors, a tint, my logo or the default atom mark, or a full label design, with uploads that go to the `labels` storage bucket), saved to the `store_settings` row; Preview opens the store with the form's choices without saving, Save writes them, Reset to defaults puts the stock look back in the form). A website order lands in the admin already recorded as a Paid sale and lowers inventory on its own. I change a status only if the money never arrives (Awaiting payment or Cancelled) or when I ship (Shipped). It's hosted as its own Cloudflare Pages project at [ADMIN WEB ADDRESS].
+- The admin shows orders (Awaiting payment, Paid, Shipped, Cancelled; every website order carries the buyer's email, phone, and shipping address laid out like a label with a Copy button, and the Excel export has a column for each; an order that arrived without an address says "No shipping address on file"), inventory ("+ New compound" adds a row, and its kit row in the same go when "Also sold as a kit" is ticked; the item key must match the product's id in data.js, which it fills in from the name and size; a row at 0 shows restock controls: the phase and date the store's Restocks page shows, and how many shoppers are waiting for an email; typing the new count emails them once through the store's `/api/restock-notify`), customers, sales and expenses, reports, and Look & layout (my store's name, sub word, tagline, location, my header logo (one for each look, with uploads), dark or light, layout, font pair including a Custom pair of any two Google fonts, two colors, the home page background (built in, my picture, or my video, with uploads), the Restocks page switch, three facts, and the vial label (label name, band and text colors, a tint, my logo or the default atom mark, or a full label design, with uploads that go to the `labels` storage bucket), saved to the `store_settings` row; Preview opens the store with the form's choices without saving, Save writes them, Reset to defaults puts the stock look back in the form). A website order lands in the admin already recorded as a Paid sale and lowers inventory on its own. I change a status only if the money never arrives (Awaiting payment or Cancelled) or when I ship (Shipped). It's hosted as its own Cloudflare Pages project at [ADMIN WEB ADDRESS] (not set up yet; added in Session 3).
 
-**Publishing.** My store is on Cloudflare Pages one of two ways. I use [PATH A / PATH B]. Delete the line that doesn't apply.
+**Publishing.** My store is on Cloudflare Pages one of two ways. I use Path B.
 
-- Path A (drag and drop): there is no repo. "Publish" means you finish the pre-publish check, then tell me the `store` folder is ready. I open Cloudflare > my store project > Create deployment, drag the `store` folder in, and it's live in about a minute. You never upload anything yourself.
-- Path B (GitHub connected): the whole kit folder is one private GitHub repo ([GITHUB USERNAME]/[REPO NAME]). Cloudflare Pages watches the `main` branch. "Publish" means: commit and push to `main`. It's live in about a minute.
+- Path B (GitHub connected): the whole kit folder is one private GitHub repo (jllopez0315/my-store). Cloudflare Pages watches the `main` branch. "Publish" means: commit and push to `main`. It's live in about a minute.
 
 # My Pricing Rules
 
-- A kit is [10] vials priced as [8] vials. When I change a vial price, update its kit to match and tell me the new kit price.
+- A kit is 10 vials priced as 8 vials. When I change a vial price, update its kit to match and tell me the new kit price.
 - Bigger sizes of the same compound must always cost less per mg than smaller sizes. If a change breaks that, tell me before you make it.
 - Research set prices are calculated from the vial prices. Never type a set price by hand.
 - Round prices to [whole dollars / the nearest $5].
@@ -66,10 +65,10 @@ My store was built from The Store Kit by Dr. Johnna Richardson (doctorjohnna.com
 
 # My Stock Wording
 
-- In stock: "[In stock]"
-- Low stock: "[Only N left]"
-- Out of stock but still orderable: "[Ships in 2 to 3 weeks]"
-- Out of stock, not orderable: "[Out of stock]"
+- In stock: "In stock"
+- Low stock: "Only N left"
+- Out of stock but still orderable: "Ships in 2 to 3 weeks"
+- Out of stock, not orderable: "Out of stock"
 - Use "ships," never "mails."
 - Stock labels on the store come from `data.js`. Inventory counts live in my admin. When I mark something out of stock on the store, remind me to check the count in the admin too. When I add a new product to `data.js`, remind me to add it in the admin too (Inventory, "+ New compound", same name and size) so it is counted.
 
@@ -127,7 +126,7 @@ Everything on this store is sold for laboratory research use only. You are my se
 - Short, plain sentences. Calm and professional.
 - No emojis. No hype. No exclamation points.
 - No em dashes. Use periods, commas, colons, or parentheses.
-- Say "[we / I]."
+- Say "we."
 - [ADD BRAND VOICE NOTES: words you like, words you never use.]
 
 # Brand
