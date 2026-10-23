@@ -532,7 +532,7 @@ staggerChildren(grid, 70);
    Product page slugs, left to right. The middle one stands tallest.
    Dark look: one of each cap color (white, blue, black).
    Light look: white, black, white. No blue caps in the light look. */
-const HERO_SLUGS = ["glp-rt3", "glp-tz2", "wolverine"];
+const HERO_SLUGS = ["tesamorelin", "rt30", "wolverine"];
 document.getElementById("hero-fan").innerHTML =
   HERO_SLUGS.map(findCatalogItem).filter(Boolean)
     .map((v, i) => vialSVG(Object.assign({}, v, { cap: ["white", "blue", "black"][i], capLight: ["white", "black", "white"][i] }))).join("");

@@ -51,33 +51,25 @@ const TERMS_VERSION = SETTINGS.termsVersion;
    is the one the research sets use.
    ---------------------------------------------------------------- */
 const PRODUCTS = [
-  { name: "BPC-157",              size: "10mg",   price: 40,  stock: true },
-  { name: "AMY-CG1",              size: "5mg",    price: 55,  stock: false, slug: "amy-cg1" },
-  { name: "DSIP",                 size: "5mg",    price: 40,  stock: true,  slug: "dsip" },
-  { name: "EPI-4",                size: "10mg",   price: 45,  stock: true,  slug: "epi-4" },
-  { name: "GHK-Cu",               size: "100mg",  price: 55,  stock: true,  slug: "ghk-cu" },
-  { name: "GSH-15",               size: "1500mg", price: 50,  stock: true,  slug: "gsh-15" },
-  { name: "GLOW",                 size: "70mg",   price: 80,  stock: false },
-  { name: "KLOW",                 size: "80mg",   price: 90,  stock: false },
-  { name: "KPV",                  size: "10mg",   price: 50,  stock: true,  slug: "kpv" },
-  { name: "MOTS-C",               size: "10mg",   price: 40,  stock: true,  slug: "mots-c" },
-  { name: "MOTS-C",               size: "20mg",   price: 60,  stock: false },
-  { name: "MOTS-C",               size: "40mg",   price: 85,  stock: false },
-  { name: "NAD+",                 size: "500mg",  price: 50,  stock: true,  slug: "nad" },
-  { name: "OXT-9",                size: "5mg",    price: 35,  stock: true,  slug: "oxt-9" },
-  { name: "GLP-RT3",              size: "20mg",   price: 85,  stock: true,  slug: "glp-rt3" },
-  { name: "GLP-RT3",              size: "10mg",   price: 55,  stock: true },
-  { name: "GLP-RT3",              size: "30mg",   price: 110, stock: false },
-  { name: "GLP-RT3",              size: "50mg",   price: 140, stock: false },
-  { name: "SLK-7",                size: "10mg",   price: 45,  stock: true,  slug: "slk-7" },
-  { name: "SMX-7",                size: "5mg",    price: 45,  stock: true,  slug: "smx-7" },
-  { name: "SS-31",                size: "10mg",   price: 60,  stock: false },
-  { name: "GHRH-TS",              size: "10mg",   price: 65,  stock: true },
-  { name: "GLP-TZ2",              size: "10mg",   price: 50,  stock: true,  slug: "glp-tz2" },
-  { name: "GLP-TZ2",              size: "20mg",   price: 70,  stock: false },
-  { name: "GLP-TZ2",              size: "60mg",   price: 115, stock: false },
-  // sortAs: where this sits in the shop's A-Z, and what its label reads
-  { name: "Wolverine (BPC157+TB500)", size: "10mg", price: 55, stock: true, slug: "wolverine", sortAs: "BPC-157+TB500" },
+  { name: "RT30",                        size: "30mg",   price: 150, stock: true,  slug: "rt30" },
+  { name: "Tesamorelin",                 size: "10mg",   price: 60,  stock: true,  slug: "tesamorelin" },
+  { name: "MOTS-C",                      size: "10mg",   price: 60,  stock: true,  slug: "mots-c" },
+  { name: "Wolverine (BPC-157/TB-500)",  size: "20mg",   price: 80,  stock: true,  slug: "wolverine", sortAs: "BPC-157/TB-500" },
+  { name: "GHK-Cu",                      size: "100mg",  price: 60,  stock: true,  slug: "ghk-cu" },
+  { name: "KLOW",                        size: "80mg",   price: 80,  stock: false, slug: "klow" },
+  { name: "NAD+",                        size: "1000mg", price: 80,  stock: true,  slug: "nad" },
+  { name: "GLOW",                        size: "70mg",   price: 80,  stock: false, slug: "glow" },
+  { name: "PT-141",                      size: "10mg",   price: 60,  stock: true,  slug: "pt-141" },
+  { name: "SS-31",                       size: "50mg",   price: 100, stock: false, slug: "ss-31" },
+  { name: "Semax",                       size: "10mg",   price: 60,  stock: true,  slug: "semax" },
+  { name: "Selank",                      size: "10mg",   price: 60,  stock: false, slug: "selank" },
+  { name: "CJC-1295 + Ipamorelin",       size: "10mg",   price: 80,  stock: true,  slug: "cjc-1295-ipamorelin" },
+  { name: "Kisspeptin",                  size: "10mg",   price: 60,  stock: true,  slug: "kisspeptin" },
+  { name: "Ipamorelin",                  size: "10mg",   price: 60,  stock: true,  slug: "ipamorelin" },
+  { name: "5-Amino-1MQ",                 size: "50mg",   price: 80,  stock: true,  slug: "5-amino-1mq" },
+  { name: "Cagrilintide",                size: "10mg",   price: 90,  stock: true,  slug: "cagrilintide" },
+  { name: "Glutathione",                 size: "1500mg", price: 100, stock: true,  slug: "glutathione" },
+  { name: "Lipo-C + B12",                size: "216mg",  price: 60,  stock: false, slug: "lipo-c-b12" },
   // supply: true files it under the Supplies filter.
   // liquid: true draws the vial filled with liquid instead of powder.
   { name: "Bacteriostatic Water", size: "10mL",   price: 15,  stock: true,  slug: "bac-water", supply: true, liquid: true,
@@ -90,28 +82,25 @@ const PRODUCTS = [
 const KITS = [
   // also: "supply" lists the water kit under the Supplies filter too
   { name: "Bacteriostatic Water", size: "10mL kit · 10 vials", price: 120, stock: true, also: "supply", liquid: true },
-  { name: "BPC-157",          size: "10mg kit · 10 vials", price: 320, stock: true },
-  { name: "Wolverine (BPC157+TB500)", size: "10mg kit · 10 vials", price: 440, stock: false, sortAs: "BPC-157+TB500" },
-  { name: "AMY-CG1",          size: "5mg kit · 10 vials",  price: 440, stock: false },
-  { name: "EPI-4",            size: "10mg kit · 10 vials", price: 360, stock: false },
-  { name: "GHK-Cu",           size: "100mg kit · 10 vials", price: 440, stock: true },
-  { name: "GLOW",             size: "70mg kit · 10 vials", price: 640, stock: false },
-  { name: "KLOW",             size: "80mg kit · 10 vials", price: 720, stock: false },
-  { name: "KPV",              size: "10mg kit · 10 vials", price: 400, stock: false },
-  { name: "MOTS-C",           size: "10mg kit · 10 vials", price: 320, stock: true },
-  { name: "MOTS-C",           size: "40mg kit · 10 vials", price: 680, stock: false },
-  { name: "NAD+",             size: "500mg kit · 10 vials", price: 400, stock: true },
-  { name: "OXT-9",            size: "5mg kit · 10 vials",  price: 280, stock: false },
-  { name: "GLP-RT3",          size: "10mg kit · 10 vials", price: 440, stock: false },
-  { name: "GLP-RT3",          size: "20mg kit · 10 vials", price: 680, stock: true },
-  { name: "GLP-RT3",          size: "30mg kit · 10 vials", price: 880, stock: false },
-  { name: "GLP-RT3",          size: "50mg kit · 10 vials", price: 1120, stock: false },
-  { name: "SLK-7",            size: "10mg kit · 10 vials", price: 360, stock: false },
-  { name: "SMX-7",            size: "5mg kit · 10 vials",  price: 360, stock: true },
-  { name: "GHRH-TS",          size: "10mg kit · 10 vials", price: 520, stock: true },
-  { name: "GLP-TZ2",          size: "10mg kit · 10 vials", price: 400, stock: true },
-  { name: "GLP-TZ2",          size: "20mg kit · 10 vials", price: 560, stock: false },
-  { name: "GLP-TZ2",          size: "60mg kit · 10 vials", price: 920, stock: false },
+  { name: "RT30",                        size: "30mg kit · 10 vials",    price: 1200, stock: true },
+  { name: "Tesamorelin",                 size: "10mg kit · 10 vials",    price: 480,  stock: true },
+  { name: "MOTS-C",                      size: "10mg kit · 10 vials",    price: 480,  stock: true },
+  { name: "Wolverine (BPC-157/TB-500)",  size: "20mg kit · 10 vials",    price: 640,  stock: true, sortAs: "BPC-157/TB-500" },
+  { name: "GHK-Cu",                      size: "100mg kit · 10 vials",   price: 480,  stock: true },
+  { name: "KLOW",                        size: "80mg kit · 10 vials",    price: 640,  stock: false },
+  { name: "NAD+",                        size: "1000mg kit · 10 vials",  price: 640,  stock: true },
+  { name: "GLOW",                        size: "70mg kit · 10 vials",    price: 640,  stock: false },
+  { name: "PT-141",                      size: "10mg kit · 10 vials",    price: 480,  stock: true },
+  { name: "SS-31",                       size: "50mg kit · 10 vials",    price: 800,  stock: false },
+  { name: "Semax",                       size: "10mg kit · 10 vials",    price: 480,  stock: true },
+  { name: "Selank",                      size: "10mg kit · 10 vials",    price: 480,  stock: false },
+  { name: "CJC-1295 + Ipamorelin",       size: "10mg kit · 10 vials",    price: 640,  stock: true },
+  { name: "Kisspeptin",                  size: "10mg kit · 10 vials",    price: 480,  stock: true },
+  { name: "Ipamorelin",                  size: "10mg kit · 10 vials",    price: 480,  stock: true },
+  { name: "5-Amino-1MQ",                 size: "50mg kit · 10 vials",    price: 640,  stock: true },
+  { name: "Cagrilintide",                size: "10mg kit · 10 vials",    price: 720,  stock: true },
+  { name: "Glutathione",                 size: "1500mg kit · 10 vials",  price: 800,  stock: true },
+  { name: "Lipo-C + B12",                size: "216mg kit · 10 vials",   price: 480,  stock: false },
 ];
 
 /* ---------- 3b. BLURBS · one-line descriptions ----------
@@ -122,26 +111,19 @@ const KITS = [
    as their vial because the key is the product name. Describe what the
    item IS (class, length, form); never what it does. ---------- */
 const BLURBS = {
-  "BPC-157":                  "Synthetic 15-amino-acid peptide fragment derived from a gastric protein sequence. Lyophilized powder.",
-  "AMY-CG1":                  "Synthetic long-acting amylin analogue, 37 amino acids with a lipidated side chain. Lyophilized powder.",
-  "DSIP":                     "Delta sleep-inducing peptide, a synthetic nonapeptide (9 amino acids). Lyophilized powder.",
-  "EPI-4":                    "Synthetic tetrapeptide (Ala-Glu-Asp-Gly). Lyophilized powder.",
-  "GHK-Cu":                   "Copper complex of the tripeptide glycyl-L-histidyl-L-lysine. Lyophilized powder.",
-  "GSH-15":                   "Reduced tripeptide of glutamate, cysteine, and glycine. Lyophilized powder.",
-  "GLOW":                     "Research blend of GHK-Cu, BPC-157, and TB-500 in one vial. Lyophilized powder.",
-  "KLOW":                     "Research blend of KPV, GHK-Cu, BPC-157, and TB-500 in one vial. Lyophilized powder.",
-  "KPV":                      "Synthetic tripeptide (Lys-Pro-Val), the C-terminal fragment of alpha-MSH. Lyophilized powder.",
-  "MOTS-C":                   "Mitochondrial-derived 16-amino-acid peptide, synthetic. Lyophilized powder.",
-  "NAD+":                     "Nicotinamide adenine dinucleotide, the oxidized form of the coenzyme. Lyophilized powder.",
-  "OXT-9":                    "Synthetic nonapeptide (9 amino acids) with a single disulfide bridge. Lyophilized powder.",
-  "GLP-RT3":                  "Synthetic 39-amino-acid peptide, a triple agonist of the GIP, GLP-1, and glucagon receptors. Lyophilized powder.",
-  "SLK-7":                    "Synthetic heptapeptide (7 amino acids), an analogue of the tuftsin sequence. Lyophilized powder.",
-  "SMX-7":                    "Synthetic heptapeptide (7 amino acids) derived from an ACTH fragment. Lyophilized powder.",
-  "SS-31":                    "Synthetic tetrapeptide (D-Arg-Dmt-Lys-Phe). Lyophilized powder.",
-  "GHRH-TS":                  "Synthetic 44-amino-acid analogue of growth hormone-releasing hormone. Lyophilized powder.",
-  "GLP-TZ2":                  "Synthetic 39-amino-acid peptide, a dual GIP and GLP-1 receptor agonist. Lyophilized powder.",
-  "Wolverine (BPC157+TB500)": "Research blend of BPC-157 and TB-500 (a thymosin beta-4 fragment) in one vial. Lyophilized powder.",
-  "Bacteriostatic Water":     "Sterile water with 0.9% benzyl alcohol as a preservative, for reconstituting lyophilized research compounds.",
+  "Tesamorelin":                 "Synthetic 44-amino-acid analogue of growth hormone-releasing hormone. Lyophilized powder.",
+  "MOTS-C":                      "Mitochondrial-derived 16-amino-acid peptide, synthetic. Lyophilized powder.",
+  "Wolverine (BPC-157/TB-500)":  "Research blend of BPC-157 and TB-500 (a thymosin beta-4 fragment) in one vial. Lyophilized powder.",
+  "GHK-Cu":                      "Copper complex of the tripeptide glycyl-L-histidyl-L-lysine. Lyophilized powder.",
+  "KLOW":                        "Research blend of KPV, GHK-Cu, BPC-157, and TB-500 in one vial. Lyophilized powder.",
+  "NAD+":                        "Nicotinamide adenine dinucleotide, the oxidized form of the coenzyme. Lyophilized powder.",
+  "GLOW":                        "Research blend of GHK-Cu, BPC-157, and TB-500 in one vial. Lyophilized powder.",
+  "SS-31":                       "Synthetic tetrapeptide (D-Arg-Dmt-Lys-Phe). Lyophilized powder.",
+  "Semax":                       "Synthetic heptapeptide (7 amino acids) derived from an ACTH fragment. Lyophilized powder.",
+  "Selank":                      "Synthetic heptapeptide (7 amino acids), an analogue of the tuftsin sequence. Lyophilized powder.",
+  "Glutathione":                 "Reduced tripeptide of glutamate, cysteine, and glycine. Lyophilized powder.",
+  "Cagrilintide":                "Synthetic long-acting amylin analogue, 37 amino acids with a lipidated side chain. Lyophilized powder.",
+  "Bacteriostatic Water":        "Sterile water with 0.9% benzyl alcohol as a preservative, for reconstituting lyophilized research compounds.",
 };
 // Research sets share one line
 // Sets build their line from what's actually free in that set:
@@ -169,6 +151,9 @@ function setBlurb(stack) {
    "free" names the vial(s) that ship free on top. Every set also
    includes two free 10mL BAC water vials automatically. Names must match a
    PRODUCTS name exactly. ---------- */
+const STACKS = [];
+/* Sample sets from the kit, hidden until you choose your own (they named
+   sample products that are no longer in the catalog):
 const STACKS = [
   {
     name: "GLP-1 & Amylin",
@@ -229,6 +214,7 @@ const STACKS = [
     ],
   },
 ];
+*/
 
 /* ---------- 5. COAS · lab report rows ----------
    Every row shown on the Lab Results page, the home page preview,
@@ -284,14 +270,14 @@ function coaPurityText(c) {
    The "In stock now" strip on the home page shows these products in
    this order (product page slugs). */
 const FEATURED_SLUGS = [
-  "glp-rt3",
-  "ghk-cu",
-  "glp-tz2",
-  "gsh-15",
-  "nad",
+  "rt30",
+  "tesamorelin",
   "wolverine",
-  "kpv",
-  "smx-7",
+  "ghk-cu",
+  "nad",
+  "mots-c",
+  "cagrilintide",
+  "glutathione",
 ];
 
 /* ---------- Supplies tab display order ----------
