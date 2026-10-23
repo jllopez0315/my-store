@@ -65,23 +65,25 @@ const PRODUCTS = [
   { name: "Selank",                      size: "10mg",   price: 60,  stock: false, slug: "selank" },
   { name: "CJC-1295 + Ipamorelin",       size: "10mg",   price: 80,  stock: true,  slug: "cjc-1295-ipamorelin" },
   { name: "Kisspeptin",                  size: "10mg",   price: 60,  stock: true,  slug: "kisspeptin" },
+  { name: "KPV",                         size: "10mg",   price: 60,  stock: true,  slug: "kpv" },
   { name: "Ipamorelin",                  size: "10mg",   price: 60,  stock: true,  slug: "ipamorelin" },
   { name: "5-Amino-1MQ",                 size: "50mg",   price: 80,  stock: true,  slug: "5-amino-1mq" },
   { name: "Cagrilintide",                size: "10mg",   price: 90,  stock: true,  slug: "cagrilintide" },
   { name: "Glutathione",                 size: "1500mg", price: 100, stock: true,  slug: "glutathione" },
   { name: "Lipo-C + B12",                size: "216mg",  price: 60,  stock: false, slug: "lipo-c-b12" },
-  // supply: true files it under the Supplies filter.
-  // liquid: true draws the vial filled with liquid instead of powder.
-  { name: "Bacteriostatic Water", size: "10mL",   price: 15,  stock: true,  slug: "bac-water", supply: true, liquid: true,
-    // storage: shows as a Storage row on the product page (supplies only)
-    storage: "Store at room temperature (15–25°C). Do not freeze." },
+  // HIDDEN: Bacteriostatic Water. Remove the // marks on the lines below to show it again.
+  // // supply: true files it under the Supplies filter.
+  // // liquid: true draws the vial filled with liquid instead of powder.
+  // { name: "Bacteriostatic Water", size: "10mL",   price: 15,  stock: true,  slug: "bac-water", supply: true, liquid: true,
+  //   // storage: shows as a Storage row on the product page (supplies only)
+  //   storage: "Store at room temperature (15–25°C). Do not freeze." },
 ];
 
 /* ---------- 3. KITS · 10 vials of one compound, priced at 8 ----------
    RULE: kit price = 8 x the single vial price. Change both together. */
 const KITS = [
   // also: "supply" lists the water kit under the Supplies filter too
-  { name: "Bacteriostatic Water", size: "10mL kit · 10 vials", price: 120, stock: true, also: "supply", liquid: true },
+  // HIDDEN: { name: "Bacteriostatic Water", size: "10mL kit · 10 vials", price: 120, stock: true, also: "supply", liquid: true },
   { name: "RT30",                        size: "30mg kit · 10 vials",    price: 1200, stock: true },
   { name: "Tesamorelin",                 size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "MOTS-C",                      size: "10mg kit · 10 vials",    price: 480,  stock: true },
@@ -96,6 +98,7 @@ const KITS = [
   { name: "Selank",                      size: "10mg kit · 10 vials",    price: 480,  stock: false },
   { name: "CJC-1295 + Ipamorelin",       size: "10mg kit · 10 vials",    price: 640,  stock: true },
   { name: "Kisspeptin",                  size: "10mg kit · 10 vials",    price: 480,  stock: true },
+  { name: "KPV",                         size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "Ipamorelin",                  size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "5-Amino-1MQ",                 size: "50mg kit · 10 vials",    price: 640,  stock: true },
   { name: "Cagrilintide",                size: "10mg kit · 10 vials",    price: 720,  stock: true },
@@ -123,6 +126,7 @@ const BLURBS = {
   "Selank":                      "Synthetic heptapeptide (7 amino acids), an analogue of the tuftsin sequence. Lyophilized powder.",
   "Glutathione":                 "Reduced tripeptide of glutamate, cysteine, and glycine. Lyophilized powder.",
   "Cagrilintide":                "Synthetic long-acting amylin analogue, 37 amino acids with a lipidated side chain. Lyophilized powder.",
+  "KPV":                         "Synthetic tripeptide (Lys-Pro-Val), the C-terminal fragment of alpha-MSH. Lyophilized powder.",
   "Bacteriostatic Water":        "Sterile water with 0.9% benzyl alcohol as a preservative, for reconstituting lyophilized research compounds.",
 };
 // Research sets share one line
@@ -244,15 +248,60 @@ const STACKS = [
    sample: true adds the word "(sample)" beside the purity. Remove
               it from your real rows. */
 const COAS = [
-  { report: "Sample report", compound: "GLP-RT3", size: "20mg",
-    batch: "SAMPLE-0001", analyzed: "2026-08-27", purity: "99.0",
-    lab: "Sample Laboratory", sample: true },
-  { report: "Sample report", compound: "GHK-Cu", size: "100mg",
-    batch: "SAMPLE-0002", analyzed: "2026-08-15", purity: "99.0",
-    lab: "Sample Laboratory", sample: true },
-  { report: "Sample report", compound: "SMX-7", size: "5mg",
-    batch: "SAMPLE-0003", analyzed: "2026-07-30", purity: "99.0",
-    lab: "Sample Laboratory", sample: true },
+  { report: "Supplier report (Real Peptides)", compound: "Wolverine (BPC-157/TB-500)", size: "20mg",
+    batch: "KVR-2026-A0726C", analyzed: "2026-09-18", purity: "99.669",
+    lab: "Kovera Labs", file: "coa/wolverine-bpc-157-tb-500-20mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "Semax", size: "10mg",
+    batch: "KVR-2026-418F3C", analyzed: "2026-09-18", purity: "99.578",
+    lab: "Kovera Labs", file: "coa/semax-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "Selank", size: "10mg",
+    batch: "KVR-2026-4C7F48", analyzed: "2026-09-18", purity: "99.677",
+    lab: "Kovera Labs", file: "coa/selank-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "SS-31", size: "50mg",
+    batch: "KVR-2026-7E0BA9", analyzed: "2026-09-18", purity: "99.601",
+    lab: "Kovera Labs", file: "coa/ss-31-50mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "PT-141", size: "10mg",
+    batch: "KVR-2026-61624A", analyzed: "2026-09-18", purity: "99.814",
+    lab: "Kovera Labs", file: "coa/pt-141-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "Kisspeptin", size: "10mg",
+    batch: "KVR-2026-ED1C6E", analyzed: "2026-09-18", purity: "99.614",
+    lab: "Kovera Labs", file: "coa/kisspeptin-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "KPV", size: "10mg",
+    batch: "KVR-2026-72B870", analyzed: "2026-09-18", purity: "99.756",
+    lab: "Kovera Labs", file: "coa/kpv-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "Glutathione", size: "1500mg",
+    batch: "KVR-2026-0F2758", analyzed: "2026-09-18", purity: "99.424",
+    lab: "Kovera Labs", file: "coa/glutathione-1500mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "Cagrilintide", size: "10mg",
+    batch: "KVR-2026-436122", analyzed: "2026-09-18", purity: "99.806",
+    lab: "Kovera Labs", file: "coa/cagrilintide-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "CJC-1295 + Ipamorelin", size: "10mg",
+    batch: "KVR-2026-090628", analyzed: "2026-09-18", purity: "99.666",
+    lab: "Kovera Labs", file: "coa/cjc-1295-ipamorelin-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "5-Amino-1MQ", size: "50mg",
+    batch: "KVR-2026-33911D", analyzed: "2026-09-18", purity: "99.621",
+    lab: "Kovera Labs", file: "coa/5-amino-1mq-50mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "Tesamorelin", size: "10mg",
+    batch: "KVR-2026-363D24", analyzed: "2026-08-12", purity: "99.757",
+    lab: "Kovera Labs", file: "coa/tesamorelin-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "NAD+", size: "1000mg",
+    batch: "KVR-2026-1BACF7", analyzed: "2026-08-12", purity: "99.689",
+    lab: "Kovera Labs", file: "coa/nad-1000mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "MOTS-C", size: "10mg",
+    batch: "KVR-2026-C527B8", analyzed: "2026-08-12", purity: "99.613",
+    lab: "Kovera Labs", file: "coa/mots-c-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "KLOW", size: "80mg",
+    batch: "KVR-2026-12DC38", analyzed: "2026-08-12", purity: "99.365",
+    lab: "Kovera Labs", file: "coa/klow-80mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "Ipamorelin", size: "10mg",
+    batch: "KVR-2026-B36321", analyzed: "2026-08-12", purity: "99.516",
+    lab: "Kovera Labs", file: "coa/ipamorelin-10mg.pdf", fullPanel: true },
+  { report: "Supplier report (Real Peptides)", compound: "GLOW", size: "70mg",
+    batch: "KVR-2026-515288", analyzed: "2026-08-12", purity: "99.787",
+    lab: "Kovera Labs", file: "coa/glow-70mg.pdf" },
+  { report: "Supplier report (Real Peptides)", compound: "GHK-Cu", size: "100mg",
+    batch: "KVR-2026-BC8D16", analyzed: "2026-08-12", purity: "99.650",
+    lab: "Kovera Labs", file: "coa/ghk-cu-100mg.pdf", fullPanel: true },
 ];
 
 // The Report cell for one row: a link when the row has a file,

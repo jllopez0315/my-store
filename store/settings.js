@@ -203,7 +203,7 @@ const SETTINGS = {
                      drops shipping to $0. pickupNote is the short line
                      shown beside it ("Pickup in Austin by appointment"). */
   shipping: {
-    flat: 12,
+    flat: 10,
     freeOver: 250,
     expedited: 28,
     overnight: 60,
@@ -224,12 +224,12 @@ const SETTINGS = {
                for card numbers. */
   payment: {
     methods: [
-      { method: "Zelle",    handle: "" },
+      { method: "Zelle",    handle: "559-827-7044" },
       { method: "Venmo",    handle: "" },
       { method: "Cash App", handle: "" }
     ],
     note: "In the payment note, write only your name.",
-    hostedCheckoutUrl: ""
+    hostedCheckoutUrl: "https://square.link/u/Pr8kIP2H"
   },
 
   /* ---------- RULES ----------

@@ -469,6 +469,7 @@ if (WATER_KIT) document.getElementById("water-kit-bump-label").textContent = "Ad
 // is in the cart. It stays visible once water is added so the boxes can
 // be unticked.
 function waterBumpRelevant() {
+  if (!WATER && !WATER_KIT) return false; // water hidden in data.js: no offer
   return cartLines().some(l => {
     const p = l.item;
     return p.name !== "Bacteriostatic Water";
