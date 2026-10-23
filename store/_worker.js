@@ -1,19 +1,6 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.authWindow = authWindow;
-exports.b64url = b64url;
-exports.b64urlDecode = b64urlDecode;
-exports.codeFor = codeFor;
-exports.default = void 0;
-exports.isEmail = isEmail;
-exports.makeAuthToken = makeAuthToken;
-exports.normalizeEmail = normalizeEmail;
-exports.readCookie = readCookie;
-exports.sameString = sameString;
-exports.verifyAuthToken = verifyAuthToken;
+/* Cloudflare Pages needs an ES module with "export default { fetch }".
+   The kit shipped this file in CommonJS form (exports.default = ...),
+   which Cloudflare rejects with "no registered event handlers". */
 /* ============================================================
    THE STORE KIT · _worker.js
    The one piece of the store that runs on a server (Cloudflare's).
@@ -76,7 +63,7 @@ exports.verifyAuthToken = verifyAuthToken;
    <img src="https://.../logo.png" width="120" alt="Store name">
    line at the top of the html in ownerEmail() and buyerEmail().
    ============================================================ */
-var _default = exports.default = {
+export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === "/api/order") {
@@ -1049,4 +1036,4 @@ async function handleRestockNotify(request, env, host) {
     failed
   });
 }
-//# sourceMappingURL=_worker.js.map
+export { authWindow, b64url, b64urlDecode, codeFor, isEmail, makeAuthToken, normalizeEmail, readCookie, sameString, verifyAuthToken };
