@@ -37,7 +37,7 @@ const TERMS_VERSION = SETTINGS.termsVersion;
 
 /* ---------- 2. PRODUCTS · single vials and supplies ----------
    stock: true  = in stock, ships same day before 1pm EST
-   stock: false = available to order, ships in 4 weeks
+   stock: false = available to order, ships in 2 to 3 weeks
 
    OPTIONAL: left: N marks an in-stock item as low ("only N left")
    and stops the + button at N.
@@ -778,7 +778,7 @@ function applyLabReportRule() {
 }
 
 // A set is in stock only when every vial in it (paid and free) and the
-// BAC water are in stock. Otherwise it shows "Ships in 4 weeks".
+// BAC water are in stock. Otherwise it shows "Ships in 2 to 3 weeks".
 // Runs once, when the catalog is built. Stock comes only from the
 // stock: true / false flags above.
 function refreshSetStock() {

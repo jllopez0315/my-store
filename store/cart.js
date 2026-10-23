@@ -60,11 +60,11 @@ function cartLines() {
 function cartCount() { return cartLines().reduce((n, l) => n + l.qty, 0); }
 function cartSubtotal() { return cartLines().reduce((s, l) => s + l.item.price * l.qty, 0); }
 
-// How a line ships: all now, all in 4 weeks, or split
+// How a line ships: all now, all in 2 to 3 weeks, or split
 function lineShipNote(item, qty) {
-  if (!item.stock) return "Ships in 4 weeks";
+  if (!item.stock) return "Ships in 2 to 3 weeks";
   if (item.left && qty > item.left) {
-    return item.left + " ship" + (item.left === 1 ? "s" : "") + " now, " + (qty - item.left) + " in 4 weeks";
+    return item.left + " ship" + (item.left === 1 ? "s" : "") + " now, " + (qty - item.left) + " in 2 to 3 weeks";
   }
   return "";
 }
@@ -80,7 +80,7 @@ function stockBadgeHTML(item) {
     const text = item.left ? "In stock, only " + item.left + " left" : "In stock";
     return '<span class="stock-badge in">' + text + "</span>";
   }
-  return '<span class="stock-badge soon">Ships in 4 weeks</span>';
+  return '<span class="stock-badge soon">Ships in 2 to 3 weeks</span>';
 }
 
 /* Cart-line thumbnail: sets show a mini fan of their first three
@@ -244,7 +244,7 @@ function cartRender() {
   const pct = Math.min(100, Math.round(sub / FREE_SHIPPING_OVER * 100));
   foot.innerHTML =
     '<div class="row"><span>Subtotal</span><strong>$' + sub + "</strong></div>" +
-    '<div class="ship-progress">' + (away > 0 ? "Add $" + away + " more for free standard shipping." : "You have free standard shipping.") +
+    '<div class="ship-progress">' + (away > 0 ? "Add $" + away + " more for free shipping." : "You have free shipping.") +
       '<div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
     '<a class="btn" href="checkout.html">Checkout</a>' +
     '<a class="continue" href="shop.html">Continue browsing</a>';

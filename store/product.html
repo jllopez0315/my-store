@@ -269,7 +269,7 @@ if (!item) {
       ? '<p class="stock-line soon">Awaiting lab report</p>'
       : item.stock
       ? '<p class="stock-line in">' + (item.left ? "In stock · only " + item.left + " left" : "In stock") + " · ships same day before 1pm EST</p>"
-      : '<p class="stock-line soon">Available to order · ships in 4 weeks</p>';
+      : '<p class="stock-line soon">Available to order · ships in 2 to 3 weeks</p>';
   }
   // Two kinds of note can sit under the buy button: the split-shipment
   // line when someone orders past what's on hand, and an item's own
@@ -278,7 +278,7 @@ if (!item) {
   function buyNoteHTML() {
     return (item.soldOut ? '<div class="buy-note notify-wrap">' + notifyFormHTML(item) + "</div>" : "") +
     ((item.left && item.moreToOrder)
-      ? '<p class="buy-note">Order more than ' + item.left + ' and the rest ships separately in 4 weeks at no extra shipping cost.</p>'
+      ? '<p class="buy-note">Order more than ' + item.left + ' and the rest ships separately in 2 to 3 weeks at no extra shipping cost.</p>'
       : "") +
     (item.note ? '<p class="buy-note">' + esc(item.note) + "</p>" : "");
   }

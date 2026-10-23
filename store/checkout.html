@@ -244,16 +244,8 @@ input[readonly] { background: var(--hairline); color: var(--ink-soft); }
       <div class="ship-speed">
         <p class="ship-speed-label">Shipping speed <span class="ship-us-note">&middot; US only</span></p>
         <label class="ship-opt">
-          <input type="radio" name="shipping_speed" value="Standard (5-8 days)" checked>
-          <span><strong>Standard</strong> &middot; 5-8 days &middot; <span id="rate-standard"></span></span>
-        </label>
-        <label class="ship-opt">
-          <input type="radio" name="shipping_speed" value="Expedited (3-5 days)">
-          <span><strong>Expedited</strong> &middot; 3-5 days &middot; <span id="rate-expedited"></span></span>
-        </label>
-        <label class="ship-opt">
-          <input type="radio" name="shipping_speed" value="Overnight (1 business day)">
-          <span><strong>Overnight</strong> &middot; 1 business day &middot; <span id="rate-overnight"></span></span>
+          <input type="radio" name="shipping_speed" value="FedEx 2-Day" checked>
+          <span><strong>FedEx 2-Day</strong> &middot; <span id="rate-standard"></span></span>
         </label>
       </div>
 
@@ -329,7 +321,7 @@ input[readonly] { background: var(--hairline); color: var(--ink-soft); }
       <p class="confirm-note" id="confirm-how">Send payment using any option below.</p>
       <!-- "Pay now": shown only when settings.js has a hostedCheckoutUrl -->
       <div class="pay-now" id="pay-now">
-        <a class="btn" id="pay-now-link" href="#" target="_blank" rel="noopener">Pay now</a>
+        <a class="btn" id="pay-now-link" href="#" target="_blank" rel="noopener">Pay by card or Apple Pay</a>
         <p>Opens your payment page in a new tab.</p>
       </div>
       <!-- Payment note and handles are filled in from settings.js (payment section) -->
@@ -440,7 +432,7 @@ function updateTotals() {
   // and Overnight rather than promising a discount that can't happen.
   const onStandard = !shippingChoice().startsWith("Overnight") && !shippingChoice().startsWith("Expedited");
   const showNudge = sub > 0 && away > 0 && !isPickup() && onStandard;
-  nudge.textContent = showNudge ? "Add $" + away + " more for free standard shipping." : "";
+  nudge.textContent = showNudge ? "Add $" + away + " more for free shipping." : "";
   nudge.classList.toggle("show", showNudge);
   updateBumps();
 }
@@ -451,8 +443,7 @@ document.querySelectorAll('input[name="shipping_speed"]').forEach(r => r.addEven
 // or the free-shipping threshold there updates what the customer reads here.
 document.getElementById("rate-standard").textContent =
   "$" + SHIPPING_FLAT + ", free over $" + FREE_SHIPPING_OVER;
-document.getElementById("rate-expedited").textContent = "$" + EXPEDITED_COST;
-document.getElementById("rate-overnight").textContent = "$" + OVERNIGHT_COST;
+// Expedited and Overnight were removed: FedEx 2-Day is the only option.
 // Local pickup row: only when settings.js switches it on
 if (SETTINGS.shipping.pickupEnabled) {
   document.getElementById("pickup-row").hidden = false;

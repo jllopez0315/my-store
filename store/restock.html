@@ -282,7 +282,7 @@ function cardHtml(id, name, phase, date, isNew, item) {
   html += phase === 1 ? "<span>Est.: <b>not yet scheduled</b></span>" : "<span>Est.: <b>" + t.est + "</b></span>";
   html += "</div>";
   // An item flagged "available to order" in data.js (not counted at 0) can still be ordered today
-  if (item && !item.soldOut && !item.stock) html += '<p class="orderable">You can still <a href="product.html?p=' + item.slug + '">order it today</a>. It ships with the next batch, in about 4 weeks.</p>';
+  if (item && !item.soldOut && !item.stock) html += '<p class="orderable">You can still <a href="product.html?p=' + item.slug + '">order it today</a>. It ships with the next batch, in about 2 to 3 weeks.</p>';
   html += isNew
     ? trackHtml(phase - 2, ["Ordered, on the way", "Arrived, in testing", "Launching"])
     : trackHtml(phase - 1, ["Reorder pending", "Ordered, on the way", "Arrived, in testing", "Back in stock"]);
