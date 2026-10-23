@@ -80,7 +80,7 @@ const SETTINGS = {
     tagline: "Research compounds, documented.",
     contactEmail: "info@eliteresearchlabss.com",
     location: "",
-    logo: "",
+    logo: "img/logo.png",
     logoLight: "",
     labelName: "",
     labelLogo: "",

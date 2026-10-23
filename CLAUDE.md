@@ -132,7 +132,7 @@ Everything on this store is sold for laboratory research use only. You are my se
 # Brand
 
 - Colors and fonts live in `SETTINGS.look` until Session 3, then in the admin under Look & layout. Change them in one place only, and tell me which.
-- Logo file: `[logo file name in store/img/]`. Never redraw or recreate my logo.
+- Logo file: `logo.png` in store/img/ (cropped from my square logo, black background made transparent). Never redraw or recreate my logo.
 
 # Common Jobs
 
