@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Browser tab icon: two initials in cream on the brand navy, a brass
+       rule beneath. Change the letters in the text line to your own
+       initials, and the two colors if you recolor the store. -->
+  <rect width="64" height="64" rx="12" fill="#1B2A41"/>
+  <text x="32" y="41" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="30" letter-spacing="1" fill="#EFEAE0">YB</text>
+  <rect x="17" y="49" width="30" height="2" fill="#B08D57"/>
+</svg>

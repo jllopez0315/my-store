@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Kit Prompts</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#FEFCF9; --ink:#202020; --teal:#53C5B3; --soft:#4a4a4a; --line:#e7e2da; --panel:#f6f2ec; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); font-family:Switzer,-apple-system,sans-serif; font-size:15px; line-height:1.55; padding:36px 24px 72px; }
+  .wrap { max-width:820px; margin:0 auto; }
+  h1 { font-family:"DM Serif Display",Georgia,serif; font-weight:400; font-size:2rem; margin-bottom:6px; }
+  h2 { font-family:"DM Serif Display",Georgia,serif; font-weight:400; font-size:1.35rem; margin:34px 0 10px; }
+  .lede { color:var(--soft); margin-bottom:10px; max-width:70ch; }
+  .note { background:var(--panel); border-left:3px solid var(--teal); padding:10px 14px; border-radius:4px; color:var(--soft); font-size:14px; margin-top:14px; }
+  .p { display:flex; justify-content:space-between; align-items:center; gap:12px; border:1px solid var(--line); border-radius:6px; padding:10px 14px; margin-top:8px; background:#fff; }
+  .p code { font-family:ui-monospace,Menlo,monospace; font-size:13.5px; color:var(--ink); white-space:pre-wrap; }
+  .p small { display:block; color:var(--soft); font-size:12.5px; margin-top:3px; font-family:Switzer,sans-serif; }
+  button { font-family:Switzer,sans-serif; font-size:12px; font-weight:600; background:var(--ink); color:#fff; border:0; border-radius:3px; padding:8px 14px; cursor:pointer; white-space:nowrap; }
+  button:hover { background:var(--teal); color:var(--ink); }
+  @media (max-width:600px) { body { padding:24px 16px 56px; } .p { flex-direction:column; align-items:flex-start; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Prompts for your store</h1>
+  <p class="lede">Every prompt we use in the three sessions, plus the ones you'll use every week. Click Copy, paste it into Claude Code (or Codex) with your store folder open, and replace anything in [brackets] with your own details. One prompt, one change. Say <strong>publish</strong> only when the preview looks right.</p>
+  <div class="note">Claude reads the CLAUDE.md file in your folder every time, so it already knows your rules. If it ever gets something wrong twice, say: "Add that to CLAUDE.md so you remember it next time."</div>
+
+  <h2>Session 1 · Connect</h2>
+  <div class="p"><div><code>Read CLAUDE.md and START-HERE.html, then tell me in five lines what this store is and what you will never do without asking.</code><small>A warm-up. Confirms the assistant found your rules.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>Fill in the brackets in CLAUDE.md with these details: my name is [NAME], my store is [STORE NAME] at [WEB ADDRESS], I use Path [A or B] to publish.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>In store/settings.js set the brand name to "[STORE NAME]", the sub word to "[LABS or blank]", the tagline to "[TAGLINE]", and the contact email to [EMAIL]. Show me the preview.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Switch the store to the [dark or light] look, the [classic, modern, or editorial] font pair, and set the brand color to #[HEX] and the accent color to #[HEX]. Show me the preview.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Run the pre-publish check on everything you changed and tell me exactly what to look at in the preview.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Publish</code><small>Only after you've looked at the preview.</small></div><button>Copy</button></div>
+
+  <h2>Session 2 · Set up</h2>
+  <div class="p"><div><code>Replace the sample products in store/data.js with my list. Keep the same format. Here it is: [NAME, SIZE, PRICE, in stock or not, one per line]</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Add the matching 10-vial kit for each vial, priced as [8] vials, per my kit rule.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Here are my payment methods. Put them in settings.js and show me the checkout confirmation screen: Zelle [HANDLE], Venmo [HANDLE], Cash App [HANDLE].</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Set shipping to a flat $[AMOUNT], free over $[AMOUNT], expedited $[AMOUNT], overnight $[AMOUNT].</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Add a lab report for [PRODUCT] [SIZE], lot [LOT NUMBER], tested [DATE], purity [PERCENT], from [LAB NAME], file store/coa/[FILE NAME].pdf. Show me the lab results page.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Put my logo in the header. The file is [FILE NAME] with a transparent background.</code><small>A wide shape works best, around 600 by 160 pixels. Or do it in the admin under Look &amp; layout, Header.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>Use [FILE NAME] as my home page background.</code><small>A picture (JPG, PNG, or WebP, 1920 by 1080, under 400 KB) or a silent MP4 loop (8 to 15 seconds, under 4 MB). Or upload it in the admin under Look &amp; layout, Home page background.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>Put my logo on the vial labels. The file is [FILE NAME] with a transparent background.</code><small>Or do it in the admin under Look &amp; layout, Vial label.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>Change the entry gate heading to "[HEADING]" and the button to "[BUTTON TEXT]". Keep the two acknowledgment lines as they are.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>In store/legal.html, fill in my business name as [LEGAL NAME], my state as [STATE], and my contact email as [EMAIL]. Change nothing else. I'll send it to my attorney.</code></div><button>Copy</button></div>
+
+  <h2>Session 3 · Launch</h2>
+  <div class="p"><div><code>In store/settings.js, fill in sync with my Supabase project URL [URL] and my anon key [KEY]. Show me the preview.</code><small>The anon key is the public one. Never paste the service key into a file.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>In admin/index.html, set ADMIN_CONFIG: storeName "[STORE NAME]", storeUrl "[STORE WEB ADDRESS]", supabaseUrl "[URL]", supabaseAnonKey "[KEY]".</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Add a product called "Test" at $1 with 5 in stock so I can place a test order. I'll delete it after.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Remove the "Test" product and show me the shop page.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Read my whole store like a buyer would. Tell me anything confusing, broken, or out of date before I open.</code></div><button>Copy</button></div>
+
+  <h2>Every week</h2>
+  <div class="p"><div><code>Mark [PRODUCT] [SIZE] out of stock.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Mark [PRODUCT] [SIZE] back in stock.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Show that I only have [N] vials of [PRODUCT] [SIZE] left.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Change [PRODUCT] [SIZE] to $[PRICE] and update its kit to match my kit rule.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Raise every kit price by $[AMOUNT] and tell me the new prices.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Add a new vial: [NAME] [SIZE], $[PRICE], in stock. Add the matching kit.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Add a lab report for lot [LOT NUMBER].</code><small>Then give it the product, size, lab, date, purity, and the PDF name.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>Turn on the Restocks page.</code><small>One page that tracks every reorder and emails waiting buyers when it's back. After Session 3 it is a checkbox in the admin under Look &amp; layout. The phase and date for each item are set in the admin, Inventory, on any row at 0: no prompt needed.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>My shipping takes [N] to [M] days and lab testing [N] to [M] days.</code><small>The Restocks page shows these as its countdown ranges.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>Change my Zelle handle to [NEW HANDLE]. Confirm with me before you change it.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Raise free shipping to orders over $[AMOUNT].</code></div><button>Copy</button></div>
+  <div class="p"><div><code>List every price on the store in one table so I can check it against my supplier sheet.</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Update my store to the new kit version in ~/Downloads/[NEW KIT FOLDER], keep my settings.js, data.js, img, coa, legal.html and my admin config, then show me the preview.</code><small>When a new kit version comes out.</small></div><button>Copy</button></div>
+  <div class="p"><div><code>Undo that</code></div><button>Copy</button></div>
+  <div class="p"><div><code>Publish</code></div><button>Copy</button></div>
+</div>
+<script>
+  document.querySelectorAll(".p button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var text = b.parentElement.querySelector("code").textContent;
+      navigator.clipboard.writeText(text).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1500); });
+    });
+  });
+</script>
+</body>
+</html>

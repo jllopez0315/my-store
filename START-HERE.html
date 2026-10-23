@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Start Here</title>
+<!--
+  THE STORE KIT · START HERE
+  This is your first page. Open it by double-clicking the file.
+  Checkboxes remember themselves in this browser only. Clear them with the
+  "Reset all checkboxes" link at the bottom.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FEFCF9;
+    --ink: #202020;
+    --teal: #53C5B3;
+    --ink-soft: #4a4a4a;
+    --line: #e7e2da;
+    --panel: #f6f2ec;
+    --serif: "DM Serif Display", Georgia, serif;
+    --sans: "Switzer", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
+    padding: 0 20px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.15; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); margin: 60px 0 14px; }
+  h2 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 0 0 18px; scroll-margin-top: 24px; }
+  h3 { font-size: 1.3rem; margin: 28px 0 8px; }
+  p { margin-bottom: 14px; max-width: 64ch; }
+  a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--teal); text-underline-offset: 3px; }
+  .lede { font-size: 1.15rem; color: var(--ink-soft); margin-bottom: 36px; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+  section { padding: 44px 0; border-top: 1px solid var(--line); }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em; background: var(--panel); padding: 2px 6px; border-radius: 3px; }
+  ul, ol { margin: 0 0 16px 22px; }
+  li { margin-bottom: 8px; }
+  li p { margin-bottom: 6px; }
+
+  /* Table of contents */
+  .toc { background: var(--panel); border-radius: 8px; padding: 22px 24px; margin-bottom: 10px; }
+  .toc ol { margin: 0 0 0 20px; columns: 2; column-gap: 32px; }
+  .toc li { break-inside: avoid; margin-bottom: 6px; }
+  @media (max-width: 560px) { .toc ol { columns: 1; } }
+
+  /* File map */
+  .filemap { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin: 16px 0 20px; }
+  .filemap .row { display: grid; grid-template-columns: 220px 1fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .filemap .row:last-child { border-bottom: none; }
+  .filemap .row.head { background: var(--panel); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .filemap .row.sub { padding-left: 32px; }
+  .filemap .row code { white-space: nowrap; }
+  @media (max-width: 560px) {
+    .filemap .row { grid-template-columns: 1fr; gap: 4px; }
+    .filemap .row.sub { padding-left: 16px; }
+  }
+
+  /* Session cards */
+  .sessions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 22px 20px; background: #fff; min-width: 0; }
+  .card .num { font-family: var(--serif); font-size: 2rem; color: var(--teal); line-height: 1; margin-bottom: 8px; }
+  .card h3 { margin-top: 0; font-size: 1.25rem; }
+  .card ul { margin-left: 18px; font-size: 0.97rem; }
+  .card .bring { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.93rem; color: var(--ink-soft); }
+  .card .bring strong { color: var(--ink); }
+  @media (max-width: 760px) { .sessions { grid-template-columns: 1fr; } }
+
+  /* Checklists */
+  .check { list-style: none; margin-left: 0; }
+  .check li { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line); margin: 0; }
+  .check li:last-child { border-bottom: none; }
+  .check input[type="checkbox"] { width: 20px; height: 20px; margin-top: 4px; accent-color: var(--teal); cursor: pointer; }
+  .check label { cursor: pointer; }
+  .check label small { display: block; color: var(--ink-soft); font-size: 0.93rem; margin-top: 2px; }
+  .check input:checked + label { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--teal); }
+  .check input:checked + label small { text-decoration: none; }
+
+  /* Setup steps */
+  .step { border: 1px solid var(--line); border-radius: 8px; padding: 24px 24px 18px; margin: 18px 0; background: #fff; }
+  .step .top { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .step .top .n { font-family: var(--serif); font-size: 1.9rem; color: var(--teal); line-height: 1; }
+  .step h3 { margin: 0; }
+  .step .where { margin: 14px 0 6px; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+  .step ol { margin-left: 20px; }
+  .step .done { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); font-weight: 600; }
+  .step .done input { width: 20px; height: 20px; accent-color: var(--teal); cursor: pointer; }
+  .step .done label { cursor: pointer; }
+  .note { background: var(--panel); border-left: 3px solid var(--teal); padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 14px 0; font-size: 0.97rem; }
+  .note p:last-child { margin-bottom: 0; }
+
+  /* Prompts */
+  .prompt { font-family: var(--sans); background: var(--panel); border: 1px solid var(--line); padding: 12px 16px; border-radius: 6px; margin: 8px 0 12px; font-size: 0.98rem; }
+  .prompt::before { content: "Say: "; font-weight: 600; color: var(--teal); }
+
+  /* Support */
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 16px 0; }
+  .two .card h3 { font-size: 1.15rem; }
+  @media (max-width: 600px) { .two { grid-template-columns: 1fr; } }
+
+  .ruo-box { background: var(--ink); color: var(--bg); border-radius: 8px; padding: 28px 28px 20px; margin-top: 10px; }
+  .ruo-box h3 { color: var(--bg); margin-top: 0; }
+  .ruo-box ul { margin-left: 20px; }
+  .ruo-box p, .ruo-box li { color: #d8d3ca; }
+  .ruo-box strong { color: var(--bg); }
+
+  footer { padding-top: 40px; font-size: 0.9rem; color: var(--ink-soft); }
+  footer a { color: var(--ink-soft); }
+  .progress { font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 20px; }
+  .progress b { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow" style="margin-top:50px">The Store Kit</p>
+  <h1>Start here.</h1>
+  <p class="lede">You own this store. This page walks you from the folder you just downloaded to a store that's open, in three live sessions and a handful of setup steps. Work through it in order. Check things off as you go. The boxes remember themselves in this browser.</p>
+
+  <div class="toc">
+    <p class="eyebrow" style="margin-bottom:8px">On this page</p>
+    <ol>
+      <li><a href="#whats-in-this-folder">What's in this folder</a></li>
+      <li><a href="#the-three-sessions">The three sessions</a></li>
+      <li><a href="#before-session-1">Before Session 1: homework</a></li>
+      <li><a href="#setup-steps">The setup steps, in order</a></li>
+      <li><a href="#running-your-store">Running your store with Claude</a></li>
+      <li><a href="#launch-checklist">Launch checklist</a></li>
+      <li><a href="#support">Support</a></li>
+      <li><a href="#updating">Updating the kit later</a></li>
+      <li><a href="#research-use-only">Research use only</a></li>
+    </ol>
+  </div>
+  <p class="progress">Boxes checked: <b id="progress-count">0</b> of <b id="progress-total">0</b></p>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="whats-in-this-folder">What's in this folder</h2>
+    <p>Two folders and a few files. The <code>store</code> folder is what your buyers see. The <code>admin</code> folder is your private back office. Everything else is for you and your AI assistant.</p>
+
+    <div class="filemap">
+      <div class="row head"><span>File or folder</span><span>What it is</span></div>
+      <div class="row"><code>START-HERE.html</code><span>This page.</span></div>
+      <div class="row"><code>PROMPTS.html</code><span>Every prompt from the three sessions, plus the ones you'll use every week, each with a Copy button.</span></div>
+      <div class="row"><code>CLAUDE.md</code><span>The instruction file your AI assistant (Claude Code) reads every time you open this folder. You fill in the brackets in Session 1. It holds your pricing rules, your wording rules, and what Claude must never do without asking.</span></div>
+      <div class="row"><code>AGENTS.md</code><span>A short pointer to CLAUDE.md for other AI tools (ChatGPT Codex, for example). You don't edit it.</span></div>
+      <div class="row"><code>LICENSE.txt</code><span>Your single-store license. One purchase, one store, one business.</span></div>
+      <div class="row head"><span>store/</span><span>The storefront your buyers see. Runs on Cloudflare Pages.</span></div>
+      <div class="row sub"><code>settings.js</code><span>Payment handles, the hosted checkout link, shipping rates, the entry gate wording, and the rules. Your name, tagline, header logo, look (dark or light, layout, fonts, colors), home page background (your own picture or a short video loop), the Restocks page switch, and the three facts start here too, and move into the admin under Look &amp; layout once Session 3 connects the database (with Preview, Reset to defaults, uploads, and a Custom pair of Google fonts). From then on settings.js is the fallback for those: what the store shows if the database ever cannot be reached.</span></div>
+      <div class="row sub"><code>data.js</code><span>What you sell: products, kits, research sets, and the list of lab reports.</span></div>
+      <div class="row sub"><code>coa/</code><span>Your lab report PDFs. Each one is listed in data.js so it shows on the right product.</span></div>
+      <div class="row sub"><code>restock.html</code><span>The Restocks page: everything out of stock, where its next batch is (reorder pending, on the way, in testing), a countdown from the date you set in the admin, and a "notify me" form. When you count the item back in, everyone waiting gets one email and the card leaves the page. Switched on in settings.js or the admin; off, it stays out of the menu.</span></div>
+      <div class="row sub"><code>img/</code><span>Product pictures, and your own header logo and home page background when you have them. The kit ships with three vial photos (blue, black, and white cap) with a blank label. The store prints the label automatically: your store name in a band at the top, a small atom mark under it, and the product name and size. Your own logo, the band colors, a tint, or a complete label design of your own go on the same way, from settings.js at first and from the admin's Look &amp; layout screen (Vial label) once your database is connected. Your own photos replace the three vial files with the same names.</span></div>
+      <div class="row sub"><code>legal.html</code><span>Terms, Privacy, and Disclaimer. Drafts. Your attorney reviews them before you open.</span></div>
+      <div class="row sub"><code>_worker.js</code><span>The order code. Runs on Cloudflare when a buyer submits an order. Emails you an alert, emails the buyer a receipt, and saves the order into your admin. It also runs the sign-in step: buyers verify their email with a six-digit code before the checkout form appears, and your order alert says whether the buyer's email was verified. You never edit this. It reads its keys from Cloudflare settings.</span></div>
+      <div class="row head"><span>bonus/</span><span>Your launch pack and Canva kit instructions. <code>launch-pack.html</code> is three emails and the social posts to open your store to the customers you already have, each with a Copy button. <code>canva-kit.html</code> explains how to open the Canva social kit and put it in your colors.</span></div>
+      <div class="row head"><span>admin/</span><span>Your private back office. Login required.</span></div>
+      <div class="row sub"><code>index.html</code><span>The whole admin in one file: orders (each with the buyer's email, phone, and shipping address, and a Copy button for your label tool, so an order alert that never reaches your inbox is still all there), inventory (with "+ New compound" to add an item and its kit in one go), customers, sales and expenses, reports, and Look &amp; layout (your store's name, header logo, look, home page background, Restocks page switch, facts, and vial label, changed from the admin with no file to edit; Preview shows a change on your store before you save it, Reset to defaults puts the stock look back, Custom lets you name any two Google fonts, and Vial label takes your logo or a full label design as an upload). A few settings at the top connect it to your database and name your store's web address, so Preview and Open my store work.</span></div>
+      <div class="row sub"><code>setup.sql</code><span>A script you paste into your database once. It creates your tables, including the one row that holds your Look &amp; layout choices, and the storage bucket your vial label uploads go to. Run it one time, in Session 3.</span></div>
+    </div>
+    <p>Keep this folder somewhere you can find it, like <code>Documents/my-store</code>. It is your store. Back it up like you'd back up anything that matters.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="the-three-sessions">The three sessions</h2>
+    <p>Three live sessions with Dr. Johnna, 90 minutes each, on Zoom, on your screen and your accounts. Session 1 is Tuesday, October 20. Session 2 is Thursday, October 22. Session 3 is Wednesday, October 28. All three start at 7:00 PM Eastern. The Zoom link is in your welcome email and in each reminder email. Every session is recorded, and the recording comes to your inbox after each one, so you can watch a step again any time.</p>
+
+    <div class="sessions">
+      <div class="card">
+        <div class="num">1</div>
+        <h3>Store online</h3>
+        <ul>
+          <li>Check your accounts</li>
+          <li>Connect GitHub to Cloudflare Pages</li>
+          <li>Set your brand and look in settings.js (day one; in Session 3 these move to the admin)</li>
+          <li>Publish and see your store live</li>
+          <li>Fill in CLAUDE.md</li>
+        </ul>
+        <p class="bring"><strong>Bring:</strong> your store name, tagline, contact email, brand colors, and the homework below finished.</p>
+      </div>
+      <div class="card">
+        <div class="num">2</div>
+        <h3>Products, lab reports, payments, legal</h3>
+        <ul>
+          <li>Products, sizes, prices in data.js</li>
+          <li>Pictures, your logo in the header, and your name or logo on the vial labels</li>
+          <li>Lab reports and verifying a lot</li>
+          <li>Payment methods and hosted link</li>
+          <li>Gate wording and legal drafts walkthrough</li>
+        </ul>
+        <p class="bring"><strong>Bring:</strong> your product list with sizes and prices, your lab report PDFs, your payment handles, and your business name and address for the legal pages.</p>
+      </div>
+      <div class="card">
+        <div class="num">3</div>
+        <h3>Admin, order emails, domain, launch</h3>
+        <ul>
+          <li>Create your database</li>
+          <li>Create your admin login</li>
+          <li>Connect the store to the admin's Look &amp; layout screen</li>
+          <li>Set the email keys in Cloudflare</li>
+          <li>Connect your own domain and set up a branded email address at it</li>
+          <li>Place a test order end to end</li>
+          <li>Launch checklist</li>
+        </ul>
+        <p class="bring"><strong>Bring:</strong> your Supabase and Resend logins, the login for wherever your domain is registered, and a second email address you can check for the buyer receipt.</p>
+      </div>
+    </div>
+    <p>Can't make a session live? The recording comes by email after each session and stays available for three months. Do the steps below at your own pace, and bring what you're stuck on to the next session. Questions get answered live in the room. After the three sessions, one-to-one setup packages and a done-for-you install are available. Let's talk: <a href="https://doctorjohnna.com/contact">doctorjohnna.com/contact</a></p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="before-session-1">Before Session 1: homework</h2>
+    <p>About 30 minutes. Create every account in your own name, with your own email, on your own card. Use the same email for all of them and write your passwords down somewhere safe. Nobody else needs your logins, including Dr. Johnna.</p>
+
+    <h3>Accounts</h3>
+    <ul class="check">
+      <li><input type="checkbox" id="hw-cloudflare"><label for="hw-cloudflare">Cloudflare account<small>cloudflare.com. Free plan. This puts your store on the internet and runs your order emails. The free plan allows business use.</small></label></li>
+      <li><input type="checkbox" id="hw-supabase"><label for="hw-supabase">Supabase account<small>supabase.com. Free plan. This holds your orders, inventory, customers, and your admin login. Don't create a project yet. We do that in Session 3.</small></label></li>
+      <li><input type="checkbox" id="hw-resend"><label for="hw-resend">Resend account<small>resend.com. Free plan. This sends your order emails. Don't create an API key yet.</small></label></li>
+      <li><input type="checkbox" id="hw-github"><label for="hw-github">GitHub account (optional)<small>github.com. Free plan. Only needed if you pick Path B in Step 1, where Claude publishes for you by pushing. Most owners start with Path A (drag and drop) and don't need it. You can add it later.</small></label></li>
+      <li><input type="checkbox" id="hw-domain"><label for="hw-domain">A domain name<small>Buy one at Cloudflare (Domain Registration in the dashboard) or anywhere else. About $12 a year. If you already own one, make sure you can log in where it's registered.</small></label></li>
+    </ul>
+
+    <h3>On your computer</h3>
+    <ul class="check">
+      <li><input type="checkbox" id="hw-vscode"><label for="hw-vscode">Install VS Code<small>code.visualstudio.com. Free. This is where your store files live and where you talk to Claude.</small></label></li>
+      <li><input type="checkbox" id="hw-claude-ext"><label for="hw-claude-ext">Install the Claude Code extension inside VS Code<small>Open VS Code, click the Extensions icon on the left (four squares), search "Claude Code," click Install. Sign in with your Claude account.</small></label></li>
+      <li><input type="checkbox" id="hw-claude-plan"><label for="hw-claude-plan">A Claude plan (Pro or higher)<small>claude.ai. Paid monthly to Anthropic. This is your store assistant. The plan is between you and Anthropic.</small></label></li>
+      <li><input type="checkbox" id="hw-folder"><label for="hw-folder">Put this kit folder somewhere you can find it<small>For example Documents/my-store. Then open that folder in VS Code (File, then Open Folder).</small></label></li>
+      <li><input type="checkbox" id="hw-list"><label for="hw-list">Write down your store name, tagline, contact email, and brand colors<small>Two colors are enough: a main brand color and an accent. Hex codes like #1A4D3E if you have them. If not, Dr. Johnna will help you pick in Session 1.</small></label></li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="setup-steps">The setup steps, in order</h2>
+    <p>These are the steps we do in the sessions. They're written out here so you can follow along, catch up, or do them again for a second store. Do them in order. Each one builds on the last.</p>
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="top"><span class="n">1</span><h3>Put the store online</h3></div>
+      <p>Two ways to do this. Both use the same files and both send order emails. Pick one. You can switch from A to B later without starting over.</p>
+      <div class="note">
+        <p><strong>Path A: drag and drop.</strong> Recommended for most owners. No GitHub. You drag the <code>store</code> folder into Cloudflare. To publish a change later, you drag it again. Two minutes, every time.</p>
+        <p><strong>Path B: GitHub connected.</strong> For owners who want Claude to publish by itself when they say "publish." Cloudflare watches your GitHub repo and goes live on every push. A few more clicks today, fewer clicks every day after.</p>
+      </div>
+      <div class="where">Path A: drag and drop</div>
+      <ol>
+        <li>Log in at dash.cloudflare.com. In the left menu click <strong>Workers &amp; Pages</strong>.</li>
+        <li>Click <strong>Create</strong>, then the <strong>Pages</strong> tab, then <strong>Upload assets</strong>.</li>
+        <li>Project name: your store's name, lowercase, no spaces (this becomes your free address, like <code>my-store.pages.dev</code>). Click <strong>Create project</strong>.</li>
+        <li>Open your kit folder in Finder or File Explorer. Drag the <code>store</code> folder (the folder itself, not its contents) onto the upload box. Wait for the file list to finish.</li>
+        <li>Click <strong>Deploy site</strong>. Click the <code>.pages.dev</code> link. Your store is online with the placeholder content.</li>
+      </ol>
+      <p><strong>To publish a change later on Path A:</strong> Cloudflare, Workers &amp; Pages, your store project, <strong>Create deployment</strong>, drag the <code>store</code> folder in again, <strong>Save and Deploy</strong>. Live in about a minute.</p>
+      <div class="where">Path B: GitHub connected</div>
+      <ol>
+        <li>Open your kit folder in VS Code. Open the Claude Code panel. Say this to Claude:</li>
+      </ol>
+      <div class="prompt">Create a private GitHub repo called my-store under my account and push this whole folder to it. Don't publish anything else.</div>
+      <ol start="2">
+        <li>Claude may ask you to sign in to GitHub in the browser. Do that, come back, and let it finish. When it's done, github.com shows your repo with the <code>store</code> and <code>admin</code> folders in it. Confirm the repo says <strong>Private</strong>.</li>
+        <li>Log in at dash.cloudflare.com. <strong>Workers &amp; Pages</strong>, <strong>Create</strong>, <strong>Pages</strong> tab, <strong>Connect to Git</strong>.</li>
+        <li>Connect your GitHub account when asked, pick your <code>my-store</code> repo, and click <strong>Begin setup</strong>.</li>
+        <li>On the build settings screen:
+          <ul>
+            <li>Project name: your store's name, lowercase, no spaces</li>
+            <li>Production branch: <code>main</code></li>
+            <li>Framework preset: <strong>None</strong></li>
+            <li>Build command: leave empty</li>
+            <li>Build output directory: <code>/</code></li>
+            <li>Open <strong>Root directory (advanced)</strong> and type <code>store</code></li>
+          </ul>
+        </li>
+        <li>Click <strong>Save and Deploy</strong>. Wait for the green check. Click the <code>.pages.dev</code> link. Your store is online with the placeholder content.</li>
+      </ol>
+      <p><strong>To publish a change later on Path B:</strong> say "publish" to Claude. It pushes, Cloudflare rebuilds, live in about a minute.</p>
+      <div class="note"><p>Whichever path you picked, tell Claude. Open <code>CLAUDE.md</code>, find the Publishing lines, and delete the path you're not using. That's how Claude knows what "publish" means for you.</p></div>
+      <div class="done"><input type="checkbox" id="step-1"><label for="step-1">Step 1 done: my store has a .pages.dev address</label></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="top"><span class="n">2</span><h3>Set the environment variables</h3></div>
+      <p>The order code (<code>_worker.js</code>) needs a few keys to send email and to save orders into your admin. They live in Cloudflare, never in your files. You can set the email ones now and come back for the Supabase ones after Step 3.</p>
+      <div class="where">Part A: get your Resend key</div>
+      <ol>
+        <li>Log in at resend.com. In the left menu click <strong>Domains</strong>, then <strong>Add Domain</strong>. Type your domain. Resend shows you a few DNS records to add where your domain is registered. If your domain is at Cloudflare, add them under your domain's <strong>DNS</strong> page. Wait for Resend to show <strong>Verified</strong>. (This is what lets receipts reach your buyers. Without a verified domain, Resend only delivers to your own address.)</li>
+        <li>Click <strong>API Keys</strong>, then <strong>Create API Key</strong>. Name it "store orders," permission <strong>Sending access</strong>. Copy the key now. Resend only shows it once.</li>
+      </ol>
+      <div class="where">Part B: paste the keys into Cloudflare</div>
+      <ol>
+        <li>In Cloudflare, open <strong>Workers &amp; Pages</strong>, click your store project, then <strong>Settings</strong>, then <strong>Environment variables</strong> (under Variables and Secrets on some screens).</li>
+        <li>Click <strong>Add variable</strong> for each line below. Choose <strong>Production</strong>. Mark the keys as <strong>Secret</strong> (encrypt) where offered.
+          <ul>
+            <li><code>RESEND_API_KEY</code>: the key you just copied</li>
+            <li><code>ORDER_TO</code>: the email address where you want order alerts</li>
+            <li><code>ORDER_FROM</code> (optional): the address receipts come from, like <code>orders@yourdomain.com</code>. Must be on the domain you verified in Resend. Leave it out until the domain is verified.</li>
+            <li><code>SUPABASE_URL</code> and <code>SUPABASE_SERVICE_KEY</code> (optional, after Step 3): these let the function save orders into your admin. Where to find them is in Step 4.</li>
+            <li><code>SUPABASE_ANON_KEY</code> (optional, after Step 3): the same anon public key you put in settings.js. With it, your store keeps a safety copy of your saved look at the edge, so visitors see your chosen look even on a day your database is asleep. Together with the two above and <code>RESEND_API_KEY</code>, it also lets your admin send the "it's back in stock" emails to shoppers who asked for one.</li>
+            <li><code>AUTH_SECRET</code>: any 32 or more random characters. To make one, open your password manager, generate a password 40 characters long, and paste it here. With it set, buyers must sign in with a six-digit code sent to their email before the checkout form appears, and every order alert tells you the buyer's email was verified. Without it, orders are accepted without sign-in.</li>
+          </ul>
+        </li>
+        <li>Click <strong>Save</strong>. New variables only take effect after a fresh deploy. Path A: <strong>Create deployment</strong> and drag the <code>store</code> folder in again. Path B: <strong>Deployments</strong>, three-dot menu on the latest one, <strong>Retry deployment</strong>.</li>
+      </ol>
+      <div class="note"><p>Never paste these keys into Claude, into a file, or into an email. Cloudflare is the only place they live. If one ever leaks, delete it in Resend or Supabase and make a new one.</p></div>
+      <div class="done"><input type="checkbox" id="step-2"><label for="step-2">Step 2 done: RESEND_API_KEY and ORDER_TO are set and I redeployed</label></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="top"><span class="n">3</span><h3>Create the database with setup.sql</h3></div>
+      <p>Your orders, inventory, customers, and admin login live in a Supabase project you own. One script creates everything.</p>
+      <div class="where">Where to click</div>
+      <ol>
+        <li>Log in at supabase.com. Click <strong>New project</strong>.</li>
+        <li>Name it after your store. Set a strong <strong>Database password</strong> and save it somewhere safe (you rarely need it again, but you can't recover it). Pick the region closest to you. Click <strong>Create new project</strong>. Wait a minute or two while it builds.</li>
+        <li>In the left menu click <strong>SQL Editor</strong>, then <strong>New query</strong>.</li>
+        <li>Open <code>admin/setup.sql</code> from your kit folder in VS Code. Select all, copy, and paste it into the query box.</li>
+        <li>Click <strong>Run</strong>. You want "Success. No rows returned" or similar. If you see red, copy the error and ask Dr. Johnna live in the session. Don't run it twice.</li>
+      </ol>
+      <p>The script creates four tables: your orders and expenses, your inventory, <code>store_settings</code>, a single row that holds what you choose on the admin's Look &amp; layout screen (name, tagline, logo, dark or light, layout, fonts, colors, background, the three facts, the vial label), and <code>restock_notify</code>, the shoppers waiting for a back-in-stock email. It also creates a storage bucket named <code>labels</code> for your uploads, and two read-only lookups the store uses: your live counts (so the shop shows what is really on the shelf) and the "notify me" sign-up.</p>
+      <div class="where">Then connect the store to it</div>
+      <p>For the store to read that row, <code>settings.js</code> needs two values from the same place you copy them for the admin (Project Settings, then API): the <strong>Project URL</strong> and the <strong>anon public</strong> key. They go in the <code>sync</code> block. The anon key is safe to publish; it can only read that one row.</p>
+      <div class="prompt">Fill in the sync block in settings.js: supabaseUrl is [PROJECT URL] and anonKey is [ANON KEY]. Run the syntax check and show me the preview.</div>
+      <p>Say "publish" and from then on the Look &amp; layout screen in your admin changes the live store within seconds: Preview shows a change on your store without saving, Save makes it live, Reset to defaults puts the stock look back in the form. The Header section takes your logo (one for each look), the Home page background section takes your own picture or a short silent video loop, the Restocks page switch adds a page that lists everything out of stock, and the Vial label section prints your name, colors, logo, or a full label design on every vial picture, all with uploads. The values in settings.js stay as the fallback.</p>
+      <div class="note"><p>Free Supabase projects go to sleep after about a week with no activity. If your admin ever says it can't connect, log in to supabase.com and click <strong>Restore</strong> on the project. Takes about 30 seconds.</p></div>
+      <div class="done"><input type="checkbox" id="step-3"><label for="step-3">Step 3 done: setup.sql ran without errors</label></div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step">
+      <div class="top"><span class="n">4</span><h3>Create the admin login and connect the admin</h3></div>
+      <div class="where">Part A: your login</div>
+      <ol>
+        <li>In Supabase, left menu, click <strong>Authentication</strong>, then <strong>Users</strong>.</li>
+        <li>Click <strong>Add user</strong>, then <strong>Create new user</strong>. Enter your email and a strong password. Tick <strong>Auto Confirm User</strong>. Click <strong>Create user</strong>.</li>
+      </ol>
+      <div class="where">Part B: the three values the admin needs</div>
+      <ol>
+        <li>In Supabase, click the gear icon (<strong>Project Settings</strong>), then <strong>API</strong> (called <strong>Data API</strong> on some screens).</li>
+        <li>Copy the <strong>Project URL</strong>. Copy the <strong>anon public</strong> key. (You'll also see a <strong>service_role</strong> key marked secret. That one goes into Cloudflare as <code>SUPABASE_SERVICE_KEY</code> in Step 2. It never goes into any file.)</li>
+        <li>Back in VS Code, say this to Claude:</li>
+      </ol>
+      <div class="prompt">Open admin/index.html and fill in ADMIN_CONFIG. storeName is [YOUR STORE NAME]. storeUrl is [YOUR STORE'S WEB ADDRESS]. supabaseUrl is [paste the Project URL]. supabaseAnonKey is [paste the anon public key]. Then run the pre-publish check and show me.</div>
+      <div class="where">Part C: put the admin online</div>
+      <p>Same idea as Step 1, with the <code>admin</code> folder, as its own project.</p>
+      <ol>
+        <li>Path A: Cloudflare, <strong>Workers &amp; Pages</strong>, <strong>Create</strong>, <strong>Pages</strong>, <strong>Upload assets</strong>. Project name <code>my-store-admin</code>. Drag the <code>admin</code> folder in. <strong>Deploy site</strong>.</li>
+        <li>Path B: <strong>Create</strong>, <strong>Pages</strong>, <strong>Connect to Git</strong>, the same <code>my-store</code> repo. Project name <code>my-store-admin</code>. Preset None, build command empty, output <code>/</code>, Root directory (advanced) <code>admin</code>. <strong>Save and Deploy</strong>.</li>
+        <li>Open the <code>.pages.dev</code> link. Log in with the user you just created.</li>
+      </ol>
+      <div class="note"><p>The admin address is private because it needs a login, not because it's hidden. Don't share the link publicly anyway. If you'd rather not host it, you can open <code>admin/index.html</code> straight from your computer. Hosting it means you can check orders from your phone.</p></div>
+      <div class="done"><input type="checkbox" id="step-4"><label for="step-4">Step 4 done: I can log in to my admin</label></div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step">
+      <div class="top"><span class="n">5</span><h3>Fill in settings.js and data.js</h3></div>
+      <p>This is the part you'll repeat for the life of your store, so it goes through Claude from day one. Each prompt below is one change. Look at the preview Claude shows you, then say "publish."</p>
+      <div class="where">Brand and look (settings.js)</div>
+      <div class="prompt">Set my brand in settings.js: name [STORE NAME], sub [one line under the name], tagline [TAGLINE], contactEmail [EMAIL], location [CITY, STATE].</div>
+      <div class="prompt">Set my look: dark theme, left layout, classic font pair, brandColor #[HEX], accentColor #[HEX]. Show me the preview.</div>
+      <div class="prompt">Set my three home page facts to: [FACT 1]. [FACT 2]. [FACT 3].</div>
+      <div class="prompt">Set shipping: flat $[X], free over $[Y], expedited $[Z], overnight $[W]. Pickup [on/off]. Pickup note: [NOTE].</div>
+      <div class="where">Products (data.js)</div>
+      <div class="prompt">Replace the sample products with my list. Here it is as name, size, price, stock: [paste your list, one per line]. Keep the kit rule from CLAUDE.md and tell me every kit price you calculated.</div>
+      <div class="prompt">Build a research set called [SET NAME] from [PRODUCT A] and [PRODUCT B].</div>
+      <div class="where">Pictures</div>
+      <p>Drop your photos into <code>store/img/</code> with the same file names as the placeholders they replace. Then:</p>
+      <div class="prompt">I replaced the pictures in store/img. Check every product points at a file that exists and show me the preview.</div>
+      <div class="where">Lab reports</div>
+      <p>Drop each PDF into <code>store/coa/</code>. Then, one at a time:</p>
+      <div class="prompt">Add a lab report: product [NAME], size [SIZE], lot [LOT], lab [LAB NAME], tested [DATE], purity [NN.N]%, file [filename.pdf].</div>
+      <div class="where">Payment (you confirm every change here)</div>
+      <div class="prompt">Set my payment methods: Zelle [HANDLE], Venmo [HANDLE], Cash App [HANDLE]. Payment note: [NOTE BUYERS SEE]. Hosted checkout link: [URL or none]. Read it back to me before you change anything.</div>
+      <div class="done"><input type="checkbox" id="step-5"><label for="step-5">Step 5 done: my real brand, products, pictures, lab reports, and payment details are published</label></div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step">
+      <div class="top"><span class="n">6</span><h3>Place a test order</h3></div>
+      <p>This proves the whole chain: gate, cart, order code, both emails, and the admin.</p>
+      <ol>
+        <li>Make sure <code>SUPABASE_URL</code>, <code>SUPABASE_SERVICE_KEY</code>, and <code>SUPABASE_ANON_KEY</code> are set in Cloudflare (Step 2, Part B) and you deployed again after adding them.</li>
+        <li>Open your live store on your phone. Go through the gate. Add one item. Check out using a second email address you control as the buyer.</li>
+        <li>Check the inbox at <code>ORDER_TO</code>. You should have an order alert.</li>
+        <li>Check the buyer inbox. You should have a receipt with your payment instructions.</li>
+        <li>Open your admin. The order should be there, already recorded as a <strong>Paid</strong> sale, and the stock count for that item is one lower than it was. Set it to <strong>Cancelled</strong> so it doesn't count in your reports. Cancelling puts the stock back.</li>
+      </ol>
+      <div class="note"><p>How order statuses work from here: every website order lands in your admin as Paid and lowers stock on its own. You change a status only if the money never arrives (set it to Awaiting payment or Cancelled) or when you ship it (set it to Shipped). There's nothing to click when a normal order comes in.</p></div>
+      <div class="note"><p>No alert email? Check Cloudflare: your project, <strong>Deployments</strong>, the latest one, then the logs. A missing or misspelled variable is the usual cause. On Path A, also confirm <code>_worker.js</code> is in the file list of the deployment (you dragged the <code>store</code> folder itself, not its contents). No buyer receipt but you got the alert? Your Resend domain isn't verified yet. No order in the admin? The two Supabase variables are missing or you didn't deploy again after adding them.</p></div>
+      <div class="done"><input type="checkbox" id="step-6"><label for="step-6">Step 6 done: I got both emails and the order showed in my admin</label></div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="step">
+      <div class="top"><span class="n">7</span><h3>Connect your domain and set up a branded email address</h3></div>
+      <p>We do this in Session 3. The domain makes your store yours at an address you own. The branded address (like <code>orders@yourstore.com</code>) is what your buyers' receipts come from, and what they reply to.</p>
+      <div class="where">Part A: point the domain at your store</div>
+      <ol>
+        <li>In Cloudflare, open your store project, click <strong>Custom domains</strong>, then <strong>Set up a custom domain</strong>.</li>
+        <li>Type your domain (for example <code>yourstore.com</code>) and click <strong>Continue</strong>.</li>
+        <li>If your domain is registered at Cloudflare, it adds the records for you. Click <strong>Activate domain</strong>.</li>
+        <li>If your domain is somewhere else (Namecheap, GoDaddy), Cloudflare shows a CNAME record. Log in at your registrar, open DNS settings, add that record exactly as shown, and save. Come back and wait for <strong>Active</strong>. This can take a few minutes or a few hours.</li>
+        <li>Repeat for <code>www.yourstore.com</code> if you want both to work.</li>
+        <li>For the admin, do the same on the admin project with a subdomain like <code>admin.yourstore.com</code>.</li>
+        <li>Say this to Claude so your receipts and legal pages show the right address:</li>
+      </ol>
+      <div class="prompt">My store is now at https://yourstore.com. Update every place the .pages.dev address appears and show me.</div>
+      <div class="where">Part B: a branded email address at your domain</div>
+      <ol>
+        <li>Sending: your domain must show <strong>Verified</strong> in Resend (Step 2, Part A). The DNS records Resend gives you go wherever your domain's DNS lives, Cloudflare or your registrar. Once it's verified, set <code>ORDER_FROM</code> in Cloudflare to <code>orders@yourstore.com</code> and deploy again. Receipts now come from your brand, not a generic address.</li>
+        <li>Receiving: buyers will reply to that address, so it needs to reach you. If your domain's DNS is on Cloudflare, open the domain, click <strong>Email</strong>, then <strong>Email Routing</strong>, and add a rule that forwards <code>orders@yourstore.com</code> to the inbox you check. Free. If your DNS is elsewhere, your registrar has an email forwarding setting that does the same job.</li>
+        <li>Send yourself one email at the new address and confirm it lands.</li>
+      </ol>
+      <div class="done"><input type="checkbox" id="step-7"><label for="step-7">Step 7 done: my store opens at my own domain and my receipts come from a branded address</label></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="running-your-store">Running your store with Claude</h2>
+    <p>Your store is a small set of files. You never edit them by hand. You tell Claude what you want in plain English, Claude makes the change and shows you, and you say "publish." That's the whole job. Claude does the work of the dashboard other platforms charge monthly for.</p>
+
+    <h3>The daily routine</h3>
+    <ol>
+      <li>Open VS Code. Open your store folder.</li>
+      <li>Open the Claude Code panel.</li>
+      <li>Say what you want.</li>
+      <li>Claude makes the change, runs the syntax check, opens a preview, and tells you what to look at.</li>
+      <li>Look at the preview. If it's right, say <strong>publish</strong>.</li>
+      <li>Path B: Claude pushes and it's live about a minute later. Path A: Claude tells you the folder is ready. You open Cloudflare, your store project, <strong>Create deployment</strong>, drag the <code>store</code> folder in, and it's live about a minute later.</li>
+    </ol>
+    <p>Buyers sign in with a code sent to their email before they can order (no passwords, nothing for you to manage), and every order alert says whether that email was verified. Orders, inventory counts, customers, and your store's look are in your admin, in your browser. Look changes (name, tagline, dark or light, layout, fonts, colors, the three facts): admin, Look &amp; layout, Preview to check it on the store, Save to make it live, Reset to defaults to start over. Products and prices, shipping, payment, the gate wording, and page copy: Claude, as below.</p>
+
+    <h3>Things you can say</h3>
+    <p>Copy these. Change the details.</p>
+    <div class="prompt">Mark BPC-157 10mg out of stock</div>
+    <div class="prompt">My shipment arrived. Everything in the [FAMILY] family is back in stock.</div>
+    <div class="prompt">Raise every kit price by $10 and tell me the new prices</div>
+    <div class="prompt">Add a lab report for lot 2410-A</div>
+    <div class="prompt">Change my Zelle handle to [NEW HANDLE]</div>
+    <div class="prompt">Read my whole store like a buyer would. Tell me anything confusing, broken, or out of date.</div>
+    <div class="prompt">That last change was a mistake. Put it back the way it was.</div>
+    <div class="prompt">Publish</div>
+
+    <h3>Four habits that keep you safe</h3>
+    <ol>
+      <li><strong>Look before you publish.</strong> Claude shows you the preview first. Read it. A typo in a price is a real price the moment it goes live.</li>
+      <li><strong>One change at a time.</strong> "Change this price," then "publish," beats a list of twelve things. Easier to check, easier to undo.</li>
+      <li><strong>Never paste passwords or keys into Claude.</strong> Payment handles that already show on your store are fine. Logins and API keys are not.</li>
+      <li><strong>When Claude gets something wrong twice, don't just correct it.</strong> Say: "Add that to CLAUDE.md so you remember it next time." That one habit is how your Claude gets better every week.</li>
+    </ol>
+
+    <h3>A good first week</h3>
+    <ul>
+      <li>Day 1: "Read CLAUDE.md and tell me in plain English what my rules are." Just listen.</li>
+      <li>Day 2: Change one price. Publish. Change it back. Publish again.</li>
+      <li>Day 3: Mark one item out of stock, then back in.</li>
+      <li>Day 4: Ask for something the rules forbid ("add a line saying this helps with recovery"). Watch Claude flag it. That's the moment you trust the guardrails.</li>
+      <li>Day 5: "Review my store like a buyer."</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="launch-checklist">Launch checklist</h2>
+    <p>Go through every line before you share your store address with a single buyer.</p>
+    <ul class="check">
+      <li><input type="checkbox" id="lc-gate"><label for="lc-gate">Gate wording checked<small>Open the store in a private browser window. Read the age line and the terms line out loud. It says what you mean it to say.</small></label></li>
+      <li><input type="checkbox" id="lc-legal"><label for="lc-legal">Attorney reviewed the legal pages<small>Terms, Privacy, and Disclaimer in store/legal.html, with your real business name and address. The drafts are a starting point, not a finish line.</small></label></li>
+      <li><input type="checkbox" id="lc-payment"><label for="lc-payment">Payment handles tested with a $1 payment<small>Send yourself $1 to every handle shown on your store from a different account. The money lands where you expect. If you use a hosted checkout link, open it and confirm it's yours.</small></label></li>
+      <li><input type="checkbox" id="lc-signin"><label for="lc-signin">Place a test order with the sign-in step<small>On the live store, go to checkout as a buyer. The sign-in panel appears, the six-digit code lands in your second inbox, and the order form opens with that email filled in. If the form opens with no sign-in step, AUTH_SECRET is missing in Cloudflare or you did not deploy again after adding it.</small></label></li>
+      <li><input type="checkbox" id="lc-order"><label for="lc-order">Test order received both emails<small>Owner alert in your inbox (with "Buyer email: verified by sign-in code"), buyer receipt in the second inbox, order in the admin as Paid with a Verified tag and the stock count down. Then set to Cancelled.</small></label></li>
+      <li><input type="checkbox" id="lc-coa"><label for="lc-coa">A lab report opens<small>Click a lab report link on a product page. The PDF opens. The lot number matches the vial you'd ship.</small></label></li>
+      <li><input type="checkbox" id="lc-phone"><label for="lc-phone">Phone check<small>Open every page on your phone: gate, home, shop, one product, cart, checkout, legal. Nothing cut off, nothing unreadable.</small></label></li>
+      <li><input type="checkbox" id="lc-stock"><label for="lc-stock">Stock matches reality<small>Every "in stock" item is something you can ship this week. Inventory counts in the admin match your shelf.</small></label></li>
+      <li><input type="checkbox" id="lc-noindex"><label for="lc-noindex">Noindex decision made<small>The kit ships with noindex on, so search engines don't list your store. Most RUO sellers leave it that way and share the link directly. If you decide to change it, that's your call to make on purpose, not by accident.</small></label></li>
+      <li><input type="checkbox" id="lc-backup"><label for="lc-backup">Passwords saved and the kit folder backed up<small>Cloudflare, Supabase, Resend, GitHub if you have it, domain, admin login. Somewhere safe. On Path A, the folder on your computer is the only copy of your store, so back it up to a drive or cloud folder. On Path B, GitHub holds the history, but a second copy still costs nothing.</small></label></li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="support">Support</h2>
+    <p>The kit is sold as-is. Here's what that means in practice.</p>
+    <div class="two">
+      <div class="card">
+        <h3>Included with your purchase</h3>
+        <ul>
+          <li>Three live install sessions with Dr. Johnna</li>
+          <li>Every session recorded, the recording emailed to you after each one and available for three months</li>
+          <li>Questions answered live in the sessions</li>
+          <li>90 days of email support after your sessions: send your question, Dr. Johnna answers</li>
+          <li>Kit updates by download for 12 months</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Paid extras</h3>
+        <ul>
+          <li>One-to-one sessions when a question needs more than an email, for the steps you'd rather finish with Dr. Johnna beside you</li>
+          <li>Done-for-you install: Dr. Johnna sets up the whole store on your accounts</li>
+          <li>Hourly help for custom changes, new pages, or fixing something you'd rather not touch</li>
+        </ul>
+        <p style="font-size:0.95rem;color:var(--ink-soft);margin-top:10px">Let's talk: <a href="https://doctorjohnna.com/contact">doctorjohnna.com/contact</a></p>
+      </div>
+    </div>
+    <h3>Where to ask</h3>
+    <p><strong>Live, in the sessions.</strong> Bring your question to the room, with a screenshot on your screen if you have one. Other kit owners have hit the same wall, and the answer helps everyone listening. <strong>By email, for 90 days after your sessions.</strong> Send what you see and what you expected, with a screenshot, and Dr. Johnna answers. If it needs more than an email, one-to-one sessions are there for anything you'd rather not finish alone.</p>
+    <p>Before you ask, try: "Claude, [describe what's wrong]. Find out why before you change anything." Most of the time that's the fix.</p>
+    <p>Things worth saying out loud: Claude can make mistakes. That's why nothing publishes until you say so, and why Cloudflare keeps every deployment you can roll back to (and GitHub keeps every version, on Path B). Dr. Johnna is not your compliance officer or your attorney. Your wording rules are a safety net, not a guarantee. Your Claude plan is between you and Anthropic.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="updating">Updating the kit later</h2>
+    <p>When Dr. Johnna releases a new version, you download the new zip. Your store stays where it is. Same site, same address, same accounts. You never make a new site for an update.</p>
+    <p>Your own files are the ones you filled in: <code>store/settings.js</code>, <code>store/data.js</code>, the pictures in <code>store/img/</code>, the lab reports in <code>store/coa/</code>, the <code>ADMIN_CONFIG</code> block in <code>admin/index.html</code>, and your edits to <code>store/legal.html</code>. Everything else is kit code.</p>
+    <p>The update is: copy the new kit files over the old ones, except those owner files, then publish again (drag the folder in again on Path A, or push on Path B). With Claude Code it's one prompt:</p>
+    <div class="prompt">Update my store to the new kit version in ~/Downloads/store-kit-v1.1, keep my settings.js, data.js, img, coa, legal.html and my admin config, then show me the preview.</div>
+    <p>If the version note says the database changed, there will be a small SQL file in the download to run once in your Supabase SQL Editor, the same way you ran <code>setup.sql</code>. The note will say so, and which file.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="research-use-only">Research use only</h2>
+    <div class="ruo-box">
+      <h3>The lines your store never crosses</h3>
+      <ul>
+        <li><strong>Research use only, everywhere.</strong> On the gate, on every product, in every email. The kit says it. Your wording keeps saying it.</li>
+        <li><strong>No dosing, no protocols, no usage guides.</strong> Not on the site, not in a session, not in a reply to a buyer.</li>
+        <li><strong>No health claims.</strong> No benefits, results, before-and-after, "treats," "heals," "weight loss," "anti-aging," or anything that implies human or animal use. Product names and sizes only.</li>
+        <li><strong>Never call your store "compliant" or "legal."</strong> No tool can make a business compliant, and this one doesn't claim to. That word belongs to your attorney, not your website.</li>
+        <li><strong>The store never takes card numbers.</strong> Payment handles and a hosted checkout link only. That's by design and it's also a condition of the free hosting plan.</li>
+        <li><strong>Your attorney reviews before you open.</strong> The legal pages are drafts. Your products, your wording, your buyers, and the laws that apply to you are your responsibility.</li>
+      </ul>
+      <p>Claude is told all of this in CLAUDE.md. When it flags something you asked for, listen. That flag is doing its job.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>The Store Kit by Dr. Johnna Richardson, PhD. <a href="https://doctorjohnna.com">doctorjohnna.com</a></p>
+    <p>The Store Kit is website software and training. It is not legal, regulatory, medical, or financial advice. See LICENSE.txt.</p>
+    <p><a href="#" id="reset-all">Reset all checkboxes on this page</a></p>
+  </footer>
+
+</div>
+
+<script>
+  // ============================================================
+  // Checkbox memory. Every checkbox with an id is saved in this
+  // browser's localStorage under "storekit:" + its id.
+  // ============================================================
+  (function () {
+    var boxes = document.querySelectorAll('input[type="checkbox"][id]');
+    var countEl = document.getElementById('progress-count');
+    var totalEl = document.getElementById('progress-total');
+
+    function key(box) { return 'storekit:' + box.id; }
+
+    function load() {
+      boxes.forEach(function (box) {
+        try { box.checked = localStorage.getItem(key(box)) === '1'; } catch (e) {}
+      });
+      updateCount();
+    }
+
+    function save(box) {
+      try {
+        if (box.checked) { localStorage.setItem(key(box), '1'); }
+        else { localStorage.removeItem(key(box)); }
+      } catch (e) {}
+      updateCount();
+    }
+
+    function updateCount() {
+      var n = 0;
+      boxes.forEach(function (box) { if (box.checked) { n++; } });
+      countEl.textContent = n;
+      totalEl.textContent = boxes.length;
+    }
+
+    boxes.forEach(function (box) {
+      box.addEventListener('change', function () { save(box); });
+    });
+
+    document.getElementById('reset-all').addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!confirm('Clear every checkbox on this page?')) { return; }
+      boxes.forEach(function (box) {
+        box.checked = false;
+        try { localStorage.removeItem(key(box)); } catch (err) {}
+      });
+      updateCount();
+    });
+
+    load();
+  })();
+</script>
+</body>
+</html>

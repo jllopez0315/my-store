@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- settings.js first: every other script reads from it. This page has
+     no gate check on purpose: the terms must be readable before they
+     can be accepted. -->
+<script src="settings.js"></script>
+<!-- The look (dark or light, fonts, colors): applied before the page paints -->
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Search engines are asked to stay out: the store is reached by link
+     only. To be listed on Google, delete this line on every page and
+     change robots.txt to "Allow: /". -->
+<meta name="robots" content="noindex, nofollow">
+<title>Terms, Disclaimer, and Privacy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- All three font pairs load here; settings.js picks which one shows -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ============================================================
+   POLICIES PAGE styles. The shared shell lives in styles.css.
+   DRAFT LEGAL TEXT. Words in [square brackets] are blanks for
+   the store owner to fill in. Have an attorney review before use.
+   The "Last updated" dates read termsVersion from settings.js.
+   ============================================================ */
+body { line-height: 1.7; }
+main { max-width: 720px; margin: 0 auto; padding: var(--sp-lg) 20px var(--sp-xl); }
+h1 { font-size: 32px; color: var(--brand-dark); margin: 48px 0 6px; padding-top: 24px; border-top: 1px solid var(--ink); }
+main > h1:first-of-type { margin-top: 0; border-top: none; padding-top: 0; }
+.updated { font-size: 13px; color: var(--ink-mute); margin-bottom: 20px; }
+h2 { font-size: 20px; color: var(--brand-dark); margin: 26px 0 8px; }
+p, li { font-size: 15px; margin-bottom: 12px; }
+ul { padding-left: 22px; margin-bottom: 12px; }
+/* The draft notice at the top of each section */
+.draft-note { font-size: 14px; color: var(--accent-ink); background: rgba(176, 141, 87, 0.12); border: 1px solid rgba(176, 141, 87, 0.4); border-radius: 6px; padding: 12px 16px; margin-bottom: 32px; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER + NAV (shared across pages) ============ -->
+<!-- The wordmark band and the nav travel together as one sticky
+     block, so both stay in view while the page scrolls. The words in
+     the wordmark are filled in from settings.js (brand.name and
+     brand.sub) by cart.js. -->
+<div class="sticky-stack">
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Home">
+    <span class="wm-name"></span>
+    <span class="wm-sub"><i></i><b></b><i></i></span>
+  </a>
+</header>
+<nav class="site-nav">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html">Contact</a>
+</nav>
+</div>
+
+<main>
+
+<!-- ==================== TERMS ==================== -->
+<h1 id="terms">Terms and Conditions</h1>
+<p class="updated">Last updated: <span class="js-terms-date"></span></p>
+<p class="draft-note">Draft starting point. Have your attorney review before you open.</p>
+
+<p>Please read these Terms and Conditions ("Terms") carefully before using this website or purchasing any products. By using the website or placing an order, you agree to these Terms. If you do not agree, please do not use the website or place an order.</p>
+
+<h2>Who we are</h2>
+<p><span class="js-brand"></span> ("we," "us," or "our") operates this website, accessible at <span class="js-site-host"></span>. [Your legal business name and mailing address go here.] In these Terms, "you" means the person accessing the website or placing an order.</p>
+
+<h2>Eligibility</h2>
+<p>You must be at least 21 years old to use this website or to place an order. By placing an order, you confirm that you are 21 or older.</p>
+
+<h2>What we offer</h2>
+<p>We supply research compounds, including peptides and related laboratory materials, strictly for laboratory research and educational purposes. Products, sizes, and pricing are listed on the order form. All products are sold subject to the Research Use Only Disclaimer below, which is part of these Terms.</p>
+
+<h2>Ordering and payment</h2>
+<p>Orders are placed through the order form on this website. We do not collect card numbers on the site. After you submit an order, you complete payment through <span class="js-pay-methods"></span> using the details shown on the confirmation screen and in your receipt email. Your order is confirmed and prepared for shipment once payment is received in full. Orders that remain unpaid after 7 days may be canceled.</p>
+
+<h2>Shipping</h2>
+<p>We ship within the United States only. In-stock orders placed by 1 PM EST ship the same business day once payment is received in full. Orders placed after 1 PM EST, on weekends, or on holidays ship the next business day. Items listed as available to order are not in stock and ship separately once they arrive. Risk of loss and title pass to you when we deliver the package to the carrier. We are not responsible for packages that are delayed, lost, stolen, or damaged in transit, including packages marked as delivered but not received. We will make reasonable efforts to help resolve shipping issues, but any claim for a package lost or damaged in transit must be filed with the carrier.</p>
+
+<h2>All sales final</h2>
+<p>All sales are final. Due to the nature of research materials, we do not offer refunds, returns, exchanges, or cancellations once payment is made, except where required by applicable law. By purchasing, you acknowledge and agree to this policy.</p>
+
+<h2>Product responsibility</h2>
+<p>By purchasing, you represent that you are qualified to handle research materials safely, that you will use the products solely for lawful laboratory research and educational purposes, and that you accept full responsibility for the storage, handling, use, and disposal of the products after delivery. You agree not to use the products in or on humans or animals, and not to resell or redistribute them for any prohibited use.</p>
+
+<h2>Acceptable use</h2>
+<p>You agree to use the website lawfully and respectfully. You agree not to misuse the website, interfere with its operation, attempt to gain unauthorized access, or provide false information when placing an order.</p>
+
+<h2>Third-party services</h2>
+<p>Our website and ordering process rely on third-party services, including the hosting service, the email delivery service that sends order notices and receipts, and the payment platforms listed above. We do not control these third parties and are not responsible for their content, practices, availability, or terms. Your use of them is governed by their own agreements.</p>
+
+<h2>Disclaimer of warranties</h2>
+<p>The website and our products are provided "as is" and "as available," without warranties of any kind, whether express or implied, to the fullest extent permitted by law. Some jurisdictions do not allow certain warranty exclusions, so some of these may not apply to you.</p>
+
+<h2>Limitation of liability</h2>
+<p>To the fullest extent permitted by law, <span class="js-brand"></span> will not be liable for any indirect, incidental, special, or consequential damages arising out of or related to your use of the website or our products. To the extent we are found liable for any matter related to a specific purchase, our total liability will not exceed the amount you actually paid us for that specific order. Some jurisdictions do not allow certain limitations, so some of these may not apply to you.</p>
+
+<h2>Governing law</h2>
+<p>These Terms are governed by the laws of the State of [Your State], United States, without regard to its conflict of law rules.</p>
+
+<h2>Dispute resolution</h2>
+<p>If a dispute arises, you agree to first contact us and attempt to resolve it informally before pursuing other action.</p>
+
+<h2>Changes to these Terms</h2>
+<p>We may update these Terms at any time. Changes take effect when posted, and the "Last updated" date will reflect the most recent version. Continuing to use the website or purchase from us after changes are posted means you accept the updated Terms.</p>
+
+<h2>Contact</h2>
+<p>Questions about these Terms? Email us at <a class="js-email" href="#"></a>.</p>
+
+<!-- ==================== DISCLAIMER ==================== -->
+<h1 id="disclaimer">Research Use Only Disclaimer</h1>
+<p class="updated">Last updated: <span class="js-terms-date"></span></p>
+<p class="draft-note">Draft starting point. Have your attorney review before you open.</p>
+
+<h2>Laboratory research use only</h2>
+<p>All products sold on this website are supplied strictly for laboratory research and educational purposes only. They are not for human or veterinary use of any kind. They are not intended for use as drugs, foods, dietary supplements, cosmetics, or medical devices, and they may not be used in or on humans or animals under any circumstances.</p>
+
+<h2>Not evaluated by the FDA</h2>
+<p>Products and statements on this website have not been evaluated by the U.S. Food and Drug Administration. Nothing on this website is intended to diagnose, treat, cure, or prevent any disease or condition.</p>
+
+<h2>No medical advice</h2>
+<p>Nothing on this website constitutes medical advice, health advice, or clinical guidance of any kind. Purchasing from this website does not create any clinical, therapeutic, or doctor-patient relationship. If you have a medical concern, consult a licensed and qualified healthcare provider.</p>
+
+<h2>Purchaser responsibility</h2>
+<p>By purchasing, you represent that you are a qualified purchaser of research materials, that you understand the nature of the products, and that you accept sole responsibility for their safe and lawful storage, handling, use, and disposal. You agree to hold <span class="js-brand"></span> harmless from any claim arising out of misuse of any product, including any use contrary to this Disclaimer.</p>
+
+<h2>Product information</h2>
+<p>Any descriptive information on this website is provided for reference in a research context only. It is not an instruction for use and must not be read as encouraging or enabling any application outside of laboratory research.</p>
+
+<h2>Changes</h2>
+<p>We may update this Disclaimer at any time. Changes take effect when posted, and the "Last updated" date will reflect the most recent version.</p>
+
+<h2>Contact</h2>
+<p>Questions about this Disclaimer? Email us at <a class="js-email" href="#"></a>.</p>
+
+<!-- ==================== PRIVACY ==================== -->
+<h1 id="privacy">Privacy Policy</h1>
+<p class="updated">Last updated: <span class="js-terms-date"></span></p>
+<p class="draft-note">Draft starting point. Have your attorney review before you open.</p>
+
+<p>This Privacy Policy explains what information we collect, how we use it, and the choices you have. By using this website, you agree to this Policy.</p>
+
+<h2>Who we are</h2>
+<p><span class="js-brand"></span> ("we," "us," or "our") operates this website, accessible at <span class="js-site-host"></span>. [Your legal business name and mailing address go here.]</p>
+
+<h2>What we collect</h2>
+<p>We keep our data collection minimal. When you place an order, we collect your name, email address, phone number, shipping address, the name of the person who referred you, the contents of your order, and your typed initials confirming the research-use attestation. We use this information only to fulfill your order and communicate with you about it.</p>
+<p>Like most websites, our site and the services that host it may automatically receive standard technical information when you visit, such as your browser type and the date and time of your visit. We use this only to keep the site working.</p>
+
+<h2>Payments</h2>
+<p>We do not collect or store payment card details on this website. Payments are made directly through <span class="js-pay-methods"></span>, each of which handles your payment information under its own privacy policy.</p>
+
+<h2>What we do not collect</h2>
+<p>We do not run member logins or accounts on this website. We do not use analytics or marketing cookies. At checkout you can choose whether to hear about restocks and sales; untick the box and you are not added to that list.</p>
+
+<h2>Service providers</h2>
+<p>Order form submissions are delivered to us by an email delivery service and may be stored in a database service we use to keep order records. Each processes data under its own privacy policy. We share information only with the third-party tools that help us operate, and only as needed for them to perform their function.</p>
+
+<h2>Data retention</h2>
+<p>We keep your information only as long as needed to fulfill orders and meet our legal obligations, after which we delete or stop using it.</p>
+
+<h2>Your choices and rights</h2>
+<p>You can contact us to ask what information we hold about you, to correct it, or to request that we delete it. We will honor those requests to the extent required by applicable law, keeping only what we are legally required to retain.</p>
+
+<h2>Security</h2>
+<p>We take reasonable steps to protect your information. No method of transmission over the internet or electronic storage is fully secure, so we cannot guarantee absolute security.</p>
+
+<h2>Age</h2>
+<p>This website is intended for adults aged 21 and older. We do not knowingly collect personal information from anyone under 21. If you believe someone under 21 has provided us information, please contact us and we will remove it.</p>
+
+<h2>Changes to this Policy</h2>
+<p>We may update this Privacy Policy from time to time. Changes take effect when posted, and the "Last updated" date will reflect the most recent version.</p>
+
+<h2>Contact</h2>
+<p>Questions about this Privacy Policy? Email us at <a class="js-email" href="#"></a>.</p>
+
+</main>
+
+<!-- ============ FOOTER (shared across pages) ============ -->
+<footer class="site-footer">
+  <div class="foot-links">
+    <a href="shop.html">Shop</a>
+    <a href="lab.html">Lab Results</a>
+    <a href="legal.html#terms">Terms</a>
+    <a href="legal.html#disclaimer">Disclaimer</a>
+    <a href="legal.html#privacy">Privacy</a>
+  </div>
+  <!-- Brand name and location are filled in from settings.js -->
+  <div class="foot-place js-brand-place"></div>
+  <div class="foot-ruo">For Research Use Only</div>
+  <div class="foot-legal">All compounds are intended for laboratory research purposes only. Not for human or veterinary consumption.</div>
+  <div class="foot-credit">Built with the Store Kit</div>
+</footer>
+
+<script src="data.js"></script>
+<script src="cart.js"></script>
+</body>
+</html>

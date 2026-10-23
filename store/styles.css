@@ -1,0 +1,819 @@
+/* ============================================================
+   THE STORE KIT · styles.css
+   The shared design system. Every page loads this file.
+
+   SECTIONS
+   1. Tokens (colors, spacing, type sizes)
+   2. Base (reset, body, links, headings)
+   2b. Font pairs (classic, modern, editorial; set in settings.js)
+   3. Header band + navigation
+   4. Buttons
+   5. Micro-labels and section headers
+   6. The dark "plate" (hero and product imagery)
+   7. Ledger table (lab results)
+   8. Footer
+   9. Light look (ivory, blush, and rose)
+   Page-specific styles live in each page's own style block.
+
+   COLORS: the two brand colors are set in settings.js (look.brandColor
+   and look.accentColor) and applied by theme.js. The values below are
+   the stock palette that shows when settings.js still holds the stock
+   colors.
+   ============================================================ */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  /* Stock brand palette. To recolor the store, change brandColor and
+     accentColor in settings.js rather than editing here.
+     The vial pictures are photos in the img folder (see section 6 of data.js). */
+  --brand: #1B2A41;        /* primary deep navy: header band, buttons, links */
+  --brand-dark: #121C2C;   /* darker navy: hovers, headings */
+  --brand-deep: #0C1420;   /* deepest navy: footer */
+  --accent: #B08D57;       /* muted brass: thin rules, underlines, highlights */
+  --accent-ink: #7A5F33;   /* darker brass, readable as small text on light */
+  --accent-light: #C4A36E; /* lighter brass: the gold button on hover */
+  --cream: #EFEAE0;        /* card cream, and light text on dark surfaces */
+  --paper: #F7F5F0;        /* page ground, warm near-white */
+  --surface: #FCFBF8;      /* cards and raised surfaces */
+  --ink: #1A1F29;          /* primary text */
+  --ink-soft: #474D59;     /* secondary text */
+  --ink-mute: #6C727D;     /* quiet text, captions */
+  --line: #E2DCCF;         /* borders */
+  --hairline: #ECE7DB;     /* the quietest rules */
+  --plate: #0E1624;        /* near-black navy behind the vial pictures */
+  --amber: #96651B;        /* available-to-order status only */
+
+  /* Type scale */
+  --fs-hero: clamp(2.4rem, 1.6rem + 3.2vw, 4rem);
+  --fs-h2: clamp(1.7rem, 1.4rem + 1.4vw, 2.4rem);
+  --fs-h3: clamp(1.25rem, 1.15rem + 0.5vw, 1.55rem);
+
+  /* Spacing rhythm */
+  --sp-sm: clamp(0.75rem, 0.6rem + 0.75vw, 1.25rem);
+  --sp-md: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+  --sp-lg: clamp(3rem, 2.4rem + 3vw, 5rem);
+  --sp-xl: clamp(4.5rem, 3.5rem + 4.5vw, 7.5rem);
+
+  /* Type families. The font pair in settings.js (or the admin) picks
+     these: the three built-in pairs set them in section 2b below, and
+     the "custom" pair has theme.js write the owner's own two Google
+     Fonts here. Prices and numbers name Jost directly and never change. */
+  --font-heading: 'Marcellus', serif;
+  --font-body: 'Jost', -apple-system, sans-serif;
+}
+
+/* ---------- 2. Base ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* overflow-x: clip (not hidden) so the sticky header keeps working.
+   "hidden" on html/body turns them into scroll containers and quietly
+   breaks position: sticky. The hidden line stays as a fallback for old
+   browsers that don't know clip. */
+html { scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; }
+body { overflow-x: hidden; overflow-x: clip; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--brand); }
+a:hover { color: var(--brand-dark); }
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 400;   /* Marcellus comes in one weight */
+  line-height: 1.14;
+  letter-spacing: 0;
+  overflow-wrap: break-word;
+}
+
+img { max-width: 100%; height: auto; }
+
+/* ---------- 2b. Font pairs ----------
+   theme.js puts one of three classes on <html> from settings.js:
+   font-classic   Marcellus headings (the rules above), Jost text
+   font-modern    Jost headings and Jost text
+   font-editorial Cormorant Garamond headings, Jost text
+   font-custom    the owner's own two Google Fonts (theme.js writes
+                  --font-heading and --font-body onto <html>)
+   Prices, totals, and table numbers are set in Jost by name
+   wherever they appear, so they never change with the pair. */
+html.font-modern { --font-heading: 'Jost', -apple-system, sans-serif; }
+html.font-modern h1, html.font-modern h2, html.font-modern h3,
+html.font-modern .wordmark .wm-name {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+html.font-modern .wordmark .wm-name { letter-spacing: 0.28em; font-weight: 600; }
+html.font-editorial { --font-heading: 'Cormorant Garamond', Georgia, serif; }
+html.font-editorial h1, html.font-editorial h2, html.font-editorial h3,
+html.font-editorial .wordmark .wm-name {
+  font-weight: 600;
+  line-height: 1.1;
+}
+html.font-editorial .wordmark .wm-name { font-weight: 500; }
+
+/* ---------- 3. Header band + navigation ---------- */
+/* The sticky stack: the logo band and the nav sit inside this one
+   wrapper. Sticking the wrapper instead of each piece means they can
+   never drift apart or leave a gap, no matter how the logo band
+   resizes on scroll. Everything above z-index 42 (the cart drawer and
+   the toast) still floats over it. */
+.sticky-stack {
+  position: sticky;
+  top: 0;
+  z-index: 42;
+}
+/* Header: the solid navy band holding the wordmark. It rides inside
+   .sticky-stack, so it stays in view without needing to stick on its
+   own. cart.js adds .compact after a short scroll, which shrinks the
+   wordmark so the band takes up less of the screen down the page. */
+.site-header {
+  background: var(--brand);
+  text-align: center;
+  padding: 16px 20px 15px;
+  transition: padding 0.3s ease;
+}
+/* The wordmark: by default there is no logo file. The name is set in
+   letterspaced serif capitals, with a small second word between two
+   thin brass rules. Both words come from settings.js (brand.name and
+   brand.sub) and are filled in by cart.js on every page.
+   With a logo (brand.logo in settings.js, or the admin's Look & layout
+   screen), cart.js adds the picture inside the wordmark and the
+   letters are hidden. A second picture (brand.logoLight) can show in
+   the light look; without one, the same logo shows in both. */
+.wordmark {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--cream);
+  line-height: 1;
+}
+.wordmark:hover { color: var(--cream); }
+.wordmark .wm-name {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 30px;
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;   /* cancels the trailing letter gap so it centers */
+  transition: font-size 0.3s ease;
+}
+.wordmark .wm-sub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 9px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  color: rgba(239, 234, 224, 0.8);
+  transition: margin 0.3s ease;
+}
+.wordmark .wm-sub b { font-weight: 600; margin-right: -0.5em; }
+.wordmark .wm-sub i { display: block; height: 1px; width: 54px; background: var(--accent); }
+.site-header.compact { padding: 9px 20px 8px; }
+.site-header.compact .wm-name { font-size: 20px; }
+.site-header.compact .wm-sub { margin-top: 5px; }
+@media (max-width: 480px) {
+  .site-header { padding: 12px 16px 11px; }
+  .wordmark .wm-name { font-size: 22px; }
+  .wordmark .wm-sub { font-size: 9px; gap: 9px; margin-top: 7px; }
+  .wordmark .wm-sub i { width: 36px; }
+  .site-header.compact .wm-name { font-size: 16px; }
+}
+
+.site-nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(14px, 4vw, 44px);
+  padding: 9px 12px;   /* thin bar; the cart button sets the height */
+}
+/* Small phones: tighter tracking so all four links fit on one line */
+@media (max-width: 480px) {
+  .site-nav { gap: 11px; padding: 8px 8px; }
+  .site-nav a { font-size: 10.5px; letter-spacing: 0.06em; }
+  /* Five links plus the cart on one line: the cart shows icon and count only */
+  .site-nav .nav-cart .label { display: none; }
+  .site-nav .nav-cart { padding: 5px 8px; gap: 4px; }
+}
+.site-nav a {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  white-space: nowrap;
+}
+.site-nav a:hover { color: var(--brand-dark); }
+.site-nav a.active {
+  color: var(--brand-dark);
+  border-bottom-color: var(--accent);
+}
+
+/* ---------- 4. Buttons ---------- */
+.btn {
+  display: inline-block;
+  background: var(--brand);
+  color: var(--cream);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 15px 32px;
+  border-radius: 6px;
+  border: 1px solid var(--brand);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.btn:hover { background: var(--brand-dark); border-color: var(--brand-dark); color: var(--cream); }
+
+.btn.ghost {
+  background: transparent;
+  color: var(--brand-dark);
+  border: 1px solid var(--brand);
+}
+.btn.ghost:hover { background: var(--brand); color: var(--cream); }
+
+/* Brass button for dark surfaces (the home page hero), where the navy
+   button would disappear into the background */
+.btn.accent { background: var(--accent); border-color: var(--accent); color: var(--brand-dark); }
+.btn.accent:hover { background: var(--accent-light); border-color: var(--accent-light); color: var(--brand-dark); }
+
+/* Ghost button for use on the dark plate */
+.btn.ghost-light {
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid rgba(239, 234, 224, 0.45);
+}
+.btn.ghost-light:hover { background: rgba(239, 234, 224, 0.12); border-color: var(--cream); color: var(--cream); }
+
+/* ---------- 5. Micro-labels and section headers ---------- */
+/* The small tracked uppercase line that introduces a section */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  margin-bottom: 14px;
+}
+.eyebrow.on-dark { color: rgba(239, 234, 224, 0.75); }
+
+/* ---------- 6. The dark plate ----------
+   Near-black navy surface behind every vial picture. The vials are
+   drawn in code (vialSVG in data.js) with see-through glass, so the
+   glass floats on the plate. */
+.plate { background: var(--plate); color: var(--cream); }
+.vial-art { display: block; overflow: visible; }
+/* Some vials carry two photos: one for the dark look, one for the
+   light look (see LIGHT_CAP_SWAP in data.js). Only one shows at a time. */
+.vial-art .only-light { display: none; }
+html[data-theme="light"] .vial-art .only-light { display: inline; }
+html[data-theme="light"] .vial-art .only-dark { display: none; }
+
+/* ---------- 7. Ledger table (lab results) ---------- */
+.ledger { width: 100%; border-collapse: collapse; }
+.ledger th {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--ink);
+}
+.ledger td {
+  padding: 14px;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 14.5px;
+  vertical-align: top;
+}
+.ledger td.num {
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  font-size: 19px;
+  color: var(--brand-dark);
+  white-space: nowrap;
+}
+.ledger a { font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--accent); }
+.ledger .mono { font-size: 13px; color: var(--ink-mute); letter-spacing: 0.02em; }
+/* Quiet "Full panel" note on rows whose report also covers sterility, endotoxin, and heavy metals */
+.ledger .panel-note {
+  display: inline-block; margin-left: 8px;
+  font-size: 12px; font-weight: 400; color: var(--ink-mute); white-space: nowrap;
+}
+/* On narrow screens the ledger scrolls sideways inside its wrap */
+/* The ledger scrolls sideways on small screens. Soft edge shadows
+   appear only while more columns are hidden in that direction, and
+   fade out at the ends (the cover gradients travel with the content
+   and hide the shadows at the edges). */
+.ledger-wrap {
+  overflow-x: auto;
+  background:
+    linear-gradient(90deg, var(--paper) 35%, rgba(247, 245, 240, 0)) left / 44px 100% no-repeat local,
+    linear-gradient(270deg, var(--paper) 35%, rgba(247, 245, 240, 0)) right / 44px 100% no-repeat local,
+    linear-gradient(90deg, rgba(26, 31, 41, 0.16), transparent) left / 16px 100% no-repeat scroll,
+    linear-gradient(270deg, rgba(26, 31, 41, 0.16), transparent) right / 16px 100% no-repeat scroll;
+}
+/* On the home page the ledger sits on the raised surface color */
+.lab-preview .ledger-wrap {
+  background:
+    linear-gradient(90deg, var(--surface) 35%, rgba(252, 251, 248, 0)) left / 44px 100% no-repeat local,
+    linear-gradient(270deg, var(--surface) 35%, rgba(252, 251, 248, 0)) right / 44px 100% no-repeat local,
+    linear-gradient(90deg, rgba(26, 31, 41, 0.16), transparent) left / 16px 100% no-repeat scroll,
+    linear-gradient(270deg, rgba(26, 31, 41, 0.16), transparent) right / 16px 100% no-repeat scroll;
+}
+.ledger-wrap .ledger { min-width: 560px; }
+/* Small swipe hint, phones only, under any scrolling ledger */
+.ledger-hint { display: none; }
+@media (max-width: 640px) {
+  .ledger-hint {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+  }
+}
+
+/* ---------- 8. Footer ---------- */
+.site-footer {
+  background: var(--brand-deep);
+  color: var(--cream);
+  padding: var(--sp-lg) 20px var(--sp-md);
+  text-align: center;
+  font-size: 13.5px;
+}
+.site-footer .foot-links { margin-bottom: 18px; }
+.site-footer .foot-links a {
+  color: var(--cream);
+  margin: 0 12px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(239, 234, 224, 0.35);
+}
+.site-footer .foot-links a:hover { border-bottom-color: var(--cream); color: var(--cream); }
+.site-footer .foot-place { opacity: 0.85; }
+.site-footer .foot-ruo {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(239, 234, 224, 0.18);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.site-footer .foot-legal {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.6;
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+/* The small credit line at the very bottom */
+.site-footer .foot-credit {
+  margin-top: 22px;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.4;
+}
+
+/* Respect reduced-motion users: no smooth scrolling, no transitions */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+
+/* ============================================================
+   STOREFRONT ADDITIONS (2026-09)
+   9.  Sticky nav with the cart button
+   10. Product cards and the shop grid
+   11. Stock badge and quantity stepper
+   12. Cart drawer and toast
+   13. Motion: reveal on scroll, floating vial, hover lift
+   ============================================================ */
+
+/* ---------- 9. Sticky nav + cart button ---------- */
+.site-nav {
+  background: rgba(252, 251, 248, 0.86);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  align-items: center;
+}
+.nav-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 14px 5px 12px;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+/* The nav link rule above would erase the pill's bottom edge; put it back */
+.site-nav a.nav-cart { border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+.site-nav a.nav-cart:hover { color: var(--brand-dark); border-color: var(--brand); }
+.nav-cart svg { width: 16px; height: 16px; }
+.nav-cart .count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: var(--cream);
+  font-size: 11px;
+  letter-spacing: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-cart .count:empty { display: none; }
+.nav-cart.bump { animation: cart-bump 0.45s ease; }
+@keyframes cart-bump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@media (max-width: 480px) {
+  .nav-cart { padding: 6px 10px 6px 9px; letter-spacing: 0.1em; font-size: 10.5px; }
+}
+
+/* ---------- 10. Product cards and the shop grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 22px;
+}
+@media (max-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 44px -22px rgba(18, 28, 44, 0.45);
+  border-color: rgba(27, 42, 65, 0.3);
+}
+/* The vial sits on the dark plate. An always-on ambient backdrop
+   gives the product depth: a cool halo behind it, a soft brass
+   floor beneath it, and a faint light from above. It breathes
+   slowly, and brightens a little on hover. No pointer tracking. */
+.card-media {
+  position: relative;
+  display: block;
+  background: var(--plate);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+.card-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(55% 45% at 50% 55%, rgba(78, 108, 158, 0.55), transparent 68%),
+    radial-gradient(70% 22% at 50% 92%, rgba(176, 141, 87, 0.28), transparent 72%),
+    linear-gradient(180deg, rgba(239, 234, 224, 0.05), transparent 30%);
+  opacity: 0.6;
+  transition: opacity 0.5s ease;
+  animation: plate-breathe 10s ease-in-out infinite;
+}
+.card:hover .card-media::before { opacity: 0.95; }
+@keyframes plate-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+/* The vial is sized by its WIDTH; its height follows on its own
+   (the drawing is 3 wide by 5 tall). */
+.card-media .vial-art {
+  position: relative;
+  width: 50%;
+  height: auto;
+  margin: 9% auto 0;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Soft rim glow that follows the vial's silhouette.
+     Kept modest on cards; product pages carry a fuller version. */
+  filter: drop-shadow(0 0 12px rgba(150, 175, 215, 0.35)) drop-shadow(0 14px 22px rgba(0, 0, 0, 0.5));
+  /* Glassy surface: a mirrored reflection under the vial,
+     fading with distance. (Not shown by Firefox; that's fine.) */
+  -webkit-box-reflect: below 2px linear-gradient(transparent 74%, rgba(0, 0, 0, 0.2));
+}
+.card:hover .card-media .vial-art { transform: translateY(-4px) scale(1.04); }
+/* A kit card shows the drawn case of ten vials, wider and lower on the plate */
+.card-media .vial-art.kit-art { width: 90%; margin: 24% auto 0; }
+/* Small corner tag: "10 vials", "Research set", "Supply" */
+.card-media .tag, .photo .tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cream);
+  background: rgba(239, 234, 224, 0.14);
+  border: 1px solid rgba(239, 234, 224, 0.25);
+  border-radius: 999px;
+  padding: 5px 10px;
+}
+/* Research sets: three vials fanned on the plate. The .fan-stack
+   wrapper casts ONE glow and one reflection for the whole trio, so
+   no vial is tinted by a neighbor's glow through its glass. */
+.card-media.fan { display: flex; align-items: flex-end; justify-content: center; padding-bottom: 14%; }
+.fan-stack {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  filter: drop-shadow(0 0 12px rgba(150, 175, 215, 0.35)) drop-shadow(0 14px 22px rgba(0, 0, 0, 0.5));
+  -webkit-box-reflect: below 2px linear-gradient(transparent 74%, rgba(0, 0, 0, 0.2));
+}
+.card-media.fan .vial-art { margin: 0 -3%; width: 33%; filter: none; -webkit-box-reflect: none; }
+.card-media.fan .vial-art:nth-child(2) { width: 38%; z-index: 2; }
+.card:hover .card-media.fan .vial-art { transform: none; }
+
+.card-body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.card-title { font-size: 15px; font-weight: 600; line-height: 1.3; }
+.card-title a { color: inherit; text-decoration: none; }
+.card-title a:hover { color: var(--brand-dark); }
+.card-title .size { display: block; font-size: 13px; font-weight: 400; color: var(--ink-mute); margin-top: 2px; }
+.card-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; }
+.card-meta .price { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 22px; color: var(--brand-dark); }
+.card .btn { width: 100%; text-align: center; padding: 12px 14px; font-size: 12px; margin-top: 4px; }
+.card .btn.added { background: var(--brand-dark); }
+@media (max-width: 480px) {
+  .card-body { padding: 12px 12px 14px; }
+  .card-title { font-size: 13.5px; }
+  .card-meta .price { font-size: 19px; }
+  .card .btn { padding: 11px 8px; font-size: 11px; letter-spacing: 0.08em; }
+}
+
+/* Set cards: separate-purchase value, lightly struck through beside the price */
+.card-meta .price .value { font-size: 13px; font-weight: 400; color: var(--ink-mute); text-decoration: line-through; margin-left: 6px; }
+
+/* ---------- 11. Stock badge and quantity stepper ---------- */
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.stock-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+/* "Email me when it's back" (product page and the Restocks page) */
+.notify label { display: block; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 8px; }
+.notify form { display: flex; gap: 8px; flex-wrap: wrap; }
+.notify input { flex: 1; min-width: 0; font: inherit; font-size: 14px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.notify input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.notify .btn { font-size: 12px; padding: 12px 16px; white-space: nowrap; }
+.notify-thanks { font-size: 13.5px; color: var(--brand-dark); font-weight: 600; }
+.notify-thanks.error { color: #8A3E31; }
+.notify-wrap { flex-basis: 100%; margin-top: 10px; }
+.btn.add.ghost { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
+.btn.add.ghost:hover { background: var(--brand); color: var(--cream); }
+.stock-badge.in { color: var(--brand); }
+.stock-badge.in::before { background: var(--brand); }
+.stock-badge.soon { color: var(--amber); }
+.stock-badge.soon::before { background: #D9942F; }
+
+.qty { display: inline-flex; align-items: center; }
+.qty button {
+  width: 34px; height: 34px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--brand-dark);
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  font-family: inherit;
+}
+.qty button:first-child { border-radius: 6px 0 0 6px; }
+.qty button:last-child { border-radius: 0 6px 6px 0; }
+.qty button:hover { background: var(--cream); }
+.qty .count {
+  width: 40px; height: 34px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 15px;
+  background: var(--surface);
+}
+
+/* ---------- 12. Cart drawer and toast ---------- */
+.cart-backdrop {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(26, 31, 41, 0.45);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 61;
+  width: min(420px, 92vw);
+  background: var(--paper);
+  box-shadow: -20px 0 50px -20px rgba(0, 0, 0, 0.35);
+  display: flex; flex-direction: column;
+  transform: translateX(105%);
+  visibility: hidden;   /* fully out of the layout while closed */
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.45s;
+}
+body.cart-open .cart-backdrop { opacity: 1; pointer-events: auto; }
+body.cart-open .cart-drawer { transform: translateX(0); visibility: visible; transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s; }
+body.cart-open { overflow: hidden; }
+.cart-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.cart-head h2 { font-size: 24px; color: var(--brand-dark); }
+.cart-close {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--surface);
+  font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink-soft);
+  font-family: inherit;
+}
+.cart-close:hover { border-color: var(--brand); color: var(--brand-dark); }
+.cart-body { flex: 1; overflow-y: auto; padding: 8px 22px; }
+.cart-empty { text-align: center; color: var(--ink-mute); padding: 48px 10px; font-size: 14.5px; }
+.cart-line {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.cart-line .thumb {
+  width: 52px; height: 52px; border-radius: 8px;
+  background: var(--plate);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.cart-line .thumb .vial-art { height: 44px; width: 26.4px; }
+/* Sets in the cart: three tiny vials fanned like the set card */
+.cart-line .thumb .mini-fan { display: flex; align-items: flex-end; justify-content: center; }
+.cart-line .thumb .mini-fan .vial-art { height: 35px; width: 21px; margin: 0 -4px; position: relative; }
+.cart-line .thumb .mini-fan .vial-art:nth-child(2) { height: 42px; width: 25.2px; z-index: 2; }
+.cart-line .info { min-width: 0; }
+.cart-line .name { font-size: 14px; font-weight: 600; line-height: 1.3; }
+.cart-line .sub { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+.cart-line .note { font-size: 11.5px; color: var(--amber); margin-top: 3px; }
+.cart-line .right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.cart-line .line-price { font-weight: 600; font-size: 14.5px; color: var(--brand-dark); }
+.cart-line .remove { background: none; border: none; color: var(--ink-mute); font-size: 12px; cursor: pointer; font-family: inherit; text-decoration: underline; padding: 0; }
+.cart-line .remove:hover { color: var(--brand-dark); }
+.cart-foot { border-top: 1px solid var(--line); padding: 16px 22px 22px; background: var(--surface); }
+.cart-foot .row { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 6px; }
+.cart-foot .row strong { font-size: 18px; color: var(--brand-dark); }
+.ship-progress { margin: 8px 0 14px; font-size: 12.5px; color: var(--ink-soft); }
+.ship-progress .bar { height: 4px; background: var(--hairline); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.ship-progress .bar i { display: block; height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s ease; }
+.cart-foot .btn { display: block; width: 100%; text-align: center; }
+.cart-foot .continue { display: block; text-align: center; font-size: 13px; margin-top: 12px; color: var(--ink-mute); }
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; z-index: 70;
+  transform: translate(-50%, 20px);
+  background: var(--ink); color: var(--cream);
+  padding: 12px 18px; border-radius: 999px;
+  font-size: 14px; display: flex; gap: 14px; align-items: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.toast a { color: #DCC59A; font-weight: 600; text-decoration: none; }
+
+@media (max-width: 640px) {
+  .toast { bottom: 24px; font-size: 13px; }
+}
+
+/* ---------- 13. Motion ---------- */
+/* Page fade-in on load */
+body { animation: page-in 0.5s ease both; }
+@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Reveal on scroll: elements with .reveal start low and faded, and
+   cart.js adds .in when they enter the viewport. --d staggers siblings. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* Hero text rises in on load, one line after another */
+.rise { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+/* The hero vial drifts slowly, forever */
+.float { animation: float 6s ease-in-out infinite; }
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-1.2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .rise, .float, .card-media::before, body { animation: none; }
+  .card:hover, .card:hover .card-media .vial-art { transform: none; }
+  .cart-drawer, .cart-backdrop, .toast { transition: none; }
+}
+
+
+/* ---------- 9. Light look ----------
+   Switched on when the page carries data-theme="light" (theme.js does
+   that). It swaps the color tokens from section 1, then softens the
+   few surfaces that were built for a dark ground: the header band,
+   the plates behind the vials, and the glows around them. The footer
+   stays deep, in plum, to anchor the page. */
+html[data-theme="light"] {
+  --brand: #4A2F3B;        /* deep plum: buttons, links */
+  --brand-dark: #2F1D26;   /* darker plum: hovers, headings */
+  --brand-deep: #2F1D26;   /* footer */
+  --accent: #C58F98;       /* dusty rose: rules, underlines, highlights */
+  --accent-ink: #9C5A67;   /* deeper rose, readable as small text */
+  --accent-light: #D3A4AC; /* lighter rose: the gold button on hover */
+  --cream: #F8F0EC;        /* light text on the plum surfaces */
+  --paper: #FBF7F4;        /* page ground, warm ivory */
+  --surface: #FFFFFF;
+  --ink: #2A2026;
+  --ink-soft: #5C4D55;
+  --ink-mute: #8A7B83;
+  --line: #ECE0DC;
+  --hairline: #F3EAE7;
+  --plate: #F4E7E3;        /* soft blush behind the vial pictures */
+  --amber: #9A6A3A;
+}
+/* Header band: ivory, with the wordmark in plum */
+html[data-theme="light"] .site-header { background: #FFFBF9; border-bottom: 1px solid var(--hairline); }
+html[data-theme="light"] .wordmark,
+html[data-theme="light"] .wordmark:hover { color: var(--brand); }
+/* Header logo: the picture replaces the letters. One image per look;
+   the dark one shows unless the light look has its own. */
+.wordmark.has-logo .wm-name, .wordmark.has-logo .wm-sub { display: none; }
+.wm-logo { display: none; height: 54px; width: auto; max-width: min(72vw, 440px); object-fit: contain; vertical-align: middle; transition: height 0.3s ease; }
+.wm-logo.for-dark { display: inline-block; }
+html[data-theme="light"] .wm-logo.for-dark { display: none; }
+html[data-theme="light"] .wm-logo.for-light { display: inline-block; }
+.site-header.compact .wm-logo { height: 36px; }
+@media (max-width: 480px) {
+  .wm-logo { height: 42px; }
+  .site-header.compact .wm-logo { height: 30px; }
+}
+html[data-theme="light"] .wordmark .wm-sub { color: var(--ink-mute); }
+/* Plates: blush ground, dark text, rose and champagne light */
+html[data-theme="light"] .plate { color: var(--ink); }
+html[data-theme="light"] .card-media { background: linear-gradient(180deg, #FAF1EE 0%, #F1E0DC 100%); }
+html[data-theme="light"] .card-media::before {
+  background:
+    radial-gradient(55% 45% at 50% 55%, rgba(255, 255, 255, 0.95), transparent 68%),
+    radial-gradient(70% 22% at 50% 92%, rgba(197, 143, 152, 0.35), transparent 72%);
+}
+html[data-theme="light"] .card-media .vial-art {
+  filter: drop-shadow(0 14px 16px rgba(74, 47, 59, 0.22));
+  -webkit-box-reflect: below 2px linear-gradient(transparent 76%, rgba(0, 0, 0, 0.12));
+}
+html[data-theme="light"] .card-media .tag,
+html[data-theme="light"] .photo .tag {
+  color: var(--brand);
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(74, 47, 59, 0.18);
+}
+/* Research sets: one soft plum shadow for the trio, no blue glow */
+html[data-theme="light"] .fan-stack {
+  filter: drop-shadow(0 14px 16px rgba(74, 47, 59, 0.22));
+  -webkit-box-reflect: below 2px linear-gradient(transparent 76%, rgba(0, 0, 0, 0.12));
+}
+html[data-theme="light"] .cart-line .thumb { background: #F6EAE7; }

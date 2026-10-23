@@ -1,0 +1,5 @@
+# The store is reached by link only. To be listed by search engines,
+# change "Disallow: /" to "Allow: /" and remove the robots meta line
+# from the top of every .html page.
+User-agent: *
+Disallow: /

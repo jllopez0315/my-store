@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- settings.js first: every other script reads from it -->
+<script src="settings.js"></script>
+<script>
+/* ---------- Research-use consent check ----------
+   Runs in the visitor's browser before anything else on the page. If
+   this device has not accepted the research-use notice for the current
+   terms version (SETTINGS.termsVersion), the visitor is sent to
+   gate.html, which sends them back here once both boxes are ticked.
+   The same small script sits at the top of every page except gate.html
+   and legal.html (the terms must be readable before accepting them). */
+(function () {
+  var key = "store_consent_" + SETTINGS.termsVersion;
+  var ok = false;
+  try { ok = !!(localStorage.getItem(key) || sessionStorage.getItem(key)); } catch (e) {}
+  if (ok) return;
+  var here = location.pathname.split("/").pop() + location.search + location.hash;
+  location.replace("gate.html?return=" + encodeURIComponent(here || "index.html"));
+})();
+</script>
+<!-- The look (dark or light, fonts, colors): applied before the page paints -->
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Search engines are asked to stay out: the store is reached by link
+     only. To be listed on Google, delete this line on every page and
+     change robots.txt to "Allow: /". -->
+<meta name="robots" content="noindex, nofollow">
+<title>Lab Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- All three font pairs load here; settings.js picks which one shows -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<style>
+/* ============================================================
+   LAB RESULTS PAGE styles. The rows live in data.js (COAS).
+   Edit the COAS list and this page updates itself, including the
+   "Verify a lot number" box at the top.
+   ============================================================ */
+
+main { max-width: 1020px; margin: 0 auto; padding: var(--sp-lg) 24px var(--sp-xl); }
+
+.page-head { max-width: 62ch; margin-bottom: var(--sp-md); }
+.page-head h1 { font-size: var(--fs-h2); color: var(--brand-dark); margin-bottom: 14px; }
+.page-head p { font-size: 15px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 10px; }
+
+/* How to read a report: four quiet notes in a 2 x 2 grid
+   (left column: Identity, Full panel; right column: Purity, Net content).
+   Stacks to one column on phones. */
+.read-how {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+  margin-bottom: var(--sp-md);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 32px;
+}
+@media (max-width: 560px) { .read-how { grid-template-columns: 1fr; } }
+.read-how div { font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+.read-how strong { display: block; color: var(--ink); font-size: 14px; margin-bottom: 3px; }
+
+/* ---------- Verify a lot number ----------
+   A buyer types the lot number printed on their vial and sees the
+   matching report row, or a plain "no report on file" line. */
+.verify { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px 24px; margin-bottom: var(--sp-md); }
+.verify h2 { font-size: var(--fs-h3); color: var(--brand-dark); margin-bottom: 6px; }
+.verify p.sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 14px; }
+.verify form { display: flex; gap: 10px; flex-wrap: wrap; }
+.verify input {
+  flex: 1 1 220px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px;
+  font-family: 'Jost', sans-serif; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--paper); color: var(--ink);
+}
+.verify input:focus { outline: 2px solid var(--brand); border-color: var(--brand); }
+.verify .btn { padding: 12px 24px; }
+.verify-result { margin-top: 16px; font-size: 14.5px; line-height: 1.7; }
+.verify-result.found { border-top: 1px solid var(--hairline); padding-top: 14px; }
+.verify-result .miss { color: var(--amber); font-weight: 600; }
+.verify-result dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 18px; }
+.verify-result dt { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); padding-top: 4px; }
+.verify-result dd { margin: 0; }
+.verify-result .num { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 19px; color: var(--brand-dark); }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER + NAV (shared across pages) ============ -->
+<!-- The wordmark band and the nav travel together as one sticky
+     block, so both stay in view while the page scrolls. The words in
+     the wordmark are filled in from settings.js (brand.name and
+     brand.sub) by cart.js. -->
+<div class="sticky-stack">
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Home">
+    <span class="wm-name"></span>
+    <span class="wm-sub"><i></i><b></b><i></i></span>
+  </a>
+</header>
+<nav class="site-nav">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html">Contact</a>
+</nav>
+</div>
+
+<main>
+  <div class="page-head">
+    <p class="eyebrow">Published lab reports</p>
+    <h1>Proof, published.</h1>
+    <p>Each certificate of analysis below comes from an independent laboratory and is published in full: identity, purity, and content. Open any report to read the original document.</p>
+  </div>
+
+  <div class="read-how">
+    <div><strong>Identity (LC-MS)</strong>Confirms the compound in the vial is the compound on the label.</div>
+    <div><strong>Purity (HPLC)</strong>The batch average purity. Everything published here verifies at 99%+.</div>
+    <div><strong>Full panel</strong>Some reports also include sterility, endotoxin, and heavy metals screening. Every report here confirms identity and purity.</div>
+    <div><strong>Net content</strong>Measures the actual milligrams against the labeled quantity.</div>
+  </div>
+
+  <!-- ============ VERIFY A LOT NUMBER ============ -->
+  <div class="verify" id="verify">
+    <h2>Verify a lot number</h2>
+    <p class="sub">Type the lot number printed on your vial to see its published report.</p>
+    <form id="verify-form">
+      <input type="text" id="lot" placeholder="Lot number" autocomplete="off" aria-label="Lot number">
+      <button type="submit" class="btn">Verify</button>
+    </form>
+    <div class="verify-result" id="verify-result" aria-live="polite"></div>
+  </div>
+
+  <div class="ledger-wrap">
+    <table class="ledger" id="coa-table">
+      <thead>
+        <tr><th>Compound</th><th>Size</th><th>Batch</th><th>Analyzed</th><th>Purity (HPLC)</th><th>Report</th></tr>
+      </thead>
+      <tbody><!-- Filled by JavaScript from the COAS list in data.js --></tbody>
+    </table>
+  </div>
+  <p class="ledger-hint">Swipe the table sideways to see every column.</p>
+
+  <!-- Earlier batches: archived reports for batches that have sold
+       out. Hidden automatically when no entry has archived: true. -->
+  <div id="archive-section" hidden>
+    <div class="page-head" style="margin-top:var(--sp-lg);">
+      <p class="eyebrow">Earlier batches</p>
+      <p>Reports for batches and sizes not currently in stock, kept published for the record.</p>
+    </div>
+    <div class="ledger-wrap">
+      <table class="ledger" id="archive-table">
+        <thead>
+          <tr><th>Compound</th><th>Size</th><th>Batch</th><th>Analyzed</th><th>Purity (HPLC)</th><th>Report</th></tr>
+        </thead>
+        <tbody><!-- Filled by JavaScript from the COAS list in data.js --></tbody>
+      </table>
+    </div>
+    <p class="ledger-hint">Swipe the table sideways to see every column.</p>
+  </div>
+
+  <p style="font-size:13px; color:var(--ink-mute); margin-top:22px; max-width:70ch;">Reports are issued by the testing laboratory named on each certificate. All compounds are supplied for laboratory research use only.</p>
+</main>
+
+<!-- ============ FOOTER (shared across pages) ============ -->
+<footer class="site-footer">
+  <div class="foot-links">
+    <a href="shop.html">Shop</a>
+    <a href="lab.html">Lab Results</a>
+    <a href="legal.html#terms">Terms</a>
+    <a href="legal.html#disclaimer">Disclaimer</a>
+    <a href="legal.html#privacy">Privacy</a>
+  </div>
+  <!-- Brand name and location are filled in from settings.js -->
+  <div class="foot-place js-brand-place"></div>
+  <div class="foot-ruo">For Research Use Only</div>
+  <div class="foot-legal">All compounds are intended for laboratory research purposes only. Not for human or veterinary consumption.</div>
+  <div class="foot-credit">Built with the Store Kit</div>
+</footer>
+
+<script src="data.js"></script>
+<script src="cart.js"></script>
+<script>
+/* ---------- Fill the report ledgers ----------
+   Current reports in the main table, archived reports (entries with
+   archived: true in data.js) in the Earlier batches table below.
+   Sorted by compound name, newest analysis first within each. */
+function fillLedger(tbody, reports) {
+  reports
+    .slice()
+    .sort((a, b) =>
+      a.compound.localeCompare(b.compound) || b.analyzed.localeCompare(a.analyzed))
+    .forEach(c => {
+      const tr = document.createElement("tr");
+      // The Report cell is a link only when the row has a saved file
+      // (see coaReportHTML in data.js).
+      // Full panel reports (sterility, endotoxin, heavy metals) get a quiet note.
+      const panelTag = c.fullPanel ? ' <span class="panel-note">Full panel</span>' : "";
+      tr.innerHTML =
+        "<td><strong>" + c.compound + "</strong>" + panelTag + "</td>" +
+        "<td>" + c.size + "</td>" +
+        '<td class="mono">' + c.batch + "</td>" +
+        "<td>" + c.analyzed + "</td>" +
+        '<td class="num">' + coaPurityText(c) + "</td>" +
+        "<td>" + coaReportHTML(c) + "</td>";
+      tbody.appendChild(tr);
+    });
+}
+
+fillLedger(document.querySelector("#coa-table tbody"), COAS.filter(c => !c.archived));
+
+const archived = COAS.filter(c => c.archived);
+if (archived.length) {
+  document.getElementById("archive-section").hidden = false;
+  fillLedger(document.querySelector("#archive-table tbody"), archived);
+}
+
+/* ---------- Verify a lot number ----------
+   Looks through every COAS row (current and archived) for a matching
+   batch, ignoring case and stray spaces. A link such as
+   lab.html?lot=SAMPLE-0001 fills the box and runs the check at once,
+   which is handy to print as a QR code on a label. */
+(function () {
+  const form = document.getElementById("verify-form");
+  const box = document.getElementById("lot");
+  const out = document.getElementById("verify-result");
+  function verify(lot) {
+    const wanted = String(lot || "").trim().toUpperCase();
+    out.className = "verify-result";
+    if (!wanted) { out.innerHTML = ""; return; }
+    const c = COAS.find(r => String(r.batch || "").trim().toUpperCase() === wanted);
+    if (!c) { out.innerHTML = '<span class="miss">No report on file for that lot number.</span>'; return; }
+    out.className = "verify-result found";
+    out.innerHTML =
+      "<dl>" +
+        "<dt>Product</dt><dd><strong>" + esc(c.compound) + "</strong></dd>" +
+        "<dt>Size</dt><dd>" + esc(c.size) + "</dd>" +
+        "<dt>Lot</dt><dd class=\"mono\">" + esc(c.batch) + "</dd>" +
+        "<dt>Lab</dt><dd>" + esc(c.lab || "") + "</dd>" +
+        "<dt>Tested</dt><dd>" + esc(c.analyzed) + "</dd>" +
+        "<dt>Purity</dt><dd class=\"num\">" + coaPurityText(c) + "</dd>" +
+        "<dt>Report</dt><dd>" + coaReportHTML(c) + (c.archived ? ' <span class="meta">(earlier batch)</span>' : "") + "</dd>" +
+      "</dl>";
+  }
+  form.addEventListener("submit", e => { e.preventDefault(); verify(box.value); });
+  const fromUrl = new URLSearchParams(location.search).get("lot");
+  if (fromUrl) { box.value = fromUrl; verify(fromUrl); }
+})();
+</script>
+
+</body>
+</html>

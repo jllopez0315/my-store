@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 1100" width="850" height="1100">
+<rect width="850" height="1100" fill="#fff"/>
+<rect x="40" y="40" width="770" height="1020" fill="none" stroke="#DDD4C3" stroke-width="2"/>
+<text x="425" y="130" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#095a60">Certificate of Analysis</text>
+<text x="425" y="170" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" letter-spacing="4" fill="#6B736F">SAMPLE REPORT</text>
+<line x1="100" y1="210" x2="750" y2="210" stroke="#0d7a82" stroke-width="2"/>
+<g font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#1C2B28">
+<text x="110" y="270">Laboratory</text><text x="420" y="270">Sample Analytical Lab</text>
+<text x="110" y="315">Compound</text><text x="420" y="315">As listed on the results page</text>
+<text x="110" y="360">Batch</text><text x="420" y="360">As listed on the results page</text>
+<text x="110" y="405">Identity (mass spectrometry)</text><text x="420" y="405">Confirmed</text>
+<text x="110" y="450">Purity (HPLC)</text><text x="420" y="450">99%+</text>
+</g>
+<rect x="100" y="520" width="650" height="330" fill="#FAF7F0" stroke="#DDD4C3"/>
+<polyline points="120,820 250,818 300,815 330,560 360,815 480,818 730,820" fill="none" stroke="#0d7a82" stroke-width="3"/>
+<text x="425" y="890" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6B736F">Chromatogram (illustration)</text>
+<text x="425" y="970" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#1C2B28">This is a placeholder for the demo store.</text>
+<text x="425" y="998" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#1C2B28">On a real store, each row opens the lab's actual report for that batch.</text>
+</svg>

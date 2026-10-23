@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- settings.js first: the wording on this page comes from its gate section -->
+<script src="settings.js"></script>
+<!-- The look (dark or light, fonts, colors): applied before the page paints -->
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Search engines are asked to stay out: the store is reached by link
+     only. To be listed on Google, delete this line on every page and
+     change robots.txt to "Allow: /". -->
+<meta name="robots" content="noindex, nofollow">
+<title>Research Use Only</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- All three font pairs load here; settings.js picks which one shows -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<meta name="description" content="Research compounds with published laboratory reports. For laboratory research use only.">
+<!-- Link preview (iMessage, WhatsApp, and so on). Preview bots do not
+     run JavaScript, so the two tags below are filled in from settings.js
+     only for browsers. Type your brand name into them by hand once, and
+     add an og:image line here once you have a share image. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="">
+<meta property="og:title" content="">
+<meta property="og:description" content="Research compounds with published laboratory reports. For laboratory research use only.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<style>
+/* ============================================================
+   THE STORE KIT · Research Use Only gate
+
+   Every visitor sees this page once per device. They read the
+   research-only notice, tick both boxes, and enter.
+
+   HOW IT WORKS: the check happens in the visitor's browser. A small
+   script at the top of every other page looks for a saved
+   acknowledgment on this device. If there is none, it sends the
+   visitor here. Ticking both boxes and pressing the button saves the
+   acknowledgment and sends them back to the page they came from.
+   legal.html stays open to everyone, so the terms can be read before
+   accepting them.
+
+   TO CHANGE THE WORDING: edit the gate section of settings.js
+   (heading, intro, the two tick lines, and the button text). The
+   script at the bottom of this page fills them in. When the legal
+   terms change, change termsVersion in settings.js and every visitor
+   is asked to accept again.
+   ============================================================ */
+:root {
+  --brand: #1B2A41;        /* deep navy */
+  --brand-dark: #121C2C;
+  --accent: #B08D57;       /* muted brass: the ticked boxes and the button */
+  --accent-light: #C4A36E;
+  --cream: #EFEAE0;
+  --fg: 239, 234, 224;     /* the light text color as three numbers, so it can be faded */
+  --plate: #0E1624;
+  /* Type families, matching styles.css. The font pair rules further
+     down set them for the built-in pairs; theme.js writes the owner's
+     own fonts here for the "custom" pair. */
+  --font-heading: 'Marcellus', serif;
+  --font-body: 'Jost', -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  background: var(--plate);
+  color: var(--cream);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Moving background (drawn in code, no video file) ----------
+   Three soft pools of light drift slowly over deep navy, and a woven
+   ring of fine brass lines turns behind the content. To restyle it,
+   change the colors in the three .glow rules and the ring color below.
+   Visitors who ask their device for less motion get the same picture,
+   standing still. */
+.flow-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0B1220 0%, #14233B 55%, #0E1624 100%);
+}
+.flow-bg .glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform;
+}
+.flow-bg .g1 { width: 46vw; height: 46vw; left: -10vw; top: -18vw; background: rgba(62, 98, 160, 0.55); animation: drift-a 26s ease-in-out infinite alternate; }
+.flow-bg .g2 { width: 38vw; height: 38vw; right: -6vw; bottom: -16vw; background: rgba(176, 141, 87, 0.42); animation: drift-b 32s ease-in-out infinite alternate; }
+.flow-bg .g3 { width: 30vw; height: 30vw; left: 42%; top: 8%; background: rgba(96, 140, 190, 0.30); animation: drift-c 38s ease-in-out infinite alternate; }
+.flow-bg .ring {
+  position: absolute;
+  width: min(1100px, 150vw);
+  height: min(1100px, 150vw);
+  left: 50%; top: 50%; transform: translate(-50%, -50%);
+  color: rgba(196, 163, 110, 0.30);
+  animation: ring-turn 140s linear infinite;
+}
+@keyframes drift-a { to { transform: translate(14vw, 10vw) scale(1.15); } }
+@keyframes drift-b { to { transform: translate(-16vw, -8vw) scale(1.2); } }
+@keyframes drift-c { to { transform: translate(-12vw, 12vw) scale(0.9); } }
+@keyframes ring-turn { to { transform: translate(-50%, -50%) rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .flow-bg .glow, .flow-bg .ring { animation: none; }
+}
+/* Legibility veil: darkens the edges so the card stands forward */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 50%, rgba(8, 13, 22, 0), rgba(8, 13, 22, 0.5) 100%);
+  pointer-events: none;
+}
+
+/* ---------- Light look (theme.js switches it on) ----------
+   Ivory ground, blush and champagne light, plum words, rose button. */
+html[data-theme="light"] {
+  --brand: #4A2F3B;
+  --brand-dark: #2F1D26;
+  --accent: #C58F98;
+  --accent-light: #D3A4AC;
+  --cream: #2F1D26;
+  --fg: 47, 29, 38;
+  --plate: #FBF7F4;
+}
+html[data-theme="light"] .flow-bg { background: linear-gradient(135deg, #FDF8F5 0%, #F6E8E4 55%, #FBF3EE 100%); }
+html[data-theme="light"] .flow-bg .g1 { background: rgba(231, 178, 186, 0.55); }
+html[data-theme="light"] .flow-bg .g2 { background: rgba(224, 196, 150, 0.45); }
+html[data-theme="light"] .flow-bg .g3 { background: rgba(203, 178, 214, 0.38); }
+html[data-theme="light"] .flow-bg .ring { color: rgba(176, 110, 124, 0.30); }
+html[data-theme="light"] .veil { background: none; }
+html[data-theme="light"] .gate-card {
+  background: rgba(255, 255, 255, 0.66);
+  border-color: rgba(74, 47, 59, 0.12);
+  box-shadow: 0 30px 80px rgba(74, 47, 59, 0.18);
+}
+
+/* ---------- Layout ---------- */
+main {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px 32px;
+}
+
+/* ---------- The card ----------
+   Frosted glass over the moving background. Everything the visitor needs sits
+   inside this one panel. */
+.gate-card {
+  width: 100%;
+  max-width: 540px;
+  padding: 44px 44px 36px;
+  background: rgba(14, 22, 36, 0.62);
+  border: 1px solid rgba(var(--fg), 0.14);
+  border-radius: 18px;
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gate-card { animation: none; }
+}
+
+/* The wordmark sits straight on the dark card. There is no logo file:
+   the name is set in letterspaced serif capitals, with a small "LABS"
+   between two thin brass rules. */
+.wordmark { text-align: center; margin: 0 auto 26px; line-height: 1; color: var(--cream); }
+.wordmark .wm-name {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 30px;
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;   /* cancels the trailing letter gap so it centers */
+}
+.wordmark .wm-sub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  color: rgba(var(--fg), 0.8);
+}
+.wordmark .wm-sub b { font-weight: 600; margin-right: -0.5em; }
+.wordmark .wm-sub i { display: block; height: 1px; width: 54px; background: var(--accent); }
+
+.eyebrow {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(var(--fg), 0.6);
+  margin-bottom: 12px;
+}
+.gate-card h1 {
+  font-family: var(--font-heading);   /* the font pair rules below change this */
+  font-size: clamp(30px, 5vw, 38px);
+  font-weight: 500;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--cream);
+  margin-bottom: 16px;
+}
+.gate-card .intro {
+  font-size: 15px;
+  line-height: 1.65;
+  text-align: center;
+  color: rgba(var(--fg), 0.78);
+  margin: 0 auto 28px;
+  max-width: 42ch;
+}
+
+/* ---------- Consent boxes ----------
+   Two custom checkboxes. The button stays dimmed until both are on. */
+.consent {
+  border-top: 1px solid rgba(var(--fg), 0.12);
+  padding-top: 8px;
+  margin-bottom: 26px;
+}
+.consent label {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 16px 0;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(var(--fg), 0.86);
+}
+.consent label + label { border-top: 1px solid rgba(var(--fg), 0.08); }
+.consent input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.box {
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border: 1.5px solid rgba(var(--fg), 0.45);
+  border-radius: 6px;
+  background: rgba(var(--fg), 0.04);
+  display: grid;
+  place-items: center;
+  transition: background 0.18s, border-color 0.18s;
+}
+.box svg {
+  width: 13px;
+  height: 13px;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.18s, transform 0.18s;
+}
+.consent input:checked + .box {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.consent input:checked + .box svg { opacity: 1; transform: scale(1); }
+.consent input:focus-visible + .box {
+  box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.5);
+}
+.consent a {
+  color: var(--cream);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(var(--fg), 0.4);
+}
+.consent a:hover { text-decoration-color: var(--cream); }
+
+/* ---------- Enter button ---------- */
+.enter {
+  width: 100%;
+  padding: 17px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-family: inherit;
+  color: var(--brand-dark);
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.18s, opacity 0.18s, transform 0.18s;
+}
+.enter:hover { background: var(--accent-light); }
+.enter:active { transform: translateY(1px); }
+.enter[disabled] {
+  opacity: 0.42;
+  cursor: not-allowed;
+  background: var(--accent);
+}
+
+/* Font pairs, matching styles.css (this page has its own styles) */
+html.font-modern { --font-heading: 'Jost', -apple-system, sans-serif; }
+html.font-modern .gate-card h1, html.font-modern .wordmark .wm-name { font-weight: 500; }
+html.font-modern .wordmark .wm-name { font-weight: 600; letter-spacing: 0.28em; }
+html.font-editorial { --font-heading: 'Cormorant Garamond', Georgia, serif; }
+html.font-editorial .gate-card h1, html.font-editorial .wordmark .wm-name { font-weight: 600; }
+html.font-editorial .wordmark .wm-name { font-weight: 500; }
+
+.remember {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(var(--fg), 0.5);
+}
+
+/* Shown only if the browser refused to save the acknowledgment.
+   Deliberately quiet: same size and tone as the line above it. */
+.storage-note {
+  display: none;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(var(--fg), 0.6);
+  text-align: center;
+}
+.storage-note.show { display: block; }
+
+footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 20px 26px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(var(--fg), 0.5);
+}
+
+@media (max-width: 640px) {
+  main { padding: 28px 14px 24px; align-items: flex-start; }
+  .gate-card { padding: 32px 22px 26px; border-radius: 14px; }
+  .wordmark { margin-bottom: 20px; }
+  .wordmark .wm-name { font-size: 24px; }
+  .wordmark .wm-sub i { width: 40px; }
+  .consent label { font-size: 13.5px; padding: 14px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Moving background behind everything -->
+<div class="flow-bg" aria-hidden="true">
+  <span class="glow g1"></span>
+  <span class="glow g2"></span>
+  <span class="glow g3"></span>
+  <svg class="ring" viewBox="0 0 1200 1200" fill="none">
+    <g stroke="currentColor" stroke-width="1.2">
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(0 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(10 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(20 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(30 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(40 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(50 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(60 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(70 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(80 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(90 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(100 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(110 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(120 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(130 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(140 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(150 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(160 600 600)"/>
+      <ellipse cx="600" cy="600" rx="560" ry="190" transform="rotate(170 600 600)"/>
+    </g>
+  </svg>
+</div>
+<div class="veil" aria-hidden="true"></div>
+
+<main>
+  <form class="gate-card" id="gate-form" novalidate>
+    <!-- Every word below is filled in from the gate section of settings.js -->
+    <div class="wordmark" role="img" aria-label="" id="gate-wordmark">
+      <span class="wm-name"></span>
+      <span class="wm-sub"><i></i><b></b><i></i></span>
+    </div>
+
+    <div class="eyebrow">Research Use Only</div>
+    <h1 id="gate-heading"></h1>
+    <p class="intro" id="gate-intro"></p>
+
+    <div class="consent">
+      <label>
+        <input type="checkbox" id="c-age">
+        <span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#121C2C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+        <span id="gate-age"></span>
+      </label>
+      <label>
+        <input type="checkbox" id="c-terms">
+        <span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#121C2C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+        <span id="gate-terms"></span>
+      </label>
+    </div>
+
+    <button class="enter" type="submit" id="enter" disabled></button>
+    <div class="remember">Your acknowledgment is remembered on this device.</div>
+    <div class="storage-note" id="storage-note">Your browser is blocking site storage, so the acknowledgment cannot be saved. Allow storage for this site (or leave private browsing) and try again.</div>
+  </form>
+</main>
+
+<footer id="gate-footer"></footer>
+
+<script>
+/* ---------- Fill the words from settings.js ----------
+   Runs now, and again if theme.js fetches newer choices from the
+   admin's "Look & layout" screen (the "store-settings" event). */
+function fillGateText() {
+  var b = SETTINGS.brand, g = SETTINGS.gate;
+  var full = (b.name + " " + (b.sub || "")).trim();
+  document.title = full + " · Research Use Only";
+  document.querySelector(".wm-name").textContent = b.name.toUpperCase();
+  document.querySelector(".wm-sub b").textContent = (b.sub || "").toUpperCase();
+  if (!b.sub) document.querySelector(".wm-sub").style.display = "none";
+  document.getElementById("gate-wordmark").setAttribute("aria-label", full);
+  document.getElementById("gate-heading").textContent = g.heading;
+  document.getElementById("gate-intro").textContent = g.intro;
+  document.getElementById("gate-age").textContent = g.ageLine;
+  document.getElementById("enter").textContent = g.buttonText;
+  document.getElementById("gate-footer").textContent = full + (b.location ? " · " + b.location : "") + " · For Research Use Only";
+  document.querySelectorAll('meta[property="og:site_name"], meta[property="og:title"]').forEach(function (m) { m.setAttribute("content", full); });
+
+  // The terms line: plain text, with the three policy names turned into
+  // links to the legal page wherever they appear in the sentence.
+  var safe = String(g.termsLine).replace(/[&<>"']/g, function (ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]; });
+  var links = [
+    ["Terms and Conditions", "legal.html#terms"],
+    ["Research Use Only Disclaimer", "legal.html#disclaimer"],
+    ["Privacy Policy", "legal.html#privacy"]
+  ];
+  links.forEach(function (l) {
+    safe = safe.split(l[0]).join('<a href="' + l[1] + '" target="_blank" rel="noopener">' + l[0] + "</a>");
+  });
+  document.getElementById("gate-terms").innerHTML = safe;
+}
+fillGateText();
+document.addEventListener("store-settings", fillGateText);
+
+/* ---------- Consent gate (runs in the browser) ----------
+   CONSENT_KEY is the name the acknowledgment is saved under on this
+   device. The small script at the top of every other page looks for
+   the same name. Both are built from termsVersion in settings.js, so
+   changing that date asks every visitor to accept again. The version
+   is saved with the date as a simple record. */
+var CONSENT_VERSION = SETTINGS.termsVersion;
+var CONSENT_KEY = "store_consent_" + CONSENT_VERSION;
+
+var age = document.getElementById("c-age");
+var terms = document.getElementById("c-terms");
+var enter = document.getElementById("enter");
+
+// Button wakes up only when both boxes are ticked.
+function refresh() { enter.disabled = !(age.checked && terms.checked); }
+age.addEventListener("change", refresh);
+terms.addEventListener("change", refresh);
+refresh();
+
+// Where to go after accepting: the page the visitor came from, passed
+// in the address as ?return=... Only a plain page name on THIS site is
+// allowed (letters, numbers, dashes, an optional .html, then an optional
+// ?query or #anchor). Anything else, such as a full web address or a
+// path with slashes, is ignored and the visitor lands on the home page.
+function returnPage() {
+  var wanted = new URLSearchParams(location.search).get("return") || "";
+  var safe = /^[A-Za-z0-9_-]+(\.html)?(\?[^#]*)?(#.*)?$/.test(wanted) && !/^gate(\.html)?([?#]|$)/.test(wanted);
+  return safe ? wanted : "index.html";
+}
+
+// Save the acknowledgment on this device and head to the site. If the
+// browser will not keep it for good, fall back to "until this tab
+// closes". If it refuses both, say so instead of looping silently.
+document.getElementById("gate-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  if (enter.disabled) return;
+  var record = JSON.stringify({ version: CONSENT_VERSION, acceptedAt: new Date().toISOString() });
+  var saved = false;
+  try { localStorage.setItem(CONSENT_KEY, record); saved = true; } catch (err) {}
+  if (!saved) { try { sessionStorage.setItem(CONSENT_KEY, record); saved = true; } catch (err) {} }
+  if (!saved) { document.getElementById("storage-note").classList.add("show"); return; }
+  window.location.href = returnPage();
+});
+</script>
+
+</body>
+</html>

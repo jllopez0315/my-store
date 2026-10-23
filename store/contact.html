@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- settings.js first: every other script reads from it -->
+<script src="settings.js"></script>
+<script>
+/* ---------- Research-use consent check ----------
+   Runs in the visitor's browser before anything else on the page. If
+   this device has not accepted the research-use notice for the current
+   terms version (SETTINGS.termsVersion), the visitor is sent to
+   gate.html, which sends them back here once both boxes are ticked.
+   The same small script sits at the top of every page except gate.html
+   and legal.html (the terms must be readable before accepting them). */
+(function () {
+  var key = "store_consent_" + SETTINGS.termsVersion;
+  var ok = false;
+  try { ok = !!(localStorage.getItem(key) || sessionStorage.getItem(key)); } catch (e) {}
+  if (ok) return;
+  var here = location.pathname.split("/").pop() + location.search + location.hash;
+  location.replace("gate.html?return=" + encodeURIComponent(here || "index.html"));
+})();
+</script>
+<!-- The look (dark or light, fonts, colors): applied before the page paints -->
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Search engines are asked to stay out: the store is reached by link
+     only. To be listed on Google, delete this line on every page and
+     change robots.txt to "Allow: /". -->
+<meta name="robots" content="noindex, nofollow">
+<title>Contact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- All three font pairs load here; settings.js picks which one shows -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<style>
+/* ============================================================
+   CONTACT PAGE styles. One short page: a message form and the email address.
+   Plain HTML below; edit the words directly.
+   ============================================================ */
+main { max-width: 720px; margin: 0 auto; padding: var(--sp-lg) 24px var(--sp-xl); }
+.page-head { margin-bottom: var(--sp-md); }
+.page-head h1 { font-size: var(--fs-h2); color: var(--brand-dark); margin-bottom: 14px; }
+.page-head p { font-size: 17px; color: var(--ink-soft); line-height: 1.75; }
+
+/* Questions in bold, answers beneath */
+.faq h2 { font-size: 20px; color: var(--ink); margin: 34px 0 10px; }
+.faq p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 0; }
+.faq a { color: var(--brand-dark); }
+
+/* Email contact block */
+.contact {
+  margin-top: var(--sp-md);
+  padding: 30px 26px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+}
+.contact p { font-size: 17px; color: var(--ink); margin-bottom: 0; }
+.contact .note { font-size: 13px; color: var(--ink-mute); margin: 14px 0 0; }
+.ruo-line { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin-top: var(--sp-md); }
+
+/* Contact form. Same field styling as checkout. */
+.contact-form { margin-top: 8px; }
+label.field { display: block; margin-bottom: 16px; }
+label.field span { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: var(--brand-dark); }
+input[type="text"], input[type="email"], textarea {
+  width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 6px;
+  font-family: inherit; font-size: 15px; background: var(--surface); color: var(--ink);
+}
+textarea { resize: vertical; min-height: 140px; }
+input:focus, textarea:focus { outline: 2px solid var(--brand); border-color: var(--brand); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+@media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } }
+.form-note { font-size: 13px; color: var(--ink-mute); margin-top: 12px; }
+.sent { display: none; padding: 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.sent h2 { font-size: var(--fs-h3); color: var(--brand-dark); margin-bottom: 8px; }
+.sent p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.7; }
+.or { text-align: center; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin: var(--sp-lg) 0 10px; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER + NAV (shared across pages) ============ -->
+<!-- The wordmark band and the nav travel together as one sticky
+     block, so both stay in view while the page scrolls. The words in
+     the wordmark are filled in from settings.js (brand.name and
+     brand.sub) by cart.js. -->
+<div class="sticky-stack">
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Home">
+    <span class="wm-name"></span>
+    <span class="wm-sub"><i></i><b></b><i></i></span>
+  </a>
+</header>
+<nav class="site-nav">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html" class="active">Contact</a>
+</nav>
+</div>
+<main>
+  <div class="page-head">
+    <p class="eyebrow">Contact</p>
+    <h1>Reach <span class="js-brand"></span>.</h1>
+    <p>Need answers? We're here for you.<br>Send a message below, or email us directly.</p>
+  </div>
+
+  <!-- Contact form. Pressing Send checks the fields, then opens the
+       visitor's own email app with the message already written and
+       addressed to brand.contactEmail from settings.js. Nothing is
+       sent by the website itself, so there is no service to set up. -->
+  <form class="contact-form" id="contact-form" novalidate>
+    <div class="two-col">
+      <label class="field"><span>Name</span><input type="text" name="name" required autocomplete="name"></label>
+      <label class="field"><span>Email</span><input type="email" name="email" required autocomplete="email"></label>
+    </div>
+    <label class="field"><span>Subject</span><input type="text" name="subject" required></label>
+    <label class="field"><span>Message</span><textarea name="message" required></textarea></label>
+    <button type="submit" class="btn" id="send-btn">Send Message</button>
+    <p class="form-note">Replies come by email within 48 hours.</p>
+  </form>
+
+  <div class="sent" id="sent">
+    <h2>Your email app should now be open.</h2>
+    <p>Your message is written and addressed. Press send there and a reply will come within 48 hours. If nothing opened, copy your message and email it to <a class="js-email" href="#"></a>.</p>
+  </div>
+
+  <p class="or">Prefer email?</p>
+  <div class="contact">
+    <p>Email us at <a class="js-email" href="#"></a></p>
+    <p class="note">Common questions are answered on the <a href="faq.html" style="color:var(--brand-dark);">FAQ</a> page.</p>
+  </div>
+
+  <p class="ruo-line">For laboratory research use only</p>
+</main>
+
+<!-- ============ FOOTER (shared across pages) ============ -->
+<footer class="site-footer">
+  <div class="foot-links">
+    <a href="shop.html">Shop</a>
+    <a href="lab.html">Lab Results</a>
+    <a href="legal.html#terms">Terms</a>
+    <a href="legal.html#disclaimer">Disclaimer</a>
+    <a href="legal.html#privacy">Privacy</a>
+  </div>
+  <!-- Brand name and location are filled in from settings.js -->
+  <div class="foot-place js-brand-place"></div>
+  <div class="foot-ruo">For Research Use Only</div>
+  <div class="foot-legal">All compounds are intended for laboratory research purposes only. Not for human or veterinary consumption.</div>
+  <div class="foot-credit">Built with the Store Kit</div>
+</footer>
+
+<script src="data.js"></script>
+<script src="cart.js"></script>
+<script>
+/* Contact form: check the fields, build a mailto: link from them, open
+   it (the visitor's email app takes over), then swap the form for the
+   note below it. Nothing is saved on the website. */
+(function () {
+  var form = document.getElementById("contact-form");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    var f = form.elements;
+    var subject = f.subject.value.trim();
+    var body = f.message.value.trim() + "\n\n" + f.name.value.trim() + "\n" + f.email.value.trim();
+    window.location.href = "mailto:" + SETTINGS.brand.contactEmail +
+      "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    form.style.display = "none";
+    document.getElementById("sent").style.display = "block";
+  });
+})();
+</script>
+
+</body>
+</html>

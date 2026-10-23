@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- settings.js first: every other script reads from it -->
+<script src="settings.js"></script>
+<script>
+/* ---------- Research-use consent check ----------
+   Runs in the visitor's browser before anything else on the page. If
+   this device has not accepted the research-use notice for the current
+   terms version (SETTINGS.termsVersion), the visitor is sent to
+   gate.html, which sends them back here once both boxes are ticked.
+   The same small script sits at the top of every page except gate.html
+   and legal.html (the terms must be readable before accepting them). */
+(function () {
+  var key = "store_consent_" + SETTINGS.termsVersion;
+  var ok = false;
+  try { ok = !!(localStorage.getItem(key) || sessionStorage.getItem(key)); } catch (e) {}
+  if (ok) return;
+  var here = location.pathname.split("/").pop() + location.search + location.hash;
+  location.replace("gate.html?return=" + encodeURIComponent(here || "index.html"));
+})();
+</script>
+<!-- The look (dark or light, fonts, colors): applied before the page paints -->
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Search engines are asked to stay out: the store is reached by link
+     only. To be listed on Google, delete this line on every page and
+     change robots.txt to "Allow: /". -->
+<meta name="robots" content="noindex, nofollow">
+<title>Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- All three font pairs load here; settings.js picks which one shows -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<style>
+/* ============================================================
+   SHOP PAGE styles. The grid, cards, and cart live in styles.css
+   and cart.js. Product data lives in data.js.
+   ============================================================ */
+main { max-width: 1120px; margin: 0 auto; padding: var(--sp-lg) 24px var(--sp-xl); }
+
+.intro { margin-bottom: 30px; }
+.intro h1 { font-size: var(--fs-h2); color: var(--brand-dark); margin-bottom: 10px; }
+.intro p { font-size: 15px; color: var(--ink-soft); max-width: 60ch; }
+/* The research-use statement, in the same quiet small caps as the hero */
+.intro .ruo-line { margin-top: 12px; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
+
+/* ---------- Toolbar: search, category pills, stock filter ---------- */
+.toolbar {
+  position: sticky;
+  top: 58px;            /* fallback; the script at the bottom measures the real header height */
+  z-index: 30;
+  background: rgba(247, 245, 240, 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  padding: 12px 0 14px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--hairline);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.search-wrap {
+  flex: 1 1 260px;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 11px 16px;
+}
+.search-wrap svg { width: 18px; height: 18px; color: var(--brand-dark); flex-shrink: 0; }
+.search-wrap input { flex: 1; border: none; outline: none; background: transparent; font-family: inherit; font-size: 15px; color: var(--ink); min-width: 0; }
+.search-wrap:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(27, 42, 65, 0.12); }
+
+.pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.pill:hover { border-color: var(--brand); color: var(--brand-dark); }
+.pill.on { background: var(--brand); border-color: var(--brand); color: var(--cream); }
+
+.stock-select {
+  font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-soft); background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 9px 14px; cursor: pointer;
+}
+@media (max-width: 640px) {
+  .pills { order: 3; width: 100%; }
+  .pill { padding: 8px 12px; font-size: 10.5px; }
+}
+
+/* Count line and empty state */
+.result-line { font-size: 13px; color: var(--ink-mute); margin: -10px 0 18px; }
+.empty { display: none; text-align: center; padding: 60px 20px; color: var(--ink-mute); font-size: 15px; }
+.empty a { font-weight: 600; }
+
+/* Request block under the grid */
+.request {
+  margin-top: var(--sp-xl);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 28px 30px;
+  display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.request h2 { font-size: var(--fs-h3); color: var(--brand-dark); margin-bottom: 6px; }
+.request p { font-size: 14px; color: var(--ink-soft); max-width: 52ch; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER + NAV (shared across pages) ============ -->
+<!-- The wordmark band and the nav travel together as one sticky
+     block, so both stay in view while the page scrolls. The words in
+     the wordmark are filled in from settings.js (brand.name and
+     brand.sub) by cart.js. -->
+<div class="sticky-stack">
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Home">
+    <span class="wm-name"></span>
+    <span class="wm-sub"><i></i><b></b><i></i></span>
+  </a>
+</header>
+<nav class="site-nav">
+  <a href="index.html">Home</a>
+  <a href="shop.html" class="active">Shop</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html">Contact</a>
+</nav>
+</div>
+
+<main>
+  <div class="intro reveal">
+    <p class="eyebrow">The Collection</p>
+    <h1>Selected for research.</h1>
+    <p>A carefully curated collection of research compounds, each third party tested to verify 99%+ purity and accompanied by published laboratory results.</p>
+    <p class="ruo-line">For laboratory research use only</p>
+  </div>
+
+  <!-- Toolbar: search + filters -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <input type="search" id="search" placeholder="Search for a compound" autocomplete="off">
+    </div>
+    <div class="pills" id="pills">
+      <button type="button" class="pill on" data-cat="all">All</button>
+      <button type="button" class="pill" data-cat="vial">Vials</button>
+      <button type="button" class="pill" data-cat="kit">Kits</button>
+      <button type="button" class="pill" data-cat="set">Research Sets</button>
+      <button type="button" class="pill" data-cat="supply">Supplies</button>
+    </div>
+    <select class="stock-select" id="stock" aria-label="Stock filter">
+      <option value="all">All stock</option>
+      <option value="in">In stock</option>
+      <option value="soon">Available to order</option>
+    </select>
+  </div>
+
+  <p class="result-line" id="result-line"></p>
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty">No matches. Try another spelling, or <a href="checkout.html#request">write in a request</a>.</p>
+
+  <div class="request reveal">
+    <div>
+      <h2>Don't see what you want?</h2>
+      <p>Write in what you're looking for (compound, size, quantity). There's no charge for a request. We'll reply with availability and pricing.</p>
+    </div>
+    <a class="btn ghost" href="checkout.html#request">Request a compound</a>
+  </div>
+</main>
+
+<!-- ============ FOOTER (shared across pages) ============ -->
+<footer class="site-footer">
+  <div class="foot-links">
+    <a href="shop.html">Shop</a>
+    <a href="lab.html">Lab Results</a>
+    <a href="legal.html#terms">Terms</a>
+    <a href="legal.html#disclaimer">Disclaimer</a>
+    <a href="legal.html#privacy">Privacy</a>
+  </div>
+  <!-- Brand name and location are filled in from settings.js -->
+  <div class="foot-place js-brand-place"></div>
+  <div class="foot-ruo">For Research Use Only</div>
+  <div class="foot-legal">All compounds are intended for laboratory research purposes only. Not for human or veterinary consumption.</div>
+  <div class="foot-credit">Built with the Store Kit</div>
+</footer>
+
+<script src="data.js"></script>
+<script src="cart.js"></script>
+<script>
+/* ============================================================
+   The shop grid. Cards come from buildCard() in cart.js; this
+   script only decides which ones to show and in what order:
+   research sets first, then everything alphabetical.
+   ============================================================ */
+const grid = document.getElementById("grid");
+const state = { cat: "all", stock: "all", q: "" };
+
+// Display order: sets first, then vials A to Z, kits A to Z, supplies.
+// Same compound in more than one size sorts smallest size first.
+const ORDER = { set: 0, vial: 1, kit: 2, supply: 3 };
+// An item can set sortAs to sit somewhere else in the A-Z
+// (Wolverine sorts as BPC-157+TB500, matching its label)
+const items = CATALOG.slice().sort((a, b) =>
+  (ORDER[a.category] - ORDER[b.category]) || (a.sortAs || a.name).localeCompare(b.sortAs || b.name) || (parseFloat(a.size) - parseFloat(b.size))
+);
+
+// Build every card once; filtering just shows and hides them
+const cards = new Map();
+items.forEach(it => { const el = buildCard(it); cards.set(it.id, el); grid.appendChild(el); });
+
+function matches(it) {
+  // An item can name a second filter it belongs under (also: "supply")
+  if (state.cat !== "all" && it.category !== state.cat && it.also !== state.cat) return false;
+  if (state.stock === "in" && !it.stock) return false;
+  if (state.stock === "soon" && it.stock) return false;
+  if (state.q) {
+    const hay = (it.name + " " + it.size + " " + (it.detail || "")).toLowerCase();
+    if (!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+function applyFilters() {
+  // The Supplies tab lays its cards out in the order set in data.js
+  // (SUPPLY_PAGE_ORDER); every other view keeps the default order.
+  const rank = it => { const i = SUPPLY_PAGE_ORDER.indexOf(it.slug); return i === -1 ? 999 : i; };
+  const layout = state.cat === "supply"
+    ? items.slice().sort((a, b) => rank(a) - rank(b))
+    : items;
+  layout.forEach(it => grid.appendChild(cards.get(it.id)));
+
+  let shown = 0;
+  layout.forEach(it => {
+    const el = cards.get(it.id);
+    const on = matches(it);
+    el.style.display = on ? "" : "none";
+    if (on) { el.style.setProperty("--d", (shown % 8) * 60 + "ms"); shown++; }
+  });
+  document.getElementById("empty").style.display = shown ? "none" : "block";
+  document.getElementById("result-line").textContent = shown + (shown === 1 ? " item" : " items");
+  initReveal();
+}
+
+// Fresh counts from the admin (data.js fires "store-stock"; cart.js has
+// already swapped each card's badge and button): the stock filter runs again
+document.addEventListener("store-stock", applyFilters);
+
+document.getElementById("pills").addEventListener("click", e => {
+  const b = e.target.closest(".pill");
+  if (!b) return;
+  document.querySelectorAll(".pill").forEach(p => p.classList.toggle("on", p === b));
+  state.cat = b.dataset.cat;
+  applyFilters();
+});
+document.getElementById("stock").addEventListener("change", e => { state.stock = e.target.value; applyFilters(); });
+document.getElementById("search").addEventListener("input", e => { state.q = e.target.value.trim().toLowerCase(); applyFilters(); });
+
+// Keep the search toolbar parked just under the sticky header. The
+// header changes height (it shrinks after a short scroll, and it is
+// shorter on phones), so its real height is measured, not guessed.
+const stickyStack = document.querySelector(".sticky-stack");
+const toolbar = document.querySelector(".toolbar");
+// (The sticky stack sits lower while a preview ribbon shows, so its own
+// top offset is added in.)
+function placeToolbar() { toolbar.style.top = (stickyStack.offsetHeight + (parseFloat(getComputedStyle(stickyStack).top) || 0)) + "px"; }
+placeToolbar();
+window.addEventListener("resize", placeToolbar);
+window.addEventListener("scroll", placeToolbar, { passive: true });
+stickyStack.addEventListener("transitionend", placeToolbar);
+
+// A link like shop.html#kits opens with that category selected
+const hash = location.hash.replace("#", "");
+const pill = document.querySelector('.pill[data-cat="' + { kits: "kit", vials: "vial", sets: "set", stacks: "set", supplies: "supply" }[hash] + '"]');
+if (pill) pill.click(); else applyFilters();
+
+// A link like shop.html?q=smx-7 (from the search box on product pages)
+// opens the shop with that search already typed in
+const qParam = new URLSearchParams(location.search).get("q");
+if (qParam) {
+  const box = document.getElementById("search");
+  box.value = qParam;
+  state.q = qParam.trim().toLowerCase();
+  applyFilters();
+}
+</script>
+
+</body>
+</html>

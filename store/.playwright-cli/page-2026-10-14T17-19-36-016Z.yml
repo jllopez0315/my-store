@@ -1,0 +1,214 @@
+- generic [ref=e3]:
+  - navigation "Screens" [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: YB
+      - generic [ref=e7]:
+        - generic [ref=e8]: Your Brand Labs
+        - text: Admin
+    - generic [ref=e9]: Run the store
+    - button "Home" [ref=e10] [cursor=pointer]
+    - button "Orders 2" [ref=e16] [cursor=pointer]:
+      - text: Orders
+      - generic [ref=e19]: "2"
+    - button "Inventory 3" [ref=e20] [cursor=pointer]:
+      - text: Inventory
+      - generic [ref=e24]: "3"
+    - button "Customers" [ref=e25] [cursor=pointer]
+    - generic [ref=e29]: Add
+    - button "Add a sale" [ref=e30] [cursor=pointer]
+    - button "Add an expense" [ref=e34] [cursor=pointer]
+    - generic [ref=e37]: Reports
+    - button "Reports" [ref=e38] [cursor=pointer]
+    - generic [ref=e41]: Your store
+    - button "Look & layout" [ref=e42] [cursor=pointer]
+    - generic [ref=e46]:
+      - generic [ref=e47]: demo@yourbrandlabs.com
+      - button "Export backup" [ref=e48] [cursor=pointer]
+      - button "Reset demo" [ref=e51] [cursor=pointer]
+  - generic [ref=e55]:
+    - heading "Look & layout" [level=1] [ref=e57]
+    - generic [ref=e58]: "Demo mode: sample data, nothing is saved. Refresh the page to start over."
+    - main [ref=e61]:
+      - generic [ref=e63]:
+        - paragraph [ref=e64]: "What the store shows in its header and on its home page. Preview shows the choices on your store without saving; Save makes them live. Products, prices, shipping, payment, and the gate wording are not here: those still change through Claude."
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - generic [ref=e69]: Store name
+                - textbox "Store name" [ref=e70]:
+                  - /placeholder: Your Brand
+                  - text: Your Brand
+              - generic [ref=e71]:
+                - generic [ref=e72]: Sub word (optional, the small word under the name)
+                - textbox "Sub word (optional, the small word under the name)" [ref=e73]:
+                  - /placeholder: Labs
+                  - text: Labs
+            - generic [ref=e74]:
+              - generic [ref=e75]: Tagline (the home page headline)
+              - textbox "Tagline (the home page headline)" [ref=e76]:
+                - /placeholder: Research compounds, documented.
+                - text: Research compounds, documented.
+            - generic [ref=e77]:
+              - generic [ref=e78]: Location (optional, shown beside the name)
+              - textbox "Location (optional, shown beside the name)" [ref=e79]:
+                - /placeholder: Austin, Texas
+            - generic [ref=e80]:
+              - generic [ref=e81]: Look
+              - radiogroup "Look" [ref=e82]:
+                - generic [ref=e83]:
+                  - radio "Dark" [checked]
+                  - generic [ref=e84] [cursor=pointer]: Dark
+                - generic [ref=e85]:
+                  - radio "Light"
+                  - generic [ref=e86] [cursor=pointer]: Light
+              - paragraph [ref=e87]: The look a new visitor sees first. The small switch in the store's corner still lets them change it.
+            - generic [ref=e88]:
+              - generic [ref=e89]: Layout (where the home page headline sits)
+              - radiogroup "Layout" [ref=e90]:
+                - generic [ref=e91]:
+                  - radio "Left" [checked]
+                  - generic [ref=e92] [cursor=pointer]: Left
+                - generic [ref=e93]:
+                  - radio "Center"
+                  - generic [ref=e94] [cursor=pointer]: Center
+                - generic [ref=e95]:
+                  - radio "Right"
+                  - generic [ref=e96] [cursor=pointer]: Right
+            - generic [ref=e97]:
+              - generic [ref=e98]: Font pair
+              - radiogroup "Font pair" [ref=e99]:
+                - generic [ref=e100]:
+                  - radio "Classic Marcellus headings, Jost text"
+                  - generic [ref=e101] [cursor=pointer]:
+                    - generic [ref=e102]: Classic
+                    - generic [ref=e103]: Marcellus headings, Jost text
+                - generic [ref=e104]:
+                  - radio "Modern Jost for everything"
+                  - generic [ref=e105] [cursor=pointer]:
+                    - generic [ref=e106]: Modern
+                    - generic [ref=e107]: Jost for everything
+                - generic [ref=e108]:
+                  - radio "Editorial Cormorant Garamond headings, Jost text"
+                  - generic [ref=e109] [cursor=pointer]:
+                    - generic [ref=e110]: Editorial
+                    - generic [ref=e111]: Cormorant Garamond headings, Jost text
+                - generic [ref=e112]:
+                  - radio "Custom Your own two Google Fonts" [checked] [active]
+                  - generic [ref=e113] [cursor=pointer]:
+                    - generic [ref=e114]: Custom
+                    - generic [ref=e115]: Your own two Google Fonts
+              - generic [ref=e224]:
+                - generic [ref=e225]:
+                  - generic [ref=e226]:
+                    - generic [ref=e227]: Heading font
+                    - textbox "Heading font" [ref=e228]:
+                      - /placeholder: Playfair Display
+                  - generic [ref=e229]:
+                    - generic [ref=e230]: Body font
+                    - textbox "Body font" [ref=e231]:
+                      - /placeholder: Inter
+                - paragraph [ref=e232]: Type any font name from fonts.google.com, spelled the way it appears there (for example Playfair Display). Fill in both. The preview card picks them up as you type, nothing to press. Then click Preview to see them on your store, or Save to keep them.
+            - generic [ref=e116]:
+              - generic [ref=e117]: Colors
+              - generic [ref=e118]:
+                - generic [ref=e119]:
+                  - generic [ref=e120]: Brand color (header band, buttons, links)
+                  - generic [ref=e121]:
+                    - textbox "Pick the brand color" [ref=e122] [cursor=pointer]: "#1b2a41"
+                    - textbox "Brand color hex code" [ref=e123]: "#1B2A41"
+                - generic [ref=e124]:
+                  - generic [ref=e125]: Accent color (thin rules, the gold button)
+                  - generic [ref=e126]:
+                    - textbox "Pick the accent color" [ref=e127] [cursor=pointer]: "#b08d57"
+                    - textbox "Accent color hex code" [ref=e128]: "#B08D57"
+              - paragraph [ref=e129]: "Leave both at the stock values (#1B2A41 and #B08D57) and each look keeps its built-in palette: navy and brass in dark, plum and rose in light. Change either one and your colors apply to both looks."
+            - generic [ref=e130]:
+              - generic [ref=e131]: Vial label
+              - paragraph [ref=e132]: Every product picture is a vial photo, and the store prints the label onto it. Change the name, the colors, or the mark here, or upload a complete label design of your own. The vial on the right follows as you go.
+              - paragraph [ref=e133]: On the demo, uploads stay in this browser. They last while this page is open; a real store keeps them in its database.
+              - generic [ref=e134]:
+                - generic [ref=e135]:
+                  - generic [ref=e136]:
+                    - generic [ref=e137]: Label name (optional)
+                    - textbox "Label name (optional)" [ref=e138]:
+                      - /placeholder: same as store name
+                  - generic [ref=e139]:
+                    - generic [ref=e140]:
+                      - generic [ref=e141]: Band color
+                      - generic [ref=e142]:
+                        - textbox "Pick the band color" [ref=e143] [cursor=pointer]: "#1d1d1f"
+                        - textbox "Band color hex code" [ref=e144]: "#1D1D1F"
+                    - generic [ref=e145]:
+                      - generic [ref=e146]: Text color
+                      - generic [ref=e147]:
+                        - textbox "Pick the band text color" [ref=e148] [cursor=pointer]: "#ffffff"
+                        - textbox "Band text color hex code" [ref=e149]: "#FFFFFF"
+                    - generic [ref=e150]:
+                      - generic [ref=e151]: Label tint
+                      - generic [ref=e152]:
+                        - textbox "Pick the label tint" [ref=e153] [cursor=pointer]: "#53c5b3"
+                        - textbox "Label tint hex code" [ref=e154]: "#53C5B3"
+                        - generic [ref=e155] [cursor=pointer]:
+                          - checkbox "None" [checked] [ref=e156]
+                          - text: None
+                  - paragraph [ref=e157]: The band carries the name. The tint colors the whole silver label and lets its shading show through.
+                  - generic [ref=e158]:
+                    - generic [ref=e159]: Mark under the name
+                    - radiogroup "Mark under the name" [ref=e160]:
+                      - generic [ref=e161]:
+                        - radio "Default mark" [checked]
+                        - generic [ref=e162] [cursor=pointer]: Default mark
+                      - generic [ref=e163]:
+                        - radio "My logo"
+                        - generic [ref=e164] [cursor=pointer]: My logo
+                  - generic [ref=e165]:
+                    - generic [ref=e166]: Full label (optional)
+                    - generic [ref=e167]:
+                      - button "Upload a full label design" [ref=e168] [cursor=pointer]
+                      - generic [ref=e169]: or paste an image address
+                      - textbox "Full label image address" [ref=e170]:
+                        - /placeholder: https://...
+                    - paragraph [ref=e171]: "A complete design that replaces the whole printed label: the band, the mark, and the colors above. PNG, SVG, or WebP, 1 MB at most, 444 by 518 pixels or the same shape larger. It is cropped to fit, never stretched. Leave room low on the design if the compound name prints on it."
+                    - generic [ref=e172] [cursor=pointer]:
+                      - checkbox "Still print the compound name and size on it" [checked] [ref=e173]
+                      - text: Still print the compound name and size on it
+                - generic [aria-hidden] [ref=e174]:
+                  - generic [ref=e175]: One vial, live
+                  - img [aria-hidden] [ref=e233]:
+                    - generic [ref=e236]: YOUR BRAND
+                    - generic [ref=e245]: GLP-RT3
+                    - generic [ref=e246]: 20 MG
+            - generic [ref=e191]:
+              - generic [ref=e192]: Three facts (a strip under the home page headline)
+              - generic [ref=e193]:
+                - textbox "Fact 1" [ref=e194]:
+                  - /placeholder: Ships from Texas
+                - textbox "Fact 2" [ref=e195]:
+                  - /placeholder: Every batch tested
+                - textbox "Fact 3" [ref=e196]:
+                  - /placeholder: Orders answered by a person
+              - paragraph [ref=e197]: Leave all three empty and the strip is hidden.
+            - generic [ref=e198]:
+              - button "Preview" [ref=e199] [cursor=pointer]
+              - button "Save" [ref=e200] [cursor=pointer]
+              - link "Open my store" [ref=e201] [cursor=pointer]:
+                - /url: https://admindemo.drjohnna.co/store/index.html
+              - button "Reset to defaults" [ref=e202] [cursor=pointer]
+            - paragraph [ref=e203]: Preview opens your store with these choices applied, without saving. Save writes them to your store for everyone.This demo store reads this demo admin. Save, then Open my store. Refresh the page or click Reset demo to start over.
+          - generic [aria-hidden] [ref=e205]:
+            - generic [ref=e206]: Preview, roughly
+            - generic [ref=e207]:
+              - generic [ref=e208]:
+                - generic [ref=e209]: YOUR BRAND
+                - generic [ref=e210]: LABS
+              - generic [ref=e215]:
+                - generic [ref=e216]: Your Brand Labs
+                - generic [ref=e217]: Research compounds, documented.
+                - generic [ref=e218]: Explore the collection
+              - generic [ref=e220]: For research use only
+            - paragraph [ref=e221]: Rough only. Click Preview to see the real thing on your store.
+    - contentinfo [ref=e222]:
+      - text: Demo of the Store Kit admin for Your Brand Labs, with sample data. Nothing is saved; refresh to start over. Items are offered for research use only.Built by
+      - link "doctorjohnna.com" [ref=e223] [cursor=pointer]:
+        - /url: https://doctorjohnna.com

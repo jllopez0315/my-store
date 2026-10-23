@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- settings.js first: every other script reads from it -->
+<script src="settings.js"></script>
+<script>
+/* ---------- Research-use consent check ----------
+   Runs in the visitor's browser before anything else on the page. If
+   this device has not accepted the research-use notice for the current
+   terms version (SETTINGS.termsVersion), the visitor is sent to
+   gate.html, which sends them back here once both boxes are ticked.
+   The same small script sits at the top of every page except gate.html
+   and legal.html (the terms must be readable before accepting them). */
+(function () {
+  var key = "store_consent_" + SETTINGS.termsVersion;
+  var ok = false;
+  try { ok = !!(localStorage.getItem(key) || sessionStorage.getItem(key)); } catch (e) {}
+  if (ok) return;
+  var here = location.pathname.split("/").pop() + location.search + location.hash;
+  location.replace("gate.html?return=" + encodeURIComponent(here || "index.html"));
+})();
+</script>
+<!-- The look (dark or light, fonts, colors): applied before the page paints -->
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Search engines are asked to stay out: the store is reached by link
+     only. To be listed on Google, delete this line on every page and
+     change robots.txt to "Allow: /". -->
+<meta name="robots" content="noindex, nofollow">
+<title>Restocks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- All three font pairs load here; settings.js picks which one shows -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<style>
+/* ============================================================
+   RESTOCKS PAGE. Switched on with look.restocksPage (settings.js, or
+   the admin's Look & layout screen); with it off, this page sends
+   visitors to the shop. Nothing here is edited by hand: every card
+   comes from the live counts on the admin's Inventory screen.
+     - every item at 0 on hand shows up here on its own
+     - its phase and date come from the restock controls on that
+       item's row in the admin (any row at 0 has them)
+     - a shopper can leave their email; the admin shows how many wait
+     - when you type the new count, everyone waiting gets one email
+       and the item leaves this page
+   Before the database is connected (Session 3), items with
+   stock: false in data.js show here as "Reorder pending".
+   Lead times and the "coming soon" list live in SETTINGS.restock.
+   ============================================================ */
+main { max-width: 1020px; margin: 0 auto; padding: var(--sp-lg) 24px var(--sp-xl); }
+.page-head { max-width: 62ch; margin-bottom: var(--sp-md); }
+.page-head h1 { font-size: var(--fs-h2); color: var(--brand-dark); margin-bottom: 14px; }
+.page-head p { font-size: 16px; color: var(--ink-soft); line-height: 1.75; }
+
+/* The honesty note and the phase legend share one bordered box */
+.legend { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); margin-bottom: var(--sp-lg); }
+.legend .note { padding: 18px 22px; font-size: 14px; color: var(--ink-soft); line-height: 1.7; border-bottom: 1px solid var(--hairline); }
+.legend .note strong { color: var(--ink); }
+.legend .phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px 22px; }
+@media (max-width: 640px) { .legend .phases { grid-template-columns: 1fr; } }
+.legend .phases strong { display: block; font-size: 15px; margin: 10px 0 4px; color: var(--ink); }
+.legend .phases p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+
+/* Phase pills. One color per phase, used in the legend and on cards */
+.pill { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+.pill.p1 { background: rgba(138, 62, 49, 0.12); color: #8A3E31; }
+.pill.p2 { background: rgba(150, 101, 27, 0.14); color: var(--amber); }
+.pill.p3 { background: rgba(27, 42, 65, 0.1); color: var(--brand); }
+html[data-theme="light"] .pill.p3 { background: rgba(74, 47, 59, 0.1); }
+
+.section-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-bottom: 18px; }
+.section-head h2 { font-size: var(--fs-h3); color: var(--brand-dark); }
+.section-head p { font-size: 14px; color: var(--ink-soft); }
+
+.search { width: 100%; font: inherit; font-size: 15px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); margin-bottom: 20px; }
+.search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.grid > * { min-width: 0; }
+@media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+.rcard { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px 22px 20px; min-width: 0; scroll-margin-top: 140px; }
+.rcard:target { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 420px) { .rcard { padding: 18px 14px 16px; } }
+.rcard h3 { font-family: var(--font-body); font-weight: 600; font-size: 17px; letter-spacing: 0; line-height: 1.3; margin-bottom: 10px; color: var(--ink); }
+.rcard .status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 14px; color: var(--ink-soft); margin-bottom: 18px; }
+.rcard .status b { color: var(--ink); font-weight: 600; }
+.rcard .orderable { font-size: 13.5px; color: var(--ink-soft); margin: -6px 0 16px; }
+.rcard .orderable a { color: var(--brand-dark); }
+
+/* The four-step track. Done steps are filled, the current step is
+   ringed, the steps still ahead are outlined in the line color */
+.track { display: grid; grid-template-columns: repeat(4, 1fr); position: relative; margin: 6px 0 18px; }
+.track.three { grid-template-columns: repeat(3, 1fr); }
+.step { text-align: center; font-size: 12.5px; line-height: 1.35; color: var(--ink-mute); position: relative; min-width: 0; overflow-wrap: anywhere; padding: 0 2px; }
+@media (max-width: 420px) { .step { font-size: 11px; } }
+.step .dot { width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 8px; display: grid; place-items: center; font-size: 12px; font-weight: 600; background: var(--surface); border: 2px solid var(--line); color: var(--ink-mute); position: relative; z-index: 1; }
+.step::before { content: ""; position: absolute; top: 14px; left: -50%; width: 100%; height: 2px; background: var(--line); }
+.step:first-child::before { display: none; }
+.step.done .dot { background: var(--brand); border-color: var(--brand); color: var(--cream); }
+.step.done::before, .step.now::before { background: var(--brand); }
+.step.now .dot { border-color: var(--brand); color: var(--brand); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--brand); }
+.step.now { color: var(--ink); font-weight: 600; }
+
+/* Countdown strip under the track */
+.timing { background: var(--paper); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 18px; }
+.timing .row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.timing b { color: var(--ink); }
+.timing .bar { height: 6px; border-radius: 999px; background: var(--line); margin-top: 10px; overflow: hidden; }
+.timing .bar span { display: block; height: 100%; border-radius: 999px; background: var(--brand); }
+.timing.p2 .bar span { background: var(--amber); }
+
+.empty { font-size: 14.5px; color: var(--ink-soft); padding: 22px; border: 1px dashed var(--line); border-radius: 14px; }
+.foot-note { font-size: 13px; color: var(--ink-mute); margin-top: 22px; max-width: 70ch; line-height: 1.6; }
+
+/* Request box */
+.ask { margin-top: var(--sp-lg); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px 22px; text-align: center; }
+.ask h2 { font-size: 20px; color: var(--ink); margin-bottom: 8px; }
+.ask p { font-size: 15px; color: var(--ink-soft); margin-bottom: 18px; }
+
+/* Coming soon block: a quiet tinted band */
+.coming { margin-top: var(--sp-xl); background: var(--paper); border: 1px solid var(--hairline); border-radius: 18px; padding: 28px 24px; }
+.coming .note { font-size: 14px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 20px; }
+.coming .note strong { color: var(--ink); }
+.newtag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); background: rgba(150, 101, 27, 0.14); padding: 4px 8px; border-radius: 6px; margin-right: 8px; vertical-align: middle; }
+.rcard .sub { font-size: 13px; color: var(--ink-mute); margin: -4px 0 10px; }
+.ruo-line { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin-top: var(--sp-md); }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER + NAV (shared across pages) ============ -->
+<!-- The wordmark band and the nav travel together as one sticky
+     block, so both stay in view while the page scrolls. The words in
+     the wordmark are filled in from settings.js (brand.name and
+     brand.sub) by cart.js, which also adds the Restocks link. -->
+<div class="sticky-stack">
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Home">
+    <span class="wm-name"></span>
+    <span class="wm-sub"><i></i><b></b><i></i></span>
+  </a>
+</header>
+<nav class="site-nav">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html">Contact</a>
+</nav>
+</div>
+<main>
+  <div class="page-head">
+    <p class="eyebrow">Restock status</p>
+    <h1>Where your restock is.</h1>
+    <p>When something is out of stock, follow its next batch here, from reorder to arrival to final lab testing. Leave your email on any card and you get one message the day it's back. When it is, the card leaves this page on its own.</p>
+  </div>
+
+  <div class="legend">
+    <div class="note"><strong>All timelines are estimates.</strong> We don't control shipping or lab turnaround, so the countdowns are our best read from the day an item was ordered or sent for testing. They're a guide, not a guarantee.</div>
+    <div class="phases">
+      <div><span class="pill p1">Phase 1</span><strong>Reorder pending</strong><p>Out of stock and not yet reordered.</p></div>
+      <div><span class="pill p2">Phase 2</span><strong>Ordered, on the way</strong><p>Reordered and in transit. Countdown runs from the order date.</p></div>
+      <div><span class="pill p3">Phase 3</span><strong>Arrived, in testing</strong><p>At the lab. Countdown runs from the testing date.</p></div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>Currently restocking</h2>
+    <p>Everything out of stock right now, and where its next batch is.</p>
+  </div>
+  <input class="search" id="search" type="search" placeholder="Search for a product" aria-label="Search for a product">
+  <div class="grid" id="restock-grid"></div>
+  <p class="empty" id="restock-empty" hidden>Nothing matches that search.</p>
+  <p class="empty" id="restock-none" hidden>Everything is in stock right now. Nothing to track.</p>
+  <p class="foot-note">When a product comes back in stock, it disappears from this page automatically.</p>
+
+  <section class="ask">
+    <h2>Don't see what you're looking for?</h2>
+    <p>Tell us the compound and size and we'll do our best to bring it in.</p>
+    <a class="btn" href="checkout.html#request">Request a compound</a>
+  </section>
+
+  <section class="coming" id="coming" hidden>
+    <div class="section-head">
+      <h2>New products, coming soon</h2>
+      <p>First-time products we're bringing in. Not in the shop yet.</p>
+    </div>
+    <div class="note"><strong>Estimated timelines only.</strong> New products move through ordering and lab testing before they go live. These dates are our best guess, not a launch date.</div>
+    <div class="grid" id="coming-grid"></div>
+  </section>
+
+  <p class="ruo-line">For laboratory research use only</p>
+</main>
+
+<!-- ============ FOOTER (shared across pages) ============ -->
+<footer class="site-footer">
+  <div class="foot-links">
+    <a href="shop.html">Shop</a>
+    <a href="lab.html">Lab Results</a>
+    <a href="legal.html#terms">Terms</a>
+    <a href="legal.html#disclaimer">Disclaimer</a>
+    <a href="legal.html#privacy">Privacy</a>
+  </div>
+  <!-- Brand name and location are filled in from settings.js -->
+  <div class="foot-place js-brand-place"></div>
+  <div class="foot-ruo">For Research Use Only</div>
+  <div class="foot-legal">All compounds are intended for laboratory research purposes only. Not for human or veterinary consumption.</div>
+  <div class="foot-credit">Built with the Store Kit</div>
+</footer>
+
+<script src="data.js"></script>
+<script src="cart.js"></script>
+<script>
+/* ---------- Build the page from the live catalog ----------
+   Nothing below needs editing. CATALOG (data.js) already carries the
+   live counts and each item's restockPhase / restockDate from the
+   admin (section 7 of data.js). This draws a card for everything out
+   of stock, and redraws when fresh counts arrive ("store-stock"). */
+
+// With the switch off, this page is not part of the store: go to the shop.
+function restocksGate() {
+  if (!(SETTINGS.look && SETTINGS.look.restocksPage)) location.replace("shop.html");
+}
+restocksGate();
+document.addEventListener("store-settings", restocksGate);
+
+const R = SETTINGS.restock || {};
+const ESTIMATES = {
+  shipping: Array.isArray(R.shippingDays) && R.shippingDays.length === 2 ? R.shippingDays : [10, 18],
+  testing:  Array.isArray(R.testingDays) && R.testingDays.length === 2 ? R.testingDays : [7, 10]
+};
+const COMING = Array.isArray(R.coming) ? R.coming : [];
+
+const PHASES = {
+  1: { pill: "p1", label: "Phase 1 · Reorder pending" },
+  2: { pill: "p2", label: "Phase 2 · On the way" },
+  3: { pill: "p3", label: "Phase 3 · In testing" }
+};
+
+const DAY = 86400000;
+function daysSince(iso) { return Math.floor((Date.now() - new Date(iso + "T12:00:00")) / DAY); }
+function fmtDate(iso) { return new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
+function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+
+/* Phase + date into words and the progress bar fill */
+function timing(phase, date) {
+  const isShip = phase === 2;
+  const [lo, hi] = isShip ? ESTIMATES.shipping : ESTIMATES.testing;
+  if (!date) return { est: "about " + lo + " to " + hi + " days", since: "Date not set yet", fill: 0.08 };
+  const gone = daysSince(date);
+  const loLeft = Math.max(0, lo - gone), hiLeft = Math.max(0, hi - gone);
+  let est;
+  if (hiLeft === 0) est = "any day now";
+  else if (loLeft === 0) est = "up to " + plural(hiLeft, "day") + " left";
+  else est = loLeft + " to " + plural(hiLeft, "day") + " left";
+  const since = (isShip ? "Ordered " : "In testing since ") + fmtDate(date) + " · " + (gone === 0 ? "today" : plural(gone, "day") + " ago");
+  return { est, since, fill: Math.min(0.96, Math.max(0.06, gone / hi)) };
+}
+
+function trackHtml(current, steps) {
+  // steps: labels. Index i is done when i < current, current when i == current.
+  return '<div class="track' + (steps.length === 3 ? " three" : "") + '">' + steps.map((label, i) => {
+    const cls = i < current ? "done" : i === current ? "now" : "";
+    const inner = i < current ? "&#10003;" : (i === steps.length - 1 ? "&#9733;" : i + (steps.length === 3 ? 2 : 1));
+    return '<div class="step ' + cls + '"><div class="dot">' + inner + "</div>" + label + "</div>";
+  }).join("") + "</div>";
+}
+
+function cardHtml(id, name, phase, date, isNew, item) {
+  phase = PHASES[phase] ? phase : 1;
+  const ph = PHASES[phase];
+  const t = phase >= 2 ? timing(phase, date) : null;
+  let html = '<article class="rcard" id="' + id + '" data-name="' + esc(name.toLowerCase()) + '">';
+  html += "<h3>" + (isNew ? '<span class="newtag">New</span>' : "") + esc(name) + "</h3>";
+  if (isNew) html += '<p class="sub">First-time product · not yet in the shop</p>';
+  html += '<div class="status"><span class="pill ' + ph.pill + '">' + ph.label + "</span>";
+  html += phase === 1 ? "<span>Est.: <b>not yet scheduled</b></span>" : "<span>Est.: <b>" + t.est + "</b></span>";
+  html += "</div>";
+  // An item flagged "available to order" in data.js (not counted at 0) can still be ordered today
+  if (item && !item.soldOut && !item.stock) html += '<p class="orderable">You can still <a href="product.html?p=' + item.slug + '">order it today</a>. It ships with the next batch, in about 4 weeks.</p>';
+  html += isNew
+    ? trackHtml(phase - 2, ["Ordered, on the way", "Arrived, in testing", "Launching"])
+    : trackHtml(phase - 1, ["Reorder pending", "Ordered, on the way", "Arrived, in testing", "Back in stock"]);
+  if (t) {
+    html += '<div class="timing ' + ph.pill + '"><div class="row"><span>' + t.since + "</span><b>" + t.est + "</b></div>" +
+      '<div class="bar"><span style="width:' + Math.round(t.fill * 100) + '%"></span></div></div>';
+  }
+  html += isNew
+    ? '<p class="foot-note" style="margin-top:0;">We\'ll announce it in the shop the day it launches.</p>'
+    : notifyFormHTML({ id: id }, "Want an email when it's back?");
+  return html + "</article>";
+}
+
+const grid = document.getElementById("restock-grid");
+function render() {
+  // Keep any form someone is typing into, and any "you're on the list" note
+  const typed = {};
+  grid.querySelectorAll("form.notify-form").forEach(f => { if (f.email.value) typed[f.dataset.item] = f.email.value; });
+  const done = Array.from(grid.querySelectorAll(".notify-thanks")).map(n => n.closest(".rcard").id);
+
+  // Vials and supplies only: a kit follows its vial, so the vial's card
+  // speaks for both (and says so when a kit exists).
+  const out = CATALOG.filter(c => !c.isStack && !c.isKit && (c.soldOut || !c.stock))
+    // Phase 3 first, then 2, then 1; A to Z inside each
+    .sort((a, b) => ((b.restockPhase || 1) - (a.restockPhase || 1)) || (a.name + a.size).localeCompare(b.name + b.size));
+  grid.innerHTML = out.map(c => cardHtml(c.id, c.name + " " + c.size + (kitFor(c) ? " · and its kit" : ""), c.restockPhase || 1, c.restockDate, false, c)).join("");
+  document.getElementById("restock-none").hidden = out.length > 0;
+
+  Object.keys(typed).forEach(id => { const f = grid.querySelector('form[data-item="' + id + '"]'); if (f) f.email.value = typed[id]; });
+  done.forEach(id => { const f = grid.querySelector('#' + CSS.escape(id) + ' form.notify-form'); if (f) f.outerHTML = '<p class="notify-thanks">You\'re on the list. One email when it\'s back, nothing else.</p>'; });
+  applySearch();
+  jumpToHash();
+}
+// Deep link from a product or shop card (restock.html#example-10mg):
+// scroll so the card sits just under the sticky header, and do it again
+// after live counts redraw the grid so the card doesn't drift.
+function jumpToHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return;
+  const card = document.getElementById(id);
+  if (!card) return;
+  const header = document.querySelector(".sticky-stack");
+  const top = card.getBoundingClientRect().top + window.scrollY - ((header ? header.offsetHeight : 0) + 16);
+  window.scrollTo({ top: top, behavior: "auto" });
+}
+render();
+document.addEventListener("store-stock", render);
+window.addEventListener("hashchange", jumpToHash);
+window.addEventListener("load", () => setTimeout(jumpToHash, 50));
+
+if (COMING.length) {
+  document.getElementById("coming").hidden = false;
+  document.getElementById("coming-grid").innerHTML = COMING.map(c =>
+    cardHtml("new-" + slugify(String(c.name)), String(c.name), c.phase, c.date, true, null)).join("");
+}
+
+// Search filters the cards by name
+function applySearch() {
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  let shown = 0;
+  grid.querySelectorAll(".rcard").forEach(c => { const hit = !q || c.dataset.name.includes(q); c.hidden = !hit; if (hit) shown++; });
+  document.getElementById("restock-empty").hidden = shown > 0 || grid.children.length === 0;
+}
+document.getElementById("search").addEventListener("input", applySearch);
+</script>
+
+</body>
+</html>

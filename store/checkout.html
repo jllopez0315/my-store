@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- settings.js first: every other script reads from it -->
+<script src="settings.js"></script>
+<script>
+/* ---------- Research-use consent check ----------
+   Runs in the visitor's browser before anything else on the page. If
+   this device has not accepted the research-use notice for the current
+   terms version (SETTINGS.termsVersion), the visitor is sent to
+   gate.html, which sends them back here once both boxes are ticked.
+   The same small script sits at the top of every page except gate.html
+   and legal.html (the terms must be readable before accepting them). */
+(function () {
+  var key = "store_consent_" + SETTINGS.termsVersion;
+  var ok = false;
+  try { ok = !!(localStorage.getItem(key) || sessionStorage.getItem(key)); } catch (e) {}
+  if (ok) return;
+  var here = location.pathname.split("/").pop() + location.search + location.hash;
+  location.replace("gate.html?return=" + encodeURIComponent(here || "index.html"));
+})();
+</script>
+<!-- The look (dark or light, fonts, colors): applied before the page paints -->
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Search engines are asked to stay out: the store is reached by link
+     only. To be listed on Google, delete this line on every page and
+     change robots.txt to "Allow: /". -->
+<meta name="robots" content="noindex, nofollow">
+<title>Checkout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- All three font pairs load here; settings.js picks which one shows -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<style>
+/* ============================================================
+   CHECKOUT styles. The cart itself lives in cart.js; product data
+   lives in data.js; shipping rates and payment handles live in
+   settings.js. Submitting sends the order to /api/order (see
+   _worker.js), which emails the owner and the buyer.
+   ============================================================ */
+main { max-width: 700px; margin: 0 auto; padding: var(--sp-lg) 20px var(--sp-xl); }
+
+.intro { text-align: center; margin-bottom: 30px; }
+.intro h1 { font-size: var(--fs-h2); color: var(--brand-dark); margin-bottom: 10px; }
+.intro p { font-size: 15px; color: var(--ink-soft); max-width: 52ch; margin: 0 auto; }
+
+h2.section { font-size: 24px; color: var(--brand-dark); padding-bottom: 10px; border-bottom: 1px solid var(--ink); margin: 44px 0 18px; scroll-margin-top: 230px; }
+p.section-sub { font-size: 13px; color: var(--ink-mute); margin-bottom: 12px; }
+
+/* Order review: one line per cart item */
+.review-empty { text-align: center; color: var(--ink-mute); padding: 26px 10px; font-size: 14.5px; border: 1px dashed var(--line); border-radius: 10px; }
+.review-empty a { font-weight: 600; }
+
+/* Order bumps */
+.bump { display: none; margin: 16px 0 0; padding: 12px 14px; background: var(--surface); border: 1px solid var(--brand); border-radius: 10px; font-size: 14px; line-height: 1.55; }
+.bump.show { display: block; }
+.bump .bump-title { font-size: 15px; font-weight: 700; color: var(--brand-dark); margin-bottom: 4px; }
+.bump .bump-note { font-size: 13px; color: var(--ink-mute); margin-bottom: 8px; }
+.bump label + label { margin-top: 8px; }
+.bump label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-weight: 600; color: var(--brand-dark); }
+.bump input { margin-top: 2px; width: 17px; height: 17px; accent-color: var(--brand); flex-shrink: 0; }
+
+/* Shipping speed */
+.ship-speed { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-top: 20px; }
+.ship-speed-label { font-size: 13px; font-weight: 600; color: var(--brand-dark); margin-bottom: 6px; }
+.ship-us-note { font-weight: 400; color: var(--ink-mute); }
+.ship-opt { display: flex; gap: 10px; align-items: center; padding: 6px 0; font-size: 14px; cursor: pointer; }
+.pickup-row { margin: 20px 0 0; }
+
+/* Totals */
+.totals { margin-top: 18px; }
+.totals .row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 15px; }
+.totals .row.grand { border-top: 2px solid var(--accent); margin-top: 8px; padding-top: 12px; font-size: 19px; font-weight: 700; color: var(--brand-dark); }
+.ship-nudge { display: none; margin-top: 4px; font-size: 13px; color: var(--brand-dark); text-align: right; }
+.ship-nudge.show { display: block; }
+.order-in-note { display: none; margin-top: 14px; padding: 12px 14px; background: #FBF3E6; border: 1px solid #EAD8B6; border-radius: 6px; font-size: 13px; color: #7A5A22; line-height: 1.5; }
+.order-in-note.show { display: block; }
+
+/* Form fields */
+label.field { display: block; margin-bottom: 16px; }
+label.field span { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: var(--brand-dark); }
+input[type="text"], input[type="email"], input[type="tel"], textarea {
+  width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 6px;
+  font-family: inherit; font-size: 15px; background: var(--surface); color: var(--ink);
+}
+textarea { resize: vertical; }
+input:focus, textarea:focus { outline: 2px solid var(--brand); border-color: var(--brand); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+.three-col { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0 14px; }
+@media (max-width: 480px) { .two-col, .three-col { grid-template-columns: 1fr; } }
+
+/* Agreements */
+.agree { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; font-size: 14px; }
+.agree input { margin-top: 4px; width: 17px; height: 17px; accent-color: var(--brand); flex-shrink: 0; }
+.agree a { color: var(--brand); }
+.initials-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.initials-row label { font-size: 13px; font-weight: 600; color: var(--brand-dark); }
+.initials-row input { width: 90px; height: auto; margin-top: 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; font-family: inherit; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; text-align: center; background: #fff; }
+
+/* Submit */
+.submit-btn { width: 100%; margin-top: 24px; padding: 16px; background: var(--brand); color: var(--cream); border: none; border-radius: 8px; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; }
+.submit-btn:hover { background: var(--brand-dark); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.form-error { display: none; margin-top: 14px; padding: 12px 16px; background: #FBEAE5; border: 1px solid #E0B4A6; border-radius: 8px; color: #7C2D12; font-size: 14px; }
+
+/* Confirmation screens */
+#confirmation, #request-confirmation { display: none; }
+.confirm-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 28px; margin-top: 24px; }
+.confirm-total { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 34px; color: var(--brand-dark); text-align: center; margin: 10px 0 4px; }
+.confirm-note { text-align: center; font-size: 14px; color: var(--ink-soft); margin-bottom: 18px; }
+/* Payment note instruction. Sits above the payment handles so it is read
+   before the customer opens their payment app, not after. */
+.pay-note { background: rgba(176, 141, 87, 0.12); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; padding: 14px 16px; margin-bottom: 20px; }
+.pay-note strong { display: block; color: var(--brand-dark); font-size: 14.5px; margin-bottom: 4px; }
+.pay-note span { display: block; font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+.pay-method { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-top: 1px solid var(--hairline); font-size: 15px; }
+.pay-method .method { font-weight: 700; color: var(--brand-dark); }
+.pay-method .handle { text-align: right; }
+.fine-print { font-size: 13px; color: var(--ink-mute); margin-top: 20px; text-align: center; }
+/* The "Pay now" button, shown only when settings.js has a hostedCheckoutUrl */
+.pay-now { display: none; text-align: center; margin-bottom: 18px; }
+.pay-now.show { display: block; }
+.pay-now .btn { width: 100%; text-align: center; }
+.pay-now p { font-size: 13px; color: var(--ink-mute); margin-top: 10px; }
+/* The short line shown beside the local pickup box (settings.js pickupNote) */
+.pickup-note { display: block; font-weight: 400; color: var(--ink-mute); font-size: 13px; margin-top: 2px; }
+/* Sending state */
+.submit-btn.sending { opacity: 0.7; cursor: progress; }
+
+/* ---------- Sign in to order ----------
+   Shown instead of the order form until the buyer has verified their
+   email with a six-digit code (SETTINGS.rules.requireSignInToOrder).
+   The form itself stays hidden until then. */
+.signin { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 28px; max-width: 460px; margin: 0 auto; }
+.signin h2 { font-size: 24px; color: var(--brand-dark); margin-bottom: 8px; }
+.signin p.lead { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 18px; line-height: 1.55; }
+.signin .btn { width: 100%; text-align: center; margin-top: 4px; }
+.signin .btn:disabled { opacity: 0.6; cursor: progress; }
+.signin input[name="signin_code"] { font-family: 'Jost', sans-serif; font-size: 24px; letter-spacing: 0.3em; text-align: center; }
+.signin .sent-to { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 14px; line-height: 1.55; }
+.signin .sent-to strong { color: var(--brand-dark); }
+.signin .resend { display: block; margin-top: 14px; font-size: 13.5px; text-align: center; color: var(--brand); }
+.signin .resend.wait { color: var(--ink-mute); pointer-events: none; text-decoration: none; }
+.signin .cart-kept { font-size: 13px; color: var(--ink-mute); text-align: center; margin-top: 18px; }
+.signin .demo-note { margin-top: 14px; padding: 10px 12px; background: #FBF3E6; border: 1px solid #EAD8B6; border-radius: 6px; font-size: 13px; color: #7A5A22; text-align: center; }
+.signin .form-error { margin-top: 12px; }
+/* The "Signed in as" line above the order form */
+.signed-in { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 14px; color: var(--ink-soft); padding: 12px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 24px; }
+.signed-in strong { color: var(--brand-dark); word-break: break-all; }
+.signed-in a { color: var(--brand); font-size: 13.5px; white-space: nowrap; }
+input[readonly] { background: var(--hairline); color: var(--ink-soft); }
+/* The hidden attribute always wins, even on flex boxes (the sign-in
+   panel, the "Signed in as" line, and the pickup row rely on it) */
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER + NAV (shared across pages) ============ -->
+<!-- The wordmark band and the nav travel together as one sticky
+     block, so both stay in view while the page scrolls. The words in
+     the wordmark are filled in from settings.js (brand.name and
+     brand.sub) by cart.js. -->
+<div class="sticky-stack">
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Home">
+    <span class="wm-name"></span>
+    <span class="wm-sub"><i></i><b></b><i></i></span>
+  </a>
+</header>
+<nav class="site-nav">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html">Contact</a>
+</nav>
+</div>
+
+<main>
+
+  <div id="order-section">
+    <div class="intro">
+      <h1>Checkout</h1>
+      <p>Review your order, choose shipping, and tell us where to send it. Payment details appear after you submit.</p>
+    </div>
+
+    <!-- ============ SIGN IN TO ORDER ============
+         Shown first when SETTINGS.rules.requireSignInToOrder is true.
+         Step 1: email in, "Send my code". Step 2: the six digits in,
+         "Verify". The order form below stays hidden until the code
+         checks out. The code is checked by _worker.js (/api/auth/...),
+         or in this page alone when SETTINGS.rules.demoSignIn is true. -->
+    <div class="signin" id="signin-panel" hidden>
+      <h2>Sign in to order</h2>
+      <p class="lead">We send a six-digit code to your email. No password.</p>
+      <div id="signin-step-email">
+        <label class="field"><span>Email</span><input type="email" name="signin_email" autocomplete="email" required></label>
+        <button type="button" class="btn" id="signin-send">Send my code</button>
+      </div>
+      <div id="signin-step-code" hidden>
+        <p class="sent-to">We sent a code to <strong id="signin-sent-to"></strong>. It is valid for 10 minutes.</p>
+        <label class="field"><span>Six-digit code</span><input type="text" name="signin_code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000"></label>
+        <button type="button" class="btn" id="signin-verify">Verify</button>
+        <a href="#" class="resend wait" id="signin-resend">Send a new code</a>
+      </div>
+      <div class="demo-note" id="signin-demo-note" hidden>Demo: any six digits work here.</div>
+      <div class="form-error" id="signin-error"></div>
+      <p class="cart-kept">Your cart is saved. It will be waiting once you are signed in.</p>
+    </div>
+
+    <!-- "Signed in as" line, shown above the order form once verified -->
+    <div class="signed-in" id="signed-in" hidden>
+      <span>Signed in as <strong id="signed-in-email"></strong></span>
+      <a href="#" id="signin-out">Not you? Sign out</a>
+    </div>
+
+    <form id="order-form">
+
+      <!-- ============ 1. YOUR ORDER (from the cart) ============ -->
+      <h2 class="section" style="margin-top:0;">Your order</h2>
+      <div id="review"><!-- Cart lines are drawn here by JavaScript --></div>
+
+      <!-- Order bumps: shown by JavaScript only when they fit the cart -->
+      <div class="bump" id="water-bump">
+        <p class="bump-title">Have enough BAC water?</p>
+        <p class="bump-note">Bacteriostatic water is sold separately. One click adds it to this order.</p>
+        <label><input type="checkbox" id="water-bump-box"><span id="water-bump-label">Add a 10mL vial of BAC water</span></label>
+        <label><input type="checkbox" id="water-kit-bump-box"><span id="water-kit-bump-label">Add the 10-vial BAC water kit</span></label>
+      </div>
+
+      <!-- ============ 2. REQUEST (optional) ============ -->
+      <h2 class="section" id="request">Don't see what you want?</h2>
+      <p class="section-sub">Write in what you're looking for (compound, size, quantity). There's no charge for a request. You can submit a request on its own, with nothing in the cart.</p>
+      <label class="field">
+        <textarea name="custom_request" rows="3" placeholder="Example: 2 vials of GHRH-TS 10mg, or anything not listed."></textarea>
+      </label>
+
+      <!-- ============ 3. SHIPPING ============ -->
+      <div class="ship-speed">
+        <p class="ship-speed-label">Shipping speed <span class="ship-us-note">&middot; US only</span></p>
+        <label class="ship-opt">
+          <input type="radio" name="shipping_speed" value="Standard (5-8 days)" checked>
+          <span><strong>Standard</strong> &middot; 5-8 days &middot; <span id="rate-standard"></span></span>
+        </label>
+        <label class="ship-opt">
+          <input type="radio" name="shipping_speed" value="Expedited (3-5 days)">
+          <span><strong>Expedited</strong> &middot; 3-5 days &middot; <span id="rate-expedited"></span></span>
+        </label>
+        <label class="ship-opt">
+          <input type="radio" name="shipping_speed" value="Overnight (1 business day)">
+          <span><strong>Overnight</strong> &middot; 1 business day &middot; <span id="rate-overnight"></span></span>
+        </label>
+      </div>
+
+      <!-- Local pickup: checking this drops shipping to $0. Shown only
+           when shipping.pickupEnabled is true in settings.js. -->
+      <label class="agree pickup-row" id="pickup-row" hidden>
+        <input type="checkbox" name="local_pickup" value="Yes, local pickup" id="pickup-box">
+        <span>I'm local and will pick up my order (free shipping).<span class="pickup-note" id="pickup-note"></span></span>
+      </label>
+
+      <div class="totals">
+        <div class="row"><span>Subtotal</span><span id="subtotal">$0</span></div>
+        <div class="row"><span>Shipping</span><span id="shipping">$0</span></div>
+        <div class="row grand"><span>Total</span><span id="total">$0</span></div>
+      </div>
+      <div class="ship-nudge" id="ship-nudge"></div>
+      <div class="order-in-note" id="order-in-note">
+        Your order includes an item that's not in stock yet. Everything in stock ships right away. The available-to-order item ships separately as soon as it comes in, at no extra shipping cost.
+      </div>
+
+      <!-- ============ 4. YOUR INFORMATION ============ -->
+      <h2 class="section">Your information</h2>
+      <div class="two-col">
+        <label class="field"><span>Full name</span><input type="text" name="name" required autocomplete="name"></label>
+        <label class="field"><span>Email</span><input type="email" name="email" required autocomplete="email"></label>
+      </div>
+      <label class="field"><span>Phone number</span><input type="tel" name="phone" required autocomplete="tel"></label>
+      <label class="field"><span>Street address</span><input type="text" name="street" required autocomplete="street-address"></label>
+      <div class="three-col">
+        <label class="field"><span>City</span><input type="text" name="city" required autocomplete="address-level2"></label>
+        <label class="field"><span>State</span><input type="text" name="state" required autocomplete="address-level1"></label>
+        <label class="field"><span>ZIP</span><input type="text" name="zip" required autocomplete="postal-code"></label>
+      </div>
+      <label class="field"><span>Who referred you? (optional)</span><input type="text" name="referral"></label>
+      <!-- Optional note: special requests. -->
+      <label class="field"><span>Note (optional)</span>
+        <textarea name="note" rows="2" placeholder="Anything we should know about this order."></textarea>
+      </label>
+
+      <!-- ============ 5. AGREEMENTS ============ -->
+      <h2 class="section">Agreements</h2>
+      <label class="agree">
+        <input type="checkbox" name="purchaser_attestation" value="Certified: 21+, lawful research use only, not for human or animal consumption, terms accepted" required>
+        <span>I certify that I am at least 21 years of age and that any products purchased will be used strictly for lawful research and laboratory purposes only. I understand and agree that these products are not for human or animal consumption and not for diagnostic, therapeutic, or clinical use. I have read and agree to the <a href="legal.html" target="_blank">Terms, Disclaimer, and Privacy Policy</a>. All sales are final.</span>
+      </label>
+      <div class="agree" style="display:block;">
+        <div class="initials-row">
+          <label for="attestation-initials">Type your initials to sign:</label>
+          <input type="text" id="attestation-initials" name="attestation_initials" maxlength="4" required autocomplete="off" placeholder="AB">
+        </div>
+      </div>
+      <!-- Email updates: ticked by default; sent to the owner as emailUpdates -->
+      <label class="agree">
+        <input type="checkbox" name="email_updates" id="email-updates" checked>
+        <span>Keep me posted on restocks and sales. Untick to opt out.</span>
+      </label>
+
+      <button type="submit" class="submit-btn" id="submit-btn">Submit Order</button>
+      <div class="form-error" id="form-error"></div>
+      <p class="fine-print">We accept <span class="js-pay-methods"></span>.<br>Payment details appear after you submit your order.</p>
+    </form>
+  </div>
+
+  <!-- ============ CONFIRMATION (hidden until the order is submitted) ============ -->
+  <div id="confirmation">
+    <div class="intro">
+      <h1>Thank You For Your Order</h1>
+      <p>One last step. Your order ships once payment is received.</p>
+    </div>
+    <div class="confirm-card">
+      <p style="text-align:center; font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink-mute);">Amount Due</p>
+      <div class="confirm-total" id="confirm-total">$0</div>
+      <p class="confirm-note" id="confirm-how">Send payment using any option below.</p>
+      <!-- "Pay now": shown only when settings.js has a hostedCheckoutUrl -->
+      <div class="pay-now" id="pay-now">
+        <a class="btn" id="pay-now-link" href="#" target="_blank" rel="noopener">Pay now</a>
+        <p>Opens your payment page in a new tab.</p>
+      </div>
+      <!-- Payment note and handles are filled in from settings.js (payment section) -->
+      <div class="pay-note" id="pay-note">
+        <strong id="pay-note-text"></strong>
+      </div>
+      <div id="pay-methods"></div>
+      <!-- Shown only when the server confirms the receipt email went out -->
+      <p class="confirm-note" id="receipt-line" style="display:none; margin-top:16px;">We emailed you a copy. Check spam if you don't see it.</p>
+    </div>
+    <p class="fine-print">Questions? Email us at <a class="js-email" href="#" style="color:var(--brand);"></a>.</p>
+  </div>
+
+  <!-- ============ REQUEST CONFIRMATION (a request with nothing in the cart) ============ -->
+  <div id="request-confirmation">
+    <div class="intro">
+      <h1>Request Received</h1>
+      <p>Thanks for your request. We'll reply with availability and pricing.</p>
+    </div>
+    <p class="fine-print">Questions in the meantime? Email us at <a class="js-email" href="#" style="color:var(--brand);"></a>.</p>
+  </div>
+
+</main>
+
+<!-- ============ FOOTER (shared across pages) ============ -->
+<footer class="site-footer">
+  <div class="foot-links">
+    <a href="shop.html">Shop</a>
+    <a href="lab.html">Lab Results</a>
+    <a href="legal.html#terms">Terms</a>
+    <a href="legal.html#disclaimer">Disclaimer</a>
+    <a href="legal.html#privacy">Privacy</a>
+  </div>
+  <!-- Brand name and location are filled in from settings.js -->
+  <div class="foot-place js-brand-place"></div>
+  <div class="foot-ruo">For Research Use Only</div>
+  <div class="foot-legal">All compounds are intended for laboratory research purposes only. Not for human or veterinary consumption. All sales are final.</div>
+  <div class="foot-credit">Built with the Store Kit</div>
+</footer>
+
+<script src="data.js"></script>
+<script src="cart.js"></script>
+<script>
+/* ============================================================
+   Checkout logic. Reads the cart from cart.js, works out shipping
+   and totals, checks the form, sends the order to /api/order, and
+   shows the confirmation screen with the payment details from
+   settings.js. Nothing here needs editing for price, stock, rate,
+   or handle changes; those live in data.js and settings.js.
+   ============================================================ */
+
+/* ---------- 1. Order review (the cart, editable) ---------- */
+const reviewEl = document.getElementById("review");
+function renderReview() {
+  const lines = cartLines();
+  if (lines.length === 0) {
+    reviewEl.innerHTML = '<p class="review-empty">Your cart is empty. <a href="shop.html">Browse the collection</a>, or write in a request below.</p>';
+  } else {
+    reviewEl.innerHTML = lines.map(l => {
+      const it = l.item;
+      const thumb = lineThumbHTML(it);
+      const note = lineShipNote(it, l.qty);
+      return '<div class="cart-line">' +
+        '<div class="thumb">' + thumb + "</div>" +
+        '<div class="info"><div class="name">' + esc(it.name) + "</div>" +
+          '<div class="sub">' + (it.isStack ? esc(it.detail) : esc(it.size)) + " · $" + it.price + " each</div>" +
+          (note ? '<div class="note">' + note + "</div>" : "") +
+          '<div class="qty" style="margin-top:8px;"><button type="button" data-id="' + it.id + '" data-d="-1" aria-label="Remove one">&minus;</button><span class="count">' + l.qty + '</span><button type="button" data-id="' + it.id + '" data-d="1" aria-label="Add one">+</button></div>' +
+        "</div>" +
+        '<div class="right"><span class="line-price">$' + (it.price * l.qty) + '</span><button type="button" class="remove" data-id="' + it.id + '" data-remove="1">Remove</button></div>' +
+      "</div>";
+    }).join("");
+  }
+  updateTotals();
+}
+reviewEl.addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  if (btn.dataset.d) cartSetQty(btn.dataset.id, cartQty(btn.dataset.id) + Number(btn.dataset.d));
+  if (btn.dataset.remove) cartRemove(btn.dataset.id);
+  renderReview();
+});
+
+/* ---------- 2. Totals ---------- */
+function isPickup() { return SETTINGS.shipping.pickupEnabled && document.getElementById("pickup-box").checked; }
+function shippingChoice() { return document.querySelector('input[name="shipping_speed"]:checked').value; }
+function shippingCost() {
+  const sub = cartSubtotal();
+  if (sub === 0 || isPickup()) return 0;
+  const choice = shippingChoice();
+  if (choice.startsWith("Overnight")) return OVERNIGHT_COST;
+  if (choice.startsWith("Expedited")) return EXPEDITED_COST;
+  return sub >= FREE_SHIPPING_OVER ? 0 : SHIPPING_FLAT;
+}
+function orderTotal() { const sub = cartSubtotal(); return sub > 0 ? sub + shippingCost() : 0; }
+function cartHasOrderIn() { return cartLines().some(l => !l.item.stock || (l.item.left && l.qty > l.item.left)); }
+
+function updateTotals() {
+  const sub = cartSubtotal();
+  document.getElementById("subtotal").textContent = "$" + sub;
+  document.getElementById("shipping").textContent =
+    (sub > 0 && isPickup()) ? "Pickup" : (sub > 0 && shippingCost() === 0) ? "Free" : "$" + shippingCost();
+  document.getElementById("total").textContent = "$" + orderTotal();
+  document.getElementById("order-in-note").classList.toggle("show", cartHasOrderIn());
+  const nudge = document.getElementById("ship-nudge");
+  const away = FREE_SHIPPING_OVER - sub;
+  // Only Standard is ever waived, so the nudge stays hidden on Expedited
+  // and Overnight rather than promising a discount that can't happen.
+  const onStandard = !shippingChoice().startsWith("Overnight") && !shippingChoice().startsWith("Expedited");
+  const showNudge = sub > 0 && away > 0 && !isPickup() && onStandard;
+  nudge.textContent = showNudge ? "Add $" + away + " more for free standard shipping." : "";
+  nudge.classList.toggle("show", showNudge);
+  updateBumps();
+}
+document.getElementById("pickup-box").addEventListener("change", updateTotals);
+document.querySelectorAll('input[name="shipping_speed"]').forEach(r => r.addEventListener("change", updateTotals));
+
+// Shipping rates on the labels come from settings.js, so changing a rate
+// or the free-shipping threshold there updates what the customer reads here.
+document.getElementById("rate-standard").textContent =
+  "$" + SHIPPING_FLAT + ", free over $" + FREE_SHIPPING_OVER;
+document.getElementById("rate-expedited").textContent = "$" + EXPEDITED_COST;
+document.getElementById("rate-overnight").textContent = "$" + OVERNIGHT_COST;
+// Local pickup row: only when settings.js switches it on
+if (SETTINGS.shipping.pickupEnabled) {
+  document.getElementById("pickup-row").hidden = false;
+  document.getElementById("pickup-note").textContent = SETTINGS.shipping.pickupNote || "";
+}
+
+/* ---------- 3. Order bumps ---------- */
+const WATER = CATALOG.find(c => c.name === "Bacteriostatic Water" && c.category === "supply");
+const WATER_KIT = CATALOG.find(c => c.name === "Bacteriostatic Water" && c.isKit);
+// Prices on the bump come from data.js so they never drift from the shop.
+if (WATER) document.getElementById("water-bump-label").textContent = "Add a 10mL vial of BAC water ($" + WATER.price + ")";
+if (WATER_KIT) document.getElementById("water-kit-bump-label").textContent = "Add the 10-vial BAC water kit ($" + WATER_KIT.price + ")";
+// "Have enough BAC water?" shows whenever any compound (vial, kit, or set)
+// is in the cart. It stays visible once water is added so the boxes can
+// be unticked.
+function waterBumpRelevant() {
+  return cartLines().some(l => {
+    const p = l.item;
+    return p.name !== "Bacteriostatic Water";
+  });
+}
+function updateBumps() {
+  document.getElementById("water-bump").classList.toggle("show", waterBumpRelevant());
+  document.getElementById("water-bump-box").checked = WATER && cartQty(WATER.id) > 0;
+  document.getElementById("water-kit-bump-box").checked = WATER_KIT && cartQty(WATER_KIT.id) > 0;
+}
+function wireBump(boxId, item) {
+  document.getElementById(boxId).addEventListener("change", e => {
+    if (!item) return;
+    cartSetQty(item.id, e.target.checked ? Math.max(1, cartQty(item.id)) : 0);
+    renderReview();
+  });
+}
+wireBump("water-bump-box", WATER);
+wireBump("water-kit-bump-box", WATER_KIT);
+
+/* ---------- 4. Payment details on the confirmation screen ----------
+   Everything here comes from the payment section of settings.js:
+   the note, the methods that have a handle, and the optional
+   "Pay now" link to a hosted payment page. */
+function paymentMethods() {
+  return (SETTINGS.payment.methods || [])
+    .filter(m => m && m.handle && String(m.handle).trim())
+    .map(m => ({ method: String(m.method), handle: String(m.handle).trim() }));
+}
+function renderPayment() {
+  const methods = paymentMethods();
+  const url = String(SETTINGS.payment.hostedCheckoutUrl || "").trim();
+  const hosted = /^https:\/\//i.test(url);
+  if (hosted) {
+    document.getElementById("pay-now-link").href = url;
+    document.getElementById("pay-now").classList.add("show");
+  }
+  document.getElementById("confirm-how").textContent =
+    hosted && methods.length ? "Pay now, or send payment using any option below."
+    : hosted ? "Press Pay now to complete your payment."
+    : methods.length ? "Send payment using any option below."
+    : "We will email you with payment instructions.";
+  const note = String(SETTINGS.payment.note || "").trim();
+  document.getElementById("pay-note-text").textContent = note;
+  document.getElementById("pay-note").style.display = note && methods.length ? "" : "none";
+  document.getElementById("pay-methods").innerHTML = methods.map(m =>
+    '<div class="pay-method"><span class="method">' + esc(m.method) + '</span><span class="handle">' + esc(m.handle) + "</span></div>").join("");
+}
+
+/* ---------- 5. Submit ----------
+   The browser checks the required fields, the attestation box, and the
+   initials before this runs. Then:
+   1. The order is packed into one JSON object (see buildOrder).
+   2. It is POSTed to /api/order on this same site. _worker.js receives
+      it, emails the owner and the buyer, and saves it if a database is
+      set up. A failed send is retried once.
+   3. Whatever the server says, the buyer sees the confirmation screen
+      with the payment details. The "We emailed you a copy" line shows
+      only when the server confirms the receipt went out. The payment
+      instructions are never hidden by a server problem. */
+function buildOrder(form, customRequest) {
+  const v = name => (form.querySelector('[name="' + name + '"]').value || "").trim();
+  const lines = cartLines();
+  return {
+    customer: { name: v("name"), email: v("email"), phone: v("phone"),
+      street: v("street"), city: v("city"), state: v("state"), zip: v("zip") },
+    items: lines.map(l => ({
+      label: itemLabel(l.item),
+      qty: l.qty,
+      each: l.item.price,
+      note: [l.item.isStack ? l.item.detail : "", lineShipNote(l.item, l.qty)].filter(Boolean).join(" · ")
+    })),
+    subtotal: cartSubtotal(),
+    shippingChoice: isPickup() ? "Local pickup" : shippingChoice(),
+    shippingCost: shippingCost(),
+    pickup: isPickup(),
+    total: orderTotal(),
+    request: customRequest,
+    referral: v("referral"),
+    note: v("note"),
+    attestedAt: new Date().toISOString(),
+    initials: v("attestation_initials").toUpperCase(),
+    termsVersion: TERMS_VERSION,
+    emailUpdates: document.getElementById("email-updates").checked,
+    // For the receipt email. The worker cannot read settings.js, so the
+    // store name, contact address, and payment details travel with the order.
+    storeName: brandFull(),
+    contactEmail: SETTINGS.brand.contactEmail,
+    payment: {
+      methods: paymentMethods(),
+      note: String(SETTINGS.payment.note || ""),
+      hostedCheckoutUrl: String(SETTINGS.payment.hostedCheckoutUrl || "")
+    }
+  };
+}
+
+// POST the order. Resolves to the server's JSON reply, or null when the
+// server could not be reached after one retry. Never throws.
+async function sendOrder(order) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order)
+      });
+      if (res.ok) return await res.json();
+      // A 4xx reply means the server read the order and refused it; a
+      // retry would get the same answer, so stop and report.
+      if (res.status >= 400 && res.status < 500) return await res.json().catch(() => ({ ok: false }));
+    } catch (err) {
+      // Network error (offline, or the function is not deployed yet): try once more
+    }
+  }
+  return null;
+}
+
+document.getElementById("order-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("form-error");
+  errorEl.style.display = "none";
+
+  const form = e.target;
+  const customRequest = (form.querySelector('[name="custom_request"]').value || "").trim();
+  const isRequestOnly = cartSubtotal() === 0;
+  if (isRequestOnly && customRequest === "") {
+    errorEl.textContent = "Your cart is empty. Add something from the shop, or write in a request, before submitting.";
+    errorEl.style.display = "block";
+    return;
+  }
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true; btn.classList.add("sending"); btn.textContent = "Sending";
+
+  const order = buildOrder(form, customRequest);
+  const reply = await sendOrder(order);
+
+  // The server wants a sign-in first (the cookie expired, or the buyer
+  // signed out in another tab): back to the sign-in panel, cart kept.
+  if (reply && reply.needSignIn) {
+    btn.disabled = false; btn.classList.remove("sending"); btn.textContent = "Submit Order";
+    showSignInPanel("Your sign-in has expired. Sign in again to place the order. Your cart is still here.");
+    window.scrollTo({ top: 0 });
+    return;
+  }
+
+  // Show the confirmation whatever the server said
+  cartClear();
+  document.getElementById("order-section").style.display = "none";
+  if (isRequestOnly) {
+    document.getElementById("request-confirmation").style.display = "block";
+  } else {
+    document.getElementById("confirm-total").textContent = "$" + order.total;
+    renderPayment();
+    if (reply && reply.ok && reply.receipt) document.getElementById("receipt-line").style.display = "block";
+    document.getElementById("confirmation").style.display = "block";
+  }
+  window.scrollTo({ top: 0 });
+});
+
+renderReview();
+
+/* ---------- 6. Sign in to order ----------
+   Rule: SETTINGS.rules.requireSignInToOrder (default on). When on, the
+   order form stays hidden behind the sign-in panel until the buyer's
+   email is verified with a six-digit code. Three ways this runs:
+   - Real store: the page talks to _worker.js (/api/auth/send, verify,
+     me, logout). A sign-in lasts 30 days in a cookie the worker sets.
+   - Demo store (SETTINGS.rules.demoSignIn true): no server at all. Any
+     six digits verify, a note says so, and the sign-in is remembered
+     for this browser tab (sessionStorage).
+   - Local preview or a host without the worker (/api/auth/me answers
+     404 or does not answer): the form shows without the panel so the
+     preview keeps working. A line is logged in the console. The same
+     happens when the worker has no AUTH_SECRET (it answers
+     available:false), because it would not enforce the rule anyway. */
+const SIGNIN_RULE = !!(SETTINGS.rules && SETTINGS.rules.requireSignInToOrder !== false);
+const SIGNIN_DEMO = !!(SETTINGS.rules && SETTINGS.rules.demoSignIn === true);
+const DEMO_SIGNIN_KEY = "store_demo_signin";
+const panelEl = document.getElementById("signin-panel");
+const formEl = document.getElementById("order-form");
+const signedInEl = document.getElementById("signed-in");
+const signinErrorEl = document.getElementById("signin-error");
+const emailField = formEl.querySelector('[name="email"]');
+let resendTimer = null;
+
+function signinError(msg) {
+  signinErrorEl.textContent = msg || "";
+  signinErrorEl.style.display = msg ? "block" : "none";
+}
+// The panel, at step 1 (email). An optional message shows above the cart line.
+function showSignInPanel(msg) {
+  formEl.hidden = true;
+  signedInEl.hidden = true;
+  panelEl.hidden = false;
+  document.getElementById("signin-step-email").hidden = false;
+  document.getElementById("signin-step-code").hidden = true;
+  document.getElementById("signin-demo-note").hidden = !SIGNIN_DEMO;
+  emailField.readOnly = false;
+  signinError(msg || "");
+}
+// The order form. With an email: prefilled, read-only, "Signed in as" above it.
+function showOrderForm(email) {
+  panelEl.hidden = true;
+  formEl.hidden = false;
+  if (email) {
+    emailField.value = email;
+    emailField.readOnly = true;
+    document.getElementById("signed-in-email").textContent = email;
+    signedInEl.hidden = false;
+  } else {
+    emailField.readOnly = false;
+    signedInEl.hidden = true;
+  }
+}
+// Step 2 of the panel: the code box, with the "Send a new code" link held for 45 seconds
+function showCodeStep(email) {
+  document.getElementById("signin-sent-to").textContent = email;
+  document.getElementById("signin-step-email").hidden = true;
+  document.getElementById("signin-step-code").hidden = false;
+  const codeBox = panelEl.querySelector('[name="signin_code"]');
+  codeBox.value = "";
+  codeBox.focus();
+  startResendWait(45);
+}
+function startResendWait(seconds) {
+  const link = document.getElementById("signin-resend");
+  clearInterval(resendTimer);
+  let left = seconds;
+  const tick = () => {
+    if (left > 0) { link.classList.add("wait"); link.textContent = "Send a new code (in " + left + "s)"; left--; }
+    else { clearInterval(resendTimer); link.classList.remove("wait"); link.textContent = "Send a new code"; }
+  };
+  tick();
+  resendTimer = setInterval(tick, 1000);
+}
+
+// One call to the worker's sign-in routes. Resolves to the JSON reply,
+// or { unavailable: true } when there is no worker to answer (404, a
+// non-JSON page, or a network error).
+async function authCall(action, body) {
+  try {
+    const res = await fetch("/api/auth/" + action, body
+      ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
+      : { method: "GET" });
+    if (res.status === 404) return { unavailable: true };
+    const type = res.headers.get("Content-Type") || "";
+    if (type.indexOf("json") === -1) return { unavailable: true };
+    return await res.json();
+  } catch (err) {
+    return { unavailable: true };
+  }
+}
+
+async function initSignIn() {
+  if (!SIGNIN_RULE) { showOrderForm(null); return; }
+  if (SIGNIN_DEMO) {
+    let remembered = "";
+    try { remembered = sessionStorage.getItem(DEMO_SIGNIN_KEY) || ""; } catch (e) {}
+    if (remembered) showOrderForm(remembered); else showSignInPanel("");
+    return;
+  }
+  // Real store: ask the worker who is signed in. The panel is held back
+  // while a returning buyer's cookie is checked, so it does not flash.
+  const hasUserCookie = /(^|;\s*)sk_user=/.test(document.cookie);
+  if (!hasUserCookie) showSignInPanel("");
+  const me = await authCall("me");
+  if (me.unavailable || me.available === false) {
+    console.log("Sign-in is not available here (no worker or no AUTH_SECRET), so the order form is shown directly.");
+    showOrderForm(null);
+    return;
+  }
+  if (me.ok && me.email) showOrderForm(me.email); else showSignInPanel("");
+}
+
+// "Send my code"
+async function sendCode() {
+  const emailBox = panelEl.querySelector('[name="signin_email"]');
+  const email = (emailBox.value || "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { signinError("Type the email address you want the code sent to."); emailBox.focus(); return; }
+  signinError("");
+  const btn = document.getElementById("signin-send");
+  btn.disabled = true; btn.textContent = "Sending";
+  if (SIGNIN_DEMO) {
+    btn.disabled = false; btn.textContent = "Send my code";
+    showCodeStep(email);
+    return;
+  }
+  const reply = await authCall("send", { email, storeName: brandFull() });
+  btn.disabled = false; btn.textContent = "Send my code";
+  if (reply.unavailable) { signinError("Sign-in is not available right now. Try again in a moment."); return; }
+  if (!reply.ok) { signinError(reply.error || "The code could not be sent. Try again."); return; }
+  showCodeStep(email);
+}
+// "Verify"
+async function verifyCode() {
+  const email = document.getElementById("signin-sent-to").textContent;
+  const codeBox = panelEl.querySelector('[name="signin_code"]');
+  const code = (codeBox.value || "").replace(/\D/g, "");
+  if (code.length !== 6) { signinError("Type all six digits from the email."); codeBox.focus(); return; }
+  signinError("");
+  const btn = document.getElementById("signin-verify");
+  btn.disabled = true; btn.textContent = "Checking";
+  if (SIGNIN_DEMO) {
+    try { sessionStorage.setItem(DEMO_SIGNIN_KEY, email); } catch (e) {}
+    btn.disabled = false; btn.textContent = "Verify";
+    showOrderForm(email);
+    return;
+  }
+  const reply = await authCall("verify", { email, code });
+  btn.disabled = false; btn.textContent = "Verify";
+  if (reply.unavailable) { signinError("Sign-in is not available right now. Try again in a moment."); return; }
+  if (!reply.ok) { signinError(reply.error || "That code did not match. Check the newest email, or send a new code."); codeBox.select(); return; }
+  showOrderForm(reply.email || email);
+}
+// "Send a new code": back to the send step with the same address
+async function resendCode(e) {
+  e.preventDefault();
+  if (document.getElementById("signin-resend").classList.contains("wait")) return;
+  const email = document.getElementById("signin-sent-to").textContent;
+  panelEl.querySelector('[name="signin_email"]').value = email;
+  await sendCode();
+}
+// "Not you? Sign out"
+async function signOut(e) {
+  e.preventDefault();
+  if (SIGNIN_DEMO) { try { sessionStorage.removeItem(DEMO_SIGNIN_KEY); } catch (err) {} }
+  else await authCall("logout", {});
+  emailField.value = "";
+  showSignInPanel("");
+}
+
+document.getElementById("signin-send").addEventListener("click", sendCode);
+document.getElementById("signin-verify").addEventListener("click", verifyCode);
+document.getElementById("signin-resend").addEventListener("click", resendCode);
+document.getElementById("signin-out").addEventListener("click", signOut);
+// Enter in the email box sends; Enter in the code box verifies
+panelEl.querySelector('[name="signin_email"]').addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); sendCode(); } });
+panelEl.querySelector('[name="signin_code"]').addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); verifyCode(); } });
+initSignIn();
+</script>
+
+</body>
+</html>

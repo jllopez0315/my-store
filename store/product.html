@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- settings.js first: every other script reads from it -->
+<script src="settings.js"></script>
+<script>
+/* ---------- Research-use consent check ----------
+   Runs in the visitor's browser before anything else on the page. If
+   this device has not accepted the research-use notice for the current
+   terms version (SETTINGS.termsVersion), the visitor is sent to
+   gate.html, which sends them back here once both boxes are ticked.
+   The same small script sits at the top of every page except gate.html
+   and legal.html (the terms must be readable before accepting them). */
+(function () {
+  var key = "store_consent_" + SETTINGS.termsVersion;
+  var ok = false;
+  try { ok = !!(localStorage.getItem(key) || sessionStorage.getItem(key)); } catch (e) {}
+  if (ok) return;
+  var here = location.pathname.split("/").pop() + location.search + location.hash;
+  location.replace("gate.html?return=" + encodeURIComponent(here || "index.html"));
+})();
+</script>
+<!-- The look (dark or light, fonts, colors): applied before the page paints -->
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Search engines are asked to stay out: the store is reached by link
+     only. To be listed on Google, delete this line on every page and
+     change robots.txt to "Allow: /". -->
+<meta name="robots" content="noindex, nofollow">
+<title>Product</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- All three font pairs load here; settings.js picks which one shows -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<style>
+/* ============================================================
+   PRODUCT PAGE styles. One template serves every item in the
+   catalog: product.html?p=slug reads its data from data.js.
+
+   This page is deliberately claims-free. It shows what the
+   compound is, what the lab measured, and how it's handled.
+   There is no benefits field anywhere in the data, so no
+   benefit language can appear here.
+   ============================================================ */
+main { max-width: 1060px; margin: 0 auto; padding: var(--sp-lg) 24px var(--sp-xl); }
+
+/* Top row: breadcrumb on the left, quick search beside it */
+.topbar { display: flex; align-items: center; justify-content: flex-start; gap: 28px; flex-wrap: wrap; margin-bottom: 30px; }
+.crumb { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; margin: 0; }
+.quick-search { position: relative; width: 100%; max-width: 280px; }
+.quick-search .box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+.quick-search .box:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(27, 42, 65, 0.12); }
+.quick-search svg { width: 16px; height: 16px; color: var(--brand-dark); flex-shrink: 0; }
+.quick-search input { flex: 1; border: none; outline: none; background: transparent; font-family: inherit; font-size: 14px; color: var(--ink); min-width: 0; }
+.quick-search .hits { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 30; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.08); overflow: hidden; display: none; }
+.quick-search .hits.show { display: block; }
+.quick-search .hits a { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; font-size: 14px; color: var(--ink); text-decoration: none; }
+.quick-search .hits a:hover, .quick-search .hits a.active { background: rgba(27, 42, 65, 0.07); }
+.quick-search .hits a span { color: var(--ink-mute); font-size: 13px; white-space: nowrap; }
+.quick-search .hits .all { border-top: 1px solid var(--line); color: var(--brand-dark); font-weight: 600; }
+@media (max-width: 560px) { .topbar { flex-direction: column; align-items: flex-start; } .quick-search { max-width: none; } }
+.crumb a { color: var(--ink-mute); text-decoration: none; }
+.crumb a:hover { color: var(--brand-dark); }
+.crumb span { color: var(--ink-mute); padding: 0 6px; }
+
+.product-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: var(--sp-lg); align-items: start; }
+@media (max-width: 760px) { .product-grid { grid-template-columns: 1fr; } }
+
+/* Picture plate: the vial floats gently in an ambient space, a cool
+   halo behind it and a soft brass floor beneath it. The vial itself is
+   drawn by vialSVG() in data.js, so there is no photo file to load. */
+.photo {
+  position: sticky; top: 110px;
+  border-radius: 14px; padding: 44px 20px 56px; text-align: center; overflow: hidden;
+  background:
+    radial-gradient(55% 45% at 50% 52%, rgba(78, 108, 158, 0.5), transparent 68%),
+    radial-gradient(75% 24% at 50% 94%, rgba(176, 141, 87, 0.24), transparent 72%),
+    linear-gradient(180deg, rgba(239, 234, 224, 0.04), transparent 30%),
+    var(--plate);
+}
+/* A kit shows the drawn case of ten vials, as wide as the plate allows */
+.photo.kit { padding: 40px 18px 48px; }
+.photo .vial-art.kit-art { height: auto; width: 100%; max-width: 100%; margin: 0 auto; }
+/* The vial is sized by its height; the width is always 3/5 of it */
+.photo .vial-art {
+  height: 380px; width: 228px; max-width: 80%; margin: 0 auto;
+  /* Grounding shadow below, plus a soft glow tracing the vial's
+     silhouette. Elegant, not loud: raise the alpha values here
+     if the glow should ever get stronger. */
+  filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.6))
+          drop-shadow(0 0 22px rgba(150, 175, 215, 0.32))
+          drop-shadow(0 0 60px rgba(78, 108, 158, 0.3));
+  /* Glassy surface: a mirrored reflection fading with distance */
+  -webkit-box-reflect: below 3px linear-gradient(transparent 72%, rgba(0, 0, 0, 0.22));
+}
+.photo .tag { z-index: 2; }
+/* Light look: blush plate, soft plum shadow instead of the blue glow */
+html[data-theme="light"] .photo {
+  background:
+    radial-gradient(55% 45% at 50% 50%, rgba(255, 255, 255, 0.95), transparent 68%),
+    radial-gradient(75% 24% at 50% 94%, rgba(197, 143, 152, 0.32), transparent 72%),
+    linear-gradient(180deg, #FAF1EE 0%, #F1E0DC 100%);
+}
+html[data-theme="light"] .photo .vial-art,
+html[data-theme="light"] .photo .fan-stack {
+  filter: drop-shadow(0 26px 30px rgba(74, 47, 59, 0.25));
+  -webkit-box-reflect: below 3px linear-gradient(transparent 74%, rgba(0, 0, 0, 0.12));
+}
+html[data-theme="light"] .photo.fan .vial-art { filter: none; -webkit-box-reflect: none; }
+/* Sets: the .fan-stack wrapper casts one glow and one reflection
+   for the trio, so no vial gets tinted through its glass */
+.photo.fan { display: flex; align-items: flex-end; justify-content: center; min-height: 380px; }
+.photo .fan-stack {
+  display: flex; align-items: flex-end; justify-content: center; gap: 0; width: 100%;
+  filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.6))
+          drop-shadow(0 0 22px rgba(150, 175, 215, 0.32))
+          drop-shadow(0 0 60px rgba(78, 108, 158, 0.3));
+  -webkit-box-reflect: below 3px linear-gradient(transparent 72%, rgba(0, 0, 0, 0.22));
+}
+.photo.fan .vial-art { height: 270px; width: 162px; margin: 0 -20px; filter: none; -webkit-box-reflect: none; }
+.photo.fan .vial-art:nth-child(2) { height: 310px; width: 186px; z-index: 2; }
+@media (max-width: 760px) {
+  .photo { position: relative; top: 0; }
+  .photo .vial-art { height: 320px; width: 192px; }
+  .photo.fan .vial-art { height: 200px; width: 120px; margin: 0 -14px; }
+  .photo.fan .vial-art:nth-child(2) { height: 232px; width: 139.2px; }
+}
+
+/* Details column */
+.details h1 { font-size: clamp(2rem, 1.6rem + 1.8vw, 3rem); color: var(--brand-dark); margin-bottom: 4px; }
+.details .size-line { font-size: 15px; color: var(--ink-mute); margin-bottom: 10px; }
+.details .blurb { font-size: 15px; color: var(--ink-soft); line-height: 1.65; max-width: 46ch; margin-bottom: 14px; }
+.details .price { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 30px; color: var(--ink); margin-bottom: 8px; }
+/* Sets: what the contents would cost separately, lightly struck through */
+.details .price .value { font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 400; color: var(--ink-mute); text-decoration: line-through; text-decoration-thickness: 1px; margin-left: 10px; vertical-align: middle; }
+.details .stock-line { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 22px; }
+.details .stock-line.in { color: var(--brand); }
+.details .stock-line.soon { color: var(--amber); }
+
+/* Buy row: stepper + add button */
+.buy-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 26px; }
+.buy-row .btn { padding: 14px 30px; }
+.buy-row .btn.added { background: var(--brand-dark); }
+.buy-note { font-size: 12.5px; color: var(--ink-mute); flex-basis: 100%; }
+
+.details .ruo-line {
+  font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px 0; margin-bottom: 26px;
+}
+
+/* Specification table */
+.spec { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+.spec th { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); text-align: left; width: 38%; padding: 11px 0; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+.spec td { font-size: 14.5px; padding: 11px 0; border-bottom: 1px solid var(--hairline); word-break: break-word; }
+
+/* Set contents */
+.contents { list-style: none; margin-bottom: 26px; }
+.contents li { font-size: 14.5px; padding: 8px 0; border-bottom: 1px solid var(--hairline); display: flex; justify-content: space-between; gap: 12px; }
+.contents li.free { color: var(--brand-dark); font-weight: 600; }
+.free-tag { background: var(--brand); color: #fff; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; }
+
+/* Lab reports */
+.reports h2 { font-size: var(--fs-h3); color: var(--brand-dark); margin-bottom: 4px; }
+.reports p.sub { font-size: 13.5px; color: var(--ink-mute); margin-bottom: 14px; }
+.report-row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--hairline); font-size: 14.5px; flex-wrap: wrap; }
+.report-row .purity { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 19px; color: var(--brand-dark); white-space: nowrap; }
+.report-row .meta { color: var(--ink-mute); font-size: 13px; }
+.report-row a { font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--accent); white-space: nowrap; }
+.reports .none { font-size: 14px; color: var(--ink-mute); padding: 8px 0 2px; }
+
+/* Other sizes / matching kit */
+.related { margin-top: 26px; }
+.related h3 { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); font-family: 'Jost', sans-serif; font-weight: 600; margin-bottom: 10px; }
+.related a { display: inline-block; margin: 0 8px 8px 0; font-size: 13.5px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; color: var(--ink); }
+.related a:hover { border-color: var(--brand); color: var(--brand-dark); }
+
+/* FDA / research-use block */
+.fda { margin-top: var(--sp-lg); border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 22px 26px; font-size: 13px; color: var(--ink-soft); line-height: 1.75; max-width: 72ch; }
+.fda strong { color: var(--ink); }
+
+.not-found { text-align: center; padding: var(--sp-xl) 0; }
+.not-found h1 { font-size: var(--fs-h2); color: var(--brand-dark); margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER + NAV (shared across pages) ============ -->
+<!-- The wordmark band and the nav travel together as one sticky
+     block, so both stay in view while the page scrolls. The words in
+     the wordmark are filled in from settings.js (brand.name and
+     brand.sub) by cart.js. -->
+<div class="sticky-stack">
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Home">
+    <span class="wm-name"></span>
+    <span class="wm-sub"><i></i><b></b><i></i></span>
+  </a>
+</header>
+<nav class="site-nav">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="faq.html">FAQ</a>
+  <a href="contact.html">Contact</a>
+</nav>
+</div>
+
+<main id="main">
+  <!-- Everything inside is built by JavaScript from data.js -->
+</main>
+
+<!-- ============ FOOTER (shared across pages) ============ -->
+<footer class="site-footer">
+  <div class="foot-links">
+    <a href="shop.html">Shop</a>
+    <a href="lab.html">Lab Results</a>
+    <a href="legal.html#terms">Terms</a>
+    <a href="legal.html#disclaimer">Disclaimer</a>
+    <a href="legal.html#privacy">Privacy</a>
+  </div>
+  <!-- Brand name and location are filled in from settings.js -->
+  <div class="foot-place js-brand-place"></div>
+  <div class="foot-ruo">For Research Use Only</div>
+  <div class="foot-legal">All compounds are intended for laboratory research purposes only. Not for human or veterinary consumption.</div>
+  <div class="foot-credit">Built with the Store Kit</div>
+</footer>
+
+<script src="data.js"></script>
+<script src="cart.js"></script>
+<script>
+/* ---------- Build the page for the item named in the URL ---------- */
+const key = new URLSearchParams(window.location.search).get("p") || "";
+const item = findCatalogItem(key);
+const main = document.getElementById("main");
+
+if (!item) {
+  main.innerHTML =
+    '<div class="not-found">' +
+      "<h1>Product not found</h1>" +
+      '<p style="margin-bottom:24px;">That link doesn\'t match a current product.</p>' +
+      '<a class="btn" href="shop.html">Back to the shop</a>' +
+    "</div>";
+} else {
+  document.title = brandFull() + " · " + item.name;
+
+  /* Picture plate: one vial, or a fan of three vials for a set. Kits
+     show the vial they contain with a "10 vials" tag. All of it is
+     drawn by vialSVG() in data.js. */
+  let photoHTML;
+  if (item.isStack) {
+    photoHTML = '<div class="photo plate fan" id="photo"><span class="fan-stack float">' + setVials(item).map(v => vialSVG(v)).join("") + "</span></div>";
+  } else {
+    photoHTML = '<div class="photo plate' + (item.isKit ? ' kit' : '') + '" id="photo">' +
+      (item.isKit ? '<span class="tag">10 vials</span>' : "") +
+      '<div class="float">' + (item.isKit ? kitSVG(item, itemLabel(item) + ", ten research vials in a case") : vialSVG(item, itemLabel(item) + " research vial")) + "</div></div>";
+  }
+
+  /* Stock line. "Awaiting lab report" appears when the lab-report rule
+     in settings.js is on and no current COAS row names this compound. */
+  function stockLineHTML() {
+    return item.comingSoon
+      ? '<p class="stock-line soon">Coming soon</p>'
+      : item.soldOut
+      ? '<p class="stock-line soon">Out of stock' + (restocksOn() ? ' · <a href="restock.html#' + item.id + '">see where the next batch is</a>' : '') + '</p>'
+      : item.awaitingReport
+      ? '<p class="stock-line soon">Awaiting lab report</p>'
+      : item.stock
+      ? '<p class="stock-line in">' + (item.left ? "In stock · only " + item.left + " left" : "In stock") + " · ships same day before 1pm EST</p>"
+      : '<p class="stock-line soon">Available to order · ships in 4 weeks</p>';
+  }
+  // Two kinds of note can sit under the buy button: the split-shipment
+  // line when someone orders past what's on hand, and an item's own
+  // "note" field from data.js. Either, both, or neither.
+  // Out of stock: the "email me when it's back" form sits under the button.
+  function buyNoteHTML() {
+    return (item.soldOut ? '<div class="buy-note notify-wrap">' + notifyFormHTML(item) + "</div>" : "") +
+    ((item.left && item.moreToOrder)
+      ? '<p class="buy-note">Order more than ' + item.left + ' and the rest ships separately in 4 weeks at no extra shipping cost.</p>'
+      : "") +
+    (item.note ? '<p class="buy-note">' + esc(item.note) + "</p>" : "");
+  }
+  function addButtonHTML() {
+    return item.soldOut
+      ? (restocksOn() ? '<a class="btn ghost" href="restock.html#' + item.id + '">Restock status</a>' : '<button type="button" class="btn" disabled>Out of stock</button>')
+      : item.awaitingReport
+      ? '<button type="button" class="btn" disabled>Awaiting lab report</button>'
+      : '<button type="button" class="btn" data-add="' + item.id + '" data-qty-from="qty">Add to cart</button>';
+  }
+  const stockLine = stockLineHTML();
+  const buyNote = buyNoteHTML();
+  // The quantity stepper, the button, and the notes. Drawn again when live counts arrive.
+  // Out of stock: no quantity stepper, just the Restock status link and the form.
+  function buyRowHTML() {
+    return (item.soldOut ? '<span class="qty" hidden><span class="count" id="qty">1</span></span>' :
+      '<span class="qty"><button type="button" id="qty-minus" aria-label="Remove one">&minus;</button><span class="count" id="qty">1</span><button type="button" id="qty-plus" aria-label="Add one">+</button></span>') +
+      addButtonHTML() + buyNoteHTML();
+  }
+
+  /* "Researched with" row: links the compounds listed on the item's
+     researchedWith field in data.js. Claims-free pairing note. */
+  function researchedWithHTML(it) {
+    const links = it.researchedWith.map(s => {
+      const p = findProductBySlug(s);
+      return p ? '<a href="product.html?p=' + s + '">' + esc(p.name) + "</a>" : "";
+    }).filter(Boolean);
+    return links.join(" and ") + ", commonly ordered together.";
+  }
+
+  /* Middle section depends on what kind of item this is */
+  let middleHTML = "";
+  if (item.isStack) {
+    const s = item.stack;
+    const freeVials = stackFreeVials(s);
+    middleHTML =
+      '<ul class="contents">' +
+        s.contents.map(c => { const p = findProduct(c[0]); return "<li><span>" + c[1] + " &times; " + esc(c[0]) + (p ? " " + p.size : "") + "</span></li>"; }).join("") +
+        freeVials.map(v => '<li class="free"><span>1 &times; ' + esc(v.name) + " " + v.size + '</span><span class="free-tag">Free</span></li>').join("") +
+        '<li class="free"><span>2 &times; Bacteriostatic Water 10mL</span><span class="free-tag">Free</span></li>' +
+      "</ul>";
+  } else if (item.isKit) {
+    middleHTML =
+      '<table class="spec">' +
+        "<tr><th>Contents</th><td>10 vials of " + esc(item.name) + " " + esc(item.vialSize) + "</td></tr>" +
+        "<tr><th>Pricing</th><td>Priced at 8 vials. Two vials come free.</td></tr>" +
+        "<tr><th>Form</th><td>Lyophilized powder</td></tr>" +
+        "<tr><th>Storage</th><td>Keep lyophilized vials cool, dry, and away from light</td></tr>" +
+      "</table>";
+  } else if (item.category === "supply") {
+    const supplyRows = [["Includes", esc(item.size)]];
+    if (item.storage) supplyRows.push(["Storage", esc(item.storage)]);
+    if (item.researchedWith) supplyRows.push(["Researched with", researchedWithHTML(item)]);
+    middleHTML = '<table class="spec">' + supplyRows.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</table>";
+  } else {
+    // Vial: the spec table. Names and sizes only, no chemistry reference fields.
+    const specRows = [["Form", "Lyophilized powder"], ["Purity", "Third-party tested to verify 99%+ purity, documented per batch below"]];
+    specRows.push(["Storage", "Keep lyophilized vials cool, dry, and away from light"]);
+    if (item.researchedWith) specRows.push(["Researched with", researchedWithHTML(item)]);
+    middleHTML = '<table class="spec">' + specRows.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</table>";
+  }
+
+  /* Lab reports: vial and kit pages list the current COAS rows for
+     this compound (from data.js). When there are none yet, a note
+     points to the lab results page. Supplies and sets skip the block. */
+  let reportsHTML = "";
+  const isSupplyKit = item.isKit && item.also === "supply";
+  if ((item.category === "vial" || item.category === "kit") && !isSupplyKit) {
+    // Current (non-archived) COAS rows for this compound, newest first
+    const rows = COAS.filter(c => !c.archived && c.compound === item.name)
+      .sort((a, b) => b.analyzed.localeCompare(a.analyzed));
+    reportsHTML = '<div class="reports"><h2>Lab reports</h2><p class="sub">Independent certificates of analysis for this compound.</p>' +
+      (rows.length
+        ? rows.map(c => '<div class="report-row"><span>' + esc(c.size) + ' · lot <span class="mono">' + esc(c.batch) + '</span><span class="meta"> · ' + esc(c.lab) + ', ' + esc(c.analyzed) + '</span></span>' +
+            '<span class="purity">' + coaPurityText(c) + '</span>' +
+            '<span>' + coaReportHTML(c) + '</span></div>').join("")
+        : '<p class="none">The report for the current batch will be published on the <a href="lab.html">lab results page</a>.</p>') +
+      "</div>";
+  }
+
+  /* Other sizes and the matching kit */
+  let relatedHTML = "";
+  if (item.category === "vial") {
+    const sibs = siblingsOf(item);
+    const kit = kitFor(item);
+    const links = sibs.map(s => '<a href="product.html?p=' + s.slug + '">' + esc(s.size) + " vial · $" + s.price + "</a>")
+      .concat(kit ? ['<a href="product.html?p=' + kit.slug + '">10-vial kit · $' + kit.price + "</a>"] : []);
+    if (links.length) relatedHTML = '<div class="related"><h3>Also available</h3>' + links.join("") + "</div>";
+  } else if (item.isKit) {
+    const vial = CATALOG.find(c => c.category === "vial" && c.name === item.name && c.size === item.vialSize);
+    if (vial) relatedHTML = '<div class="related"><h3>Also available</h3><a href="product.html?p=' + vial.slug + '">Single ' + esc(vial.size) + " vial · $" + vial.price + "</a></div>";
+  }
+
+  /* One-line description from BLURBS in data.js (keyed by product name,
+     so kits share their vial's line). Sets use setBlurb(). */
+  const blurb = item.isStack ? setBlurb(item.stack) : (BLURBS[item.name] || "");
+  const blurbHTML = blurb ? '<p class="blurb">' + esc(blurb) + "</p>" : "";
+
+  main.innerHTML =
+    '<div class="topbar">' +
+      '<p class="crumb"><a href="shop.html">Shop</a><span>/</span>' + esc(item.name) + "</p>" +
+      '<div class="quick-search">' +
+        '<label class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
+        '<input type="search" id="quick-search" placeholder="Search another compound" autocomplete="off" aria-label="Search the collection"></label>' +
+        '<div class="hits" id="quick-hits"></div>' +
+      "</div>" +
+    "</div>" +
+    '<div class="product-grid">' +
+      photoHTML +
+      '<div class="details">' +
+        "<h1>" + esc(item.name) + "</h1>" +
+        '<p class="size-line">' + (item.isStack ? "Research set · " + item.stack.contents.length + " compounds" : item.isKit ? "10 vials · " + esc(item.vialSize) + " each" : esc(item.size) + (item.category === "vial" ? " per vial" : "")) + "</p>" +
+        blurbHTML +
+        '<p class="price">$' + item.price + (item.isStack ? ' <s class="value">$' + setValue(item.stack) + "</s>" : "") + "</p>" +
+        stockLine +
+        (item.comingSoon ? "" : '<div class="buy-row" id="buy-row">' + buyRowHTML() + "</div>") +
+        '<p class="ruo-line">For laboratory research use only</p>' +
+        middleHTML +
+        reportsHTML +
+        relatedHTML +
+      "</div>" +
+    "</div>" +
+    '<div class="fda">' +
+      "<strong>Research use only.</strong> This product is supplied strictly for laboratory research and educational purposes. It is not for human or veterinary use of any kind. Statements on this website have not been evaluated by the U.S. Food and Drug Administration. Nothing here is intended to diagnose, treat, cure, or prevent any disease, and nothing on this page is an instruction for use." +
+    "</div>";
+
+  /* Quick search beside the breadcrumb: type a name, pick a compound to
+     jump to its page, or press Enter to open the shop with that search. */
+  (function () {
+    const box = document.getElementById("quick-search");
+    const hits = document.getElementById("quick-hits");
+    // One entry per product page (vials, kits, supplies), A to Z
+    const entries = CATALOG.filter(c => c.category !== "set" && c.slug)
+      .map(c => ({ label: c.name, size: c.isKit ? c.vialSize + " kit" : c.size, slug: c.slug, key: (c.name + " " + (c.sortAs || "")).toLowerCase() }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+    let cursor = -1;
+    function render(q) {
+      cursor = -1;
+      if (!q) { hits.className = "hits"; hits.innerHTML = ""; return; }
+      const found = entries.filter(e => e.key.includes(q)).slice(0, 8);
+      hits.innerHTML = found.map(e =>
+        '<a href="product.html?p=' + e.slug + '">' + esc(e.label) + "<span>" + esc(e.size) + "</span></a>").join("") +
+        '<a class="all" href="shop.html?q=' + encodeURIComponent(q) + '">Search the shop for "' + esc(q) + '"</a>';
+      hits.className = "hits show";
+    }
+    box.addEventListener("input", () => render(box.value.trim().toLowerCase()));
+    box.addEventListener("focus", () => render(box.value.trim().toLowerCase()));
+    box.addEventListener("keydown", e => {
+      const links = hits.querySelectorAll("a");
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        cursor = e.key === "ArrowDown" ? Math.min(cursor + 1, links.length - 1) : Math.max(cursor - 1, 0);
+        links.forEach((l, i) => l.classList.toggle("active", i === cursor));
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (cursor >= 0 && links[cursor]) location.href = links[cursor].href;
+        else if (box.value.trim()) location.href = "shop.html?q=" + encodeURIComponent(box.value.trim());
+      } else if (e.key === "Escape") { render(""); box.blur(); }
+    });
+    document.addEventListener("click", e => { if (!e.target.closest(".quick-search")) render(""); });
+  })();
+
+  /* Quantity stepper (capped like the cart). Absent on coming-soon pages. */
+  const qtyEl = document.getElementById("qty");
+  if (qtyEl) {
+    function bindQty() {
+      const q = document.getElementById("qty"), minus = document.getElementById("qty-minus"), plus = document.getElementById("qty-plus");
+      if (minus) minus.addEventListener("click", () => { q.textContent = Math.max(1, Number(q.textContent) - 1); });
+      if (plus) plus.addEventListener("click", () => { q.textContent = Math.min(cartMaxQty(item), Number(q.textContent) + 1); });
+    }
+    bindQty();
+    // Fresh counts from the admin: redraw the stock line and the buy row in place
+    document.addEventListener("store-stock", () => {
+      const sl = main.querySelector(".stock-line"); if (sl) sl.outerHTML = stockLineHTML();
+      const row = document.getElementById("buy-row");
+      if (!row) return;
+      row.innerHTML = buyRowHTML();
+      bindQty();
+    });
+  }
+
+}
+</script>
+
+</body>
+</html>
