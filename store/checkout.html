@@ -499,8 +499,8 @@ function renderPayment() {
     document.getElementById("pay-now").classList.add("show");
   }
   document.getElementById("confirm-how").textContent =
-    hosted && methods.length ? "Pay now, or send payment using any option below."
-    : hosted ? "Press Pay now to complete your payment."
+    hosted && methods.length ? "Pay by card or Apple Pay, or send payment using any option below."
+    : hosted ? "Press Pay by card or Apple Pay to complete your payment."
     : methods.length ? "Send payment using any option below."
     : "We will email you with payment instructions.";
   const note = String(SETTINGS.payment.note || "").trim();

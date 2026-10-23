@@ -126,10 +126,10 @@ main { max-width: 1020px; margin: 0 auto; padding: var(--sp-lg) 24px var(--sp-xl
 
   <!-- ============ VERIFY A LOT NUMBER ============ -->
   <div class="verify" id="verify">
-    <h2>Verify a lot number</h2>
+    <h2>Look up a report</h2>
     <p class="sub">Type the report number (KVR-...) to see its published report.</p>
     <form id="verify-form">
-      <input type="text" id="lot" placeholder="Lot number" autocomplete="off" aria-label="Lot number">
+      <input type="text" id="lot" placeholder="Report number" autocomplete="off" aria-label="Report number">
       <button type="submit" class="btn">Verify</button>
     </form>
     <div class="verify-result" id="verify-result" aria-live="polite"></div>
@@ -233,13 +233,13 @@ if (archived.length) {
     out.className = "verify-result";
     if (!wanted) { out.innerHTML = ""; return; }
     const c = COAS.find(r => String(r.batch || "").trim().toUpperCase() === wanted);
-    if (!c) { out.innerHTML = '<span class="miss">No report on file for that lot number.</span>'; return; }
+    if (!c) { out.innerHTML = '<span class="miss">No report on file for that report number.</span>'; return; }
     out.className = "verify-result found";
     out.innerHTML =
       "<dl>" +
         "<dt>Product</dt><dd><strong>" + esc(c.compound) + "</strong></dd>" +
         "<dt>Size</dt><dd>" + esc(c.size) + "</dd>" +
-        "<dt>Lot</dt><dd class=\"mono\">" + esc(c.batch) + "</dd>" +
+        "<dt>Report no.</dt><dd class=\"mono\">" + esc(c.batch) + "</dd>" +
         "<dt>Lab</dt><dd>" + esc(c.lab || "") + "</dd>" +
         "<dt>Tested</dt><dd>" + esc(c.analyzed) + "</dd>" +
         "<dt>Purity</dt><dd class=\"num\">" + coaPurityText(c) + "</dd>" +

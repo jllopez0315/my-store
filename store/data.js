@@ -279,7 +279,7 @@ const COAS = [
     batch: "KVR-2026-090628", analyzed: "2026-09-18", purity: "99.666",
     lab: "Kovera Labs", file: "coa/cjc-1295-ipamorelin-10mg.pdf", fullPanel: true },
   { report: "Supplier report (Real Peptides)", compound: "5-Amino-1MQ", size: "50mg",
-    batch: "KVR-2026-33911D", analyzed: "2026-09-18", purity: "99.621",
+    batch: "KVR-2026-6A32B5", analyzed: "2026-08-12", purity: "99.557",
     lab: "Kovera Labs", file: "coa/5-amino-1mq-50mg.pdf", fullPanel: true },
   { report: "Supplier report (Real Peptides)", compound: "Tesamorelin", size: "10mg",
     batch: "KVR-2026-363D24", analyzed: "2026-08-12", purity: "99.757",
