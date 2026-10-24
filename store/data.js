@@ -71,19 +71,22 @@ const PRODUCTS = [
   { name: "Cagrilintide",                size: "10mg",   price: 90,  stock: true,  slug: "cagrilintide" },
   { name: "Glutathione",                 size: "1500mg", price: 100, stock: true,  slug: "glutathione" },
   { name: "Lipo-C + B12",                size: "216mg",  price: 60,  stock: false, slug: "lipo-c-b12" },
-  // HIDDEN: Bacteriostatic Water. Remove the // marks on the lines below to show it again.
-  // // supply: true files it under the Supplies filter.
-  // // liquid: true draws the vial filled with liquid instead of powder.
-  // { name: "Bacteriostatic Water", size: "10mL",   price: 15,  stock: true,  slug: "bac-water", supply: true, liquid: true,
-  //   // storage: shows as a Storage row on the product page (supplies only)
-  //   storage: "Store at room temperature (15–25°C). Do not freeze." },
+  // supply: true files it under the Supplies filter.
+  // liquid: true draws the vial filled with liquid instead of powder.
+  // storage: shows as a Storage row on the product page (supplies only)
+  { name: "Bacteriostatic Water", size: "10mL",   price: 10,  stock: true,  slug: "bac-water", supply: true, liquid: true,
+    storage: "Store at room temperature (15–25°C). Do not freeze." },
+  { name: "Bacteriostatic Water", size: "3mL",    price: 5,   stock: true,  slug: "bac-water-3ml", supply: true, liquid: true,
+    storage: "Store at room temperature (15–25°C). Do not freeze." },
 ];
 
 /* ---------- 3. KITS · 10 vials of one compound, priced at 8 ----------
    RULE: kit price = 8 x the single vial price. Change both together. */
 const KITS = [
   // also: "supply" lists the water kit under the Supplies filter too
-  // HIDDEN: { name: "Bacteriostatic Water", size: "10mL kit · 10 vials", price: 120, stock: true, also: "supply", liquid: true },
+  // Water kits are priced at 10 vials (no free vials), so their page leaves out the "priced at 8" line.
+  { name: "Bacteriostatic Water", size: "10mL kit · 10 vials", price: 100, stock: true, also: "supply", liquid: true },
+  { name: "Bacteriostatic Water", size: "3mL kit · 10 vials",  price: 50,  stock: true, also: "supply", liquid: true },
   { name: "RT30",                        size: "30mg kit · 10 vials",    price: 1200, stock: true },
   { name: "Tesamorelin",                 size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "MOTS-C",                      size: "10mg kit · 10 vials",    price: 480,  stock: true },
@@ -334,7 +337,9 @@ const FEATURED_SLUGS = [
    order (product page slugs, top to bottom). Anything not listed
    falls to the end. ---------- */
 const SUPPLY_PAGE_ORDER = [
+  "bac-water-3ml",
   "bac-water",
+  "bacteriostatic-water-3ml-kit-10-vials",
   "bacteriostatic-water-10ml-kit-10-vials",
 ];
 

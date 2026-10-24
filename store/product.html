@@ -321,12 +321,17 @@ if (!item) {
         '<li class="free"><span>2 &times; Bacteriostatic Water 10mL</span><span class="free-tag">Free</span></li>' +
       "</ul>";
   } else if (item.isKit) {
+    // The "priced at 8" line shows only when the kit really is 8 x the vial price
+    const vial = PRODUCTS.find(p => p.name === item.name && p.size === item.vialSize);
+    const pricedAt8 = vial && item.price === vial.price * 8;
     middleHTML =
       '<table class="spec">' +
         "<tr><th>Contents</th><td>10 vials of " + esc(item.name) + " " + esc(item.vialSize) + "</td></tr>" +
-        "<tr><th>Pricing</th><td>Priced at 8 vials. Two vials come free.</td></tr>" +
-        "<tr><th>Form</th><td>Lyophilized powder</td></tr>" +
-        "<tr><th>Storage</th><td>Keep lyophilized vials cool, dry, and away from light</td></tr>" +
+        (pricedAt8 ? "<tr><th>Pricing</th><td>Priced at 8 vials. Two vials come free.</td></tr>" : "") +
+        (item.liquid
+          ? "<tr><th>Form</th><td>Liquid</td></tr>" + (vial && vial.storage ? "<tr><th>Storage</th><td>" + esc(vial.storage) + "</td></tr>" : "")
+          : "<tr><th>Form</th><td>Lyophilized powder</td></tr>" +
+            "<tr><th>Storage</th><td>Keep lyophilized vials cool, dry, and away from light</td></tr>") +
       "</table>";
   } else if (item.category === "supply") {
     const supplyRows = [["Includes", esc(item.size)]];
