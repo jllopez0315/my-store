@@ -783,14 +783,14 @@ html[data-theme="light"] .wordmark:hover { color: var(--brand); }
 /* Header logo: the picture replaces the letters. One image per look;
    the dark one shows unless the light look has its own. */
 .wordmark.has-logo .wm-name, .wordmark.has-logo .wm-sub { display: none; }
-.wm-logo { display: none; height: 54px; width: auto; max-width: min(72vw, 440px); object-fit: contain; vertical-align: middle; transition: height 0.3s ease; }
+.wm-logo { display: none; height: 100px; width: auto; max-width: min(80vw, 440px); object-fit: contain; vertical-align: middle; transition: height 0.3s ease; }
 .wm-logo.for-dark { display: inline-block; }
 html[data-theme="light"] .wm-logo.for-dark { display: none; }
 html[data-theme="light"] .wm-logo.for-light { display: inline-block; }
-.site-header.compact .wm-logo { height: 36px; }
+.site-header.compact .wm-logo { height: 60px; }
 @media (max-width: 480px) {
-  .wm-logo { height: 42px; }
-  .site-header.compact .wm-logo { height: 30px; }
+  .wm-logo { height: 72px; }
+  .site-header.compact .wm-logo { height: 48px; }
 }
 html[data-theme="light"] .wordmark .wm-sub { color: var(--ink-mute); }
 /* Plates: blush ground, dark text, rose and champagne light */
