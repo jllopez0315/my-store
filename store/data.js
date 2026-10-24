@@ -433,7 +433,7 @@ const ALL_ITEMS = PRODUCTS.concat(KITS).concat(STACK_ITEMS);
    mark area, and the two print lines are all measured in photo
    pixels). */
 const VIAL_PHOTOS = { blue: "img/vial-blue.webp", black: "img/vial-black.webp", white: "img/vial-white.webp" };
-const LIGHT_CAP_SWAP = { blue: "white" };
+const LIGHT_CAP_SWAP = {};   // every cap is black in both looks
 const VIAL_PRINT = {
   centerX: 334,     // middle of the label, in photo pixels (everything printed is centered on it)
   nameY: 752,       // baseline of the compound name
@@ -442,6 +442,8 @@ const VIAL_PRINT = {
   ink: "#1d1d1f",   // print color: the compound name, the size, and the default atom mark
   band: "#1d1d1f",  // the brand band's color when labelBand is empty
   bandText: "#ffffff", // the name's color in the band when labelText is empty
+  imageInk: "#eef2f7",     // name color on a full label design (labelImage): silver-white
+  imageSizeInk: "#2b8cff", // size color on a full label design: brand blue
   // The whole silver label, measured from the photo. A full label
   // design (labelImage) covers exactly this rectangle, and a tint
   // (labelTint) colors exactly this rectangle.
@@ -457,9 +459,7 @@ const VIAL_PRINT = {
 
 function vialCap(item) {
   if (item.cap && VIAL_PHOTOS[item.cap]) return item.cap;
-  if (item.isKit || item.category === "kit") return "black";
-  if (item.supply || item.category === "supply") return "white";
-  return "blue";
+  return "black";   // every vial, kit, and supply gets the black cap
 }
 
 // Splits a name into two lines at the space that leaves the halves
@@ -637,11 +637,13 @@ function vialInnerSVG(item) {
   const longest = lines.reduce((n, l) => Math.max(n, l.length), 0);
   const nameSize = Math.min(lines.length > 1 ? 27 : 46, p.maxWidth / (0.7 * longest));
   const firstY = lines.length > 1 ? p.nameY - 15 : p.nameY;
-  const font = ' text-anchor="middle" font-family="Jost, \'Helvetica Neue\', sans-serif" fill="' + p.ink + '"';
+  const nameInk = L.image ? p.imageInk : p.ink, sizeInk = L.image ? p.imageSizeInk : p.ink;
+  const font = ' text-anchor="middle" font-family="Jost, \'Helvetica Neue\', sans-serif" fill="' + nameInk + '"';
+  const sizeFont = ' text-anchor="middle" font-family="Jost, \'Helvetica Neue\', sans-serif" fill="' + sizeInk + '"';
   const nameText = lines.map((l, i) =>
     '<text x="' + p.centerX + '" y="' + (firstY + i * nameSize * 1.08).toFixed(1) + '"' + font + ' font-weight="600" font-size="' + nameSize.toFixed(1) + '">' + safe(l) + "</text>").join("");
   const size = String(item.vialSize || item.size || "").split(" ")[0].replace(/(\d)([a-zA-Z])/, "$1 $2").toUpperCase();
-  const sizeText = '<text x="' + p.centerX + '" y="' + p.sizeY + '"' + font + ' font-weight="700" font-size="44">' + safe(size) + "</text>";
+  const sizeText = '<text x="' + p.centerX + '" y="' + p.sizeY + '"' + sizeFont + ' font-weight="700" font-size="44">' + safe(size) + "</text>";
   const printNameSize = !L.image || L.printsNameSize;
   const cap = vialCap(item);
   const lightCap = (item.capLight && VIAL_PHOTOS[item.capLight]) ? item.capLight : (LIGHT_CAP_SWAP[cap] || cap);

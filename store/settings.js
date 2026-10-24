@@ -84,7 +84,7 @@ const SETTINGS = {
     logoLight: "",
     labelName: "",
     labelLogo: "",
-    labelImage: "",
+    labelImage: "img/label-elite.png",
     labelBand: "",
     labelText: "",
     labelTint: "",

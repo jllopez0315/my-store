@@ -535,7 +535,7 @@ staggerChildren(grid, 70);
 const HERO_SLUGS = ["tesamorelin", "rt30", "wolverine"];
 document.getElementById("hero-fan").innerHTML =
   HERO_SLUGS.map(findCatalogItem).filter(Boolean)
-    .map((v, i) => vialSVG(Object.assign({}, v, { cap: ["white", "blue", "black"][i], capLight: ["white", "black", "white"][i] }))).join("");
+    .map((v, i) => vialSVG(Object.assign({}, v, { cap: "black", capLight: "black" }))).join("");
 
 /* ---------- Lab report preview (latest four) ---------- */
 const previewBody = document.querySelector("#coa-preview tbody");
