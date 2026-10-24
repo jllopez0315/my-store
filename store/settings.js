@@ -205,9 +205,9 @@ const SETTINGS = {
   shipping: {
     flat: 10,
     freeOver: 250,
-    expedited: 28,
-    overnight: 60,
-    pickupEnabled: false,
+    expedited: 25,
+    overnight: 55,
+    pickupEnabled: true,
     pickupNote: ""
   },
 
