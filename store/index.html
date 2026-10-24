@@ -300,6 +300,15 @@ html.layout-center[data-theme="light"] .hero .veil { background: linear-gradient
      block, so both stay in view while the page scrolls. The words in
      the wordmark are filled in from settings.js (brand.name and
      brand.sub) by cart.js. -->
+<!-- ============ ROTATING ANNOUNCEMENT BAR (home page) ============
+     The free-shipping amount fills in from settings.js (shipping.freeOver).
+     The words repeat so the loop is seamless; the copy is hidden from screen readers. -->
+<div class="announce-bar" role="region" aria-label="Store announcements">
+  <div class="ann-track">
+    <div class="ann-group"><span class="ann-item">Free shipping over <span class="js-free-over">$250</span></span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Same-day shipping on in-stock orders by 1pm EST</span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Free shipping over <span class="js-free-over">$250</span></span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Same-day shipping on in-stock orders by 1pm EST</span><span class="ann-sep" aria-hidden="true">&#9671;</span></div>
+    <div class="ann-group" aria-hidden="true"><span class="ann-item">Free shipping over <span class="js-free-over">$250</span></span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Same-day shipping on in-stock orders by 1pm EST</span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Free shipping over <span class="js-free-over">$250</span></span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Same-day shipping on in-stock orders by 1pm EST</span><span class="ann-sep" aria-hidden="true">&#9671;</span></div>
+  </div>
+</div>
 <div class="sticky-stack">
 <header class="site-header">
   <a class="wordmark" href="index.html" aria-label="Home">

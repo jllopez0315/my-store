@@ -817,3 +817,14 @@ html[data-theme="light"] .fan-stack {
   -webkit-box-reflect: below 2px linear-gradient(transparent 76%, rgba(0, 0, 0, 0.12));
 }
 html[data-theme="light"] .cart-line .thumb { background: #F6EAE7; }
+
+/* ---------- Rotating announcement bar (home page) ---------- */
+.announce-bar { background: var(--brand-deep); color: #e8ecf2; overflow: hidden; white-space: nowrap; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; line-height: 1; }
+.announce-bar .ann-track { display: inline-flex; animation: ann-scroll 38s linear infinite; }
+.announce-bar:hover .ann-track { animation-play-state: paused; }
+.announce-bar .ann-group { display: inline-flex; align-items: center; flex-shrink: 0; }
+.announce-bar .ann-item { padding: 12px 0; }
+.announce-bar .ann-sep { color: var(--accent); margin: 0 22px; font-size: 11px; }
+@keyframes ann-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (max-width: 480px) { .announce-bar { font-size: 11px; letter-spacing: 0.12em; } .announce-bar .ann-sep { margin: 0 16px; } }
+@media (prefers-reduced-motion: reduce) { .announce-bar .ann-track { animation: none; } }
