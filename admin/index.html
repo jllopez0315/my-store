@@ -955,7 +955,7 @@ footer { text-align: center; font-size: 12px; color: #8A9490; padding: 20px; }
 // Login uses Supabase Auth email + password. Create your login once in
 // Supabase: Authentication > Users > Add user, with "Auto Confirm User"
 // turned on. Those are the email and password you type on this page.
-const ADMIN_CONFIG = { storeName: "Your Brand Labs", storeUrl: "", supabaseUrl: "PASTE-YOUR-SUPABASE-URL", supabaseAnonKey: "PASTE-YOUR-ANON-KEY" };
+const ADMIN_CONFIG = { storeName: "Elite Research Labs", storeUrl: "https://my-store-45y.pages.dev", supabaseUrl: "PASTE-YOUR-SUPABASE-URL", supabaseAnonKey: "PASTE-YOUR-ANON-KEY" };
 // ---- End of config. Nothing below needs editing. ----
 
 // If either value is still a placeholder, show the setup notice instead
@@ -1989,11 +1989,13 @@ $('inv-csv').addEventListener('click', () => {
    and lays it over settings.js. Anything not saved here keeps the
    value in settings.js.
    ===================================================== */
+// Starting values = Elite Research Labs' look as set in store/settings.js,
+// so an empty row, a first Save, or "Reset to defaults" never brings back the kit's stock look.
 const LOOK_DEFAULTS = {
-  brand: { name: 'Your Brand', sub: 'Labs', tagline: 'Research compounds, documented.', location: '', logo: '', logoLight: '',
-    labelName: '', labelLogo: '', labelImage: '', labelBand: '', labelText: '', labelTint: '', labelPrintsNameSize: true },
-  look: { theme: 'dark', layout: 'left', fontPair: 'classic', headingFont: '', bodyFont: '', brandColor: '#1B2A41', accentColor: '#B08D57',
-    heroImage: '', heroVideo: '', restocksPage: false },
+  brand: { name: 'Elite Research Labs', sub: '', tagline: 'Research compounds, documented.', location: '', logo: 'img/logo.png', logoLight: '',
+    labelName: '', labelLogo: '', labelImage: 'img/label-elite.png', labelBand: '', labelText: '', labelTint: '', labelPrintsNameSize: true },
+  look: { theme: 'dark', layout: 'left', fontPair: 'classic', headingFont: '', bodyFont: '', brandColor: '#1B2A41', accentColor: '#1F7AFF',
+    heroImage: 'img/hero-elite.webp', heroVideo: '', restocksPage: false },
   facts: ['', '', ''],
 }
 const STOCK_BRAND = '#1B2A41', STOCK_ACCENT = '#B08D57'   // the store's built-in colors (see store/theme.js)
