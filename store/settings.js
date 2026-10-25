@@ -175,8 +175,8 @@ const SETTINGS = {
      same web address, never call a database; used by the demo. Leave
      it false for a real store. */
   sync: {
-    supabaseUrl: "",
-    anonKey: "",
+    supabaseUrl: "https://cjbsaizeuuqosgvmdfap.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqYnNhaXpldXVxb3Nndm1kZmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5NTA5MjAsImV4cCI6MjEwODUyNjkyMH0.v6wxxgvRhuRpJSAE3x6buvgUKthsI0gZ5Kw4gqL_3Ek",
     localOnly: false
   },
 
