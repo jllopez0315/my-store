@@ -147,7 +147,7 @@ const SETTINGS = {
     bodyFont: "",
     brandColor: "#1B2A41",
     accentColor: "#B08D57",
-    heroImage: "",
+    heroImage: "img/hero-elite.webp",
     heroVideo: "",
     restocksPage: false
   },
