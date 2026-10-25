@@ -116,6 +116,10 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .flow-bg .glow, .flow-bg .ring { animation: none; }
 }
+/* The home page picture (settings.js: look.heroImage) also shows here when
+   one is set, so the gate and the home page share one background. */
+.flow-bg.has-photo { background-size: cover; background-position: center; }
+.flow-bg.has-photo .glow, .flow-bg.has-photo .ring { display: none; }
 /* Legibility veil: darkens the edges so the card stands forward */
 .veil {
   position: fixed;
@@ -398,6 +402,16 @@ footer {
   </svg>
 </div>
 <div class="veil" aria-hidden="true"></div>
+<script>
+  (function () {
+    var img = (typeof SETTINGS !== "undefined" && SETTINGS.look && String(SETTINGS.look.heroImage || "").trim()) || "";
+    var bg = document.querySelector(".flow-bg");
+    if (img && bg && /^(img\/|https:\/\/)[^"'()\s]+$/.test(img)) {
+      bg.style.backgroundImage = 'url("' + img + '")';
+      bg.classList.add("has-photo");
+    }
+  })();
+</script>
 
 <main>
   <form class="gate-card" id="gate-form" novalidate>
