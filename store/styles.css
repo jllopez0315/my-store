@@ -250,8 +250,9 @@ html.font-editorial .wordmark .wm-name { font-weight: 500; }
 
 /* Brass button for dark surfaces (the home page hero), where the navy
    button would disappear into the background */
-.btn.accent { background: var(--accent); border-color: var(--accent); color: var(--brand-dark); }
-.btn.accent:hover { background: var(--accent-light); border-color: var(--accent-light); color: var(--brand-dark); }
+/* Blue to match the logo, the DNA background, and the gate button (was the brass accent) */
+.btn.accent { background: #1f7aff; border-color: #1f7aff; color: #ffffff; }
+.btn.accent:hover { background: #4a95ff; border-color: #4a95ff; color: #ffffff; }
 
 /* Ghost button for use on the dark plate */
 .btn.ghost-light {
