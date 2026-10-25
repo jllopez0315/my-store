@@ -284,8 +284,8 @@ main {
   transition: opacity 0.18s, transform 0.18s;
 }
 .consent input:checked + .box {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--gate-blue);
+  border-color: var(--gate-blue);
 }
 .consent input:checked + .box svg { opacity: 1; transform: scale(1); }
 .consent input:focus-visible + .box {
@@ -299,7 +299,9 @@ main {
 }
 .consent a:hover { text-decoration-color: var(--cream); }
 
-/* ---------- Enter button ---------- */
+/* ---------- Enter button ----------
+   Blue to match the logo and the DNA background (was the brass accent). */
+:root { --gate-blue: #1f7aff; --gate-blue-light: #4a95ff; }
 .enter {
   width: 100%;
   padding: 17px;
@@ -308,19 +310,19 @@ main {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-family: inherit;
-  color: var(--brand-dark);
-  background: var(--accent);
+  color: #ffffff;
+  background: var(--gate-blue);
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.18s, opacity 0.18s, transform 0.18s;
 }
-.enter:hover { background: var(--accent-light); }
+.enter:hover { background: var(--gate-blue-light); }
 .enter:active { transform: translateY(1px); }
 .enter[disabled] {
   opacity: 0.42;
   cursor: not-allowed;
-  background: var(--accent);
+  background: var(--gate-blue);
 }
 
 /* Font pairs, matching styles.css (this page has its own styles) */
