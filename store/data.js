@@ -69,6 +69,7 @@ const PRODUCTS = [
   { name: "Ipamorelin",                  size: "10mg",   price: 60,  stock: true,  slug: "ipamorelin" },
   { name: "5-Amino-1MQ",                 size: "50mg",   price: 80,  stock: true,  slug: "5-amino-1mq" },
   { name: "Cagrilintide",                size: "10mg",   price: 90,  stock: true,  slug: "cagrilintide" },
+  { name: "Epithalon",                   size: "10mg",   price: 60,  stock: true,  slug: "epithalon" },
   { name: "Glutathione",                 size: "1500mg", price: 100, stock: true,  slug: "glutathione" },
   { name: "Lipo-C + B12",                size: "216mg",  price: 60,  stock: false, slug: "lipo-c-b12" },
   // supply: true files it under the Supplies filter.
@@ -105,6 +106,7 @@ const KITS = [
   { name: "Ipamorelin",                  size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "5-Amino-1MQ",                 size: "50mg kit · 10 vials",    price: 640,  stock: true },
   { name: "Cagrilintide",                size: "10mg kit · 10 vials",    price: 720,  stock: true },
+  { name: "Epithalon",                   size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "Glutathione",                 size: "1500mg kit · 10 vials",  price: 800,  stock: true },
   { name: "Lipo-C + B12",                size: "216mg kit · 10 vials",   price: 480,  stock: false },
 ];
@@ -129,6 +131,7 @@ const BLURBS = {
   "Selank":                      "Synthetic heptapeptide (7 amino acids), an analogue of the tuftsin sequence. Lyophilized powder.",
   "Glutathione":                 "Reduced tripeptide of glutamate, cysteine, and glycine. Lyophilized powder.",
   "Cagrilintide":                "Synthetic long-acting amylin analogue, 37 amino acids with a lipidated side chain. Lyophilized powder.",
+  "Epithalon":                   "Synthetic tetrapeptide (Ala-Glu-Asp-Gly). Lyophilized powder.",
   "KPV":                         "Synthetic tripeptide (Lys-Pro-Val), the C-terminal fragment of alpha-MSH. Lyophilized powder.",
   "Bacteriostatic Water":        "Sterile water with 0.9% benzyl alcohol as a preservative, for reconstituting lyophilized research compounds.",
 };
@@ -251,6 +254,9 @@ const STACKS = [
    sample: true adds the word "(sample)" beside the purity. Remove
               it from your real rows. */
 const COAS = [
+  { report: "Supplier report (Purple Direct)", compound: "Epithalon", size: "10mg",
+    batch: "2610010548", analyzed: "2026-10-03", purity: "99.74",
+    lab: "Freedom Diagnostics Testing", file: "coa/epithalon-10mg.pdf", fullPanel: true },
   { report: "Supplier report (Real Peptides)", compound: "Wolverine (BPC-157/TB-500)", size: "20mg",
     batch: "KVR-2026-A0726C", analyzed: "2026-09-18", purity: "99.669",
     lab: "Kovera Labs", file: "coa/wolverine-bpc-157-tb-500-20mg.pdf", fullPanel: true },
