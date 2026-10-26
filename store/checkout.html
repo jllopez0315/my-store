@@ -229,8 +229,7 @@ input[readonly] { background: var(--hairline); color: var(--ink-soft); }
       <div class="bump" id="water-bump">
         <p class="bump-title">Have enough BAC water?</p>
         <p class="bump-note">Bacteriostatic water is sold separately. One click adds it to this order.</p>
-        <label><input type="checkbox" id="water-bump-box"><span id="water-bump-label">Add a 10mL vial of BAC water</span></label>
-        <label><input type="checkbox" id="water-kit-bump-box"><span id="water-kit-bump-label">Add the 10-vial BAC water kit</span></label>
+        <div id="water-bump-options"><!-- One box per water size and kit, drawn from data.js --></div>
       </div>
 
       <!-- ============ 2. REQUEST (optional) ============ -->
@@ -460,11 +459,19 @@ if (SETTINGS.shipping.pickupEnabled) {
 }
 
 /* ---------- 3. Order bumps ---------- */
-const WATER = CATALOG.find(c => c.name === "Bacteriostatic Water" && c.category === "supply");
-const WATER_KIT = CATALOG.find(c => c.name === "Bacteriostatic Water" && c.isKit);
+// Every bacteriostatic water vial and kit in data.js gets its own box:
+// vials first (smallest size first), then kits. Labels and prices come from data.js.
+const isWater = c => c.name === "Bacteriostatic Water";
+const mlOf = c => parseFloat(String(c.vialSize || c.size || "")) || 0;
+const WATER_OFFERS = CATALOG.filter(c => isWater(c) && c.category === "supply" && !c.isKit).sort((a, b) => mlOf(a) - mlOf(b))
+  .concat(CATALOG.filter(c => isWater(c) && c.isKit).sort((a, b) => mlOf(a) - mlOf(b)));
+const WATER = WATER_OFFERS[0], WATER_KIT = WATER_OFFERS.find(c => c.isKit);
+document.getElementById("water-bump-options").innerHTML = WATER_OFFERS.map((c, i) => {
+  const ml = String(c.vialSize || c.size).split(" ")[0];
+  const text = c.isKit ? "Add the " + ml + " BAC water kit, 10 vials ($" + c.price + ")" : "Add a " + ml + " vial of BAC water ($" + c.price + ")";
+  return '<label><input type="checkbox" id="water-offer-' + i + '"><span>' + text + "</span></label>";
+}).join("");
 // Prices on the bump come from data.js so they never drift from the shop.
-if (WATER) document.getElementById("water-bump-label").textContent = "Add a 10mL vial of BAC water ($" + WATER.price + ")";
-if (WATER_KIT) document.getElementById("water-kit-bump-label").textContent = "Add the 10-vial BAC water kit ($" + WATER_KIT.price + ")";
 // "Have enough BAC water?" shows whenever any compound (vial, kit, or set)
 // is in the cart. It stays visible once water is added so the boxes can
 // be unticked.
@@ -477,8 +484,7 @@ function waterBumpRelevant() {
 }
 function updateBumps() {
   document.getElementById("water-bump").classList.toggle("show", waterBumpRelevant());
-  document.getElementById("water-bump-box").checked = WATER && cartQty(WATER.id) > 0;
-  document.getElementById("water-kit-bump-box").checked = WATER_KIT && cartQty(WATER_KIT.id) > 0;
+  WATER_OFFERS.forEach((c, i) => { document.getElementById("water-offer-" + i).checked = cartQty(c.id) > 0; });
 }
 function wireBump(boxId, item) {
   document.getElementById(boxId).addEventListener("change", e => {
@@ -487,8 +493,7 @@ function wireBump(boxId, item) {
     renderReview();
   });
 }
-wireBump("water-bump-box", WATER);
-wireBump("water-kit-bump-box", WATER_KIT);
+WATER_OFFERS.forEach((c, i) => wireBump("water-offer-" + i, c));
 
 /* ---------- 4. Payment details on the confirmation screen ----------
    Everything here comes from the payment section of settings.js:
