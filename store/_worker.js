@@ -489,6 +489,14 @@ function orderRef(iso) {
    it. That function lives in the database half of the kit. A failure
    here is logged and never stops the emails.
    ============================================================ */
+// The database keeps an order's "request" text as the admin's Notes. A
+// discount code is added there ("Discount code DEANA15: -$15") so the admin
+// shows it on the order and its reports can count it. Emails are unchanged.
+function dbPayload(order) {
+  if (!(order.discount > 0)) return order;
+  const line = "Discount code " + (order.discountCode || "CODE") + ": -$" + money(order.discount);
+  return Object.assign({}, order, { request: [order.request, line].filter(Boolean).join(" · ") });
+}
 async function saveToDatabase(order, env) {
   if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_KEY) return false;
   const res = await fetch(String(env.SUPABASE_URL).replace(/\/$/, "") + "/rest/v1/rpc/intake_order", {
@@ -499,7 +507,7 @@ async function saveToDatabase(order, env) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      payload: order
+      payload: dbPayload(order)
     })
   });
   if (!res.ok) {

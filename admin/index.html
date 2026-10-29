@@ -2635,6 +2635,23 @@ function rangeLabelText() {
   return (from || 'the beginning') + ' to ' + (to || 'today')
 }
 
+// Discount codes: the store writes "Discount code CODE: -$15" into an order's
+// notes. These read it back so reports can count orders and dollars per code.
+function discountOf(e) {
+  const m = /Discount code ([A-Za-z0-9_-]+): -\$([0-9.,]+)/.exec(String((e && e.notes) || ''))
+  return m ? { code: m[1].toUpperCase(), off: Number(m[2].replace(/,/g, '')) || 0 } : null
+}
+// One row per code, paid orders only: { code, orders, discounted, sales }
+function discountSummary(sales) {
+  const by = {}
+  sales.forEach(e => {
+    const d = discountOf(e); if (!d || !isPaid(e)) return
+    const r = by[d.code] || (by[d.code] = { code: d.code, orders: 0, discounted: 0, sales: 0 })
+    r.orders++; r.discounted += d.off; r.sales += Number(e.amount) || 0
+  })
+  return Object.values(by).sort((a, b) => b.orders - a.orders)
+}
+
 // Totals for the chosen range, shared by the print and CSV reports
 function reportTotals(rows) {
   const sales = rows.filter(e => e.kind === 'sale')
@@ -2655,6 +2672,13 @@ $('rep-print').addEventListener('click', () => {
       <td>${escapeHtml(e.description || '')}</td>
       <td>${escapeHtml(e.status || '')}</td>
       <td class="num">${money(Number(e.amount) || 0)}</td></tr>`).join('') : '<tr><td colspan="5" class="muted">No sales in this range.</td></tr>'
+
+  const codes = discountSummary(t.sales)
+  const codeRows = codes.length ? codes.map(r => `<tr>
+      <td>${escapeHtml(r.code)}</td>
+      <td class="num">${r.orders}</td>
+      <td class="num">${money(r.discounted)}</td>
+      <td class="num">${money(r.sales)}</td></tr>`).join('') : '<tr><td colspan="4" class="muted">No paid orders used a discount code in this range.</td></tr>'
 
   const expRows = t.expenses.length ? t.expenses.map(e => `<tr>
       <td>${e.entry_date || ''}</td>
@@ -2698,6 +2722,9 @@ $('rep-print').addEventListener('click', () => {
     <h2>Sales</h2>
     <table><thead><tr><th>Date</th><th>Customer</th><th>Items</th><th>Status</th><th class="num">Amount</th></tr></thead>
       <tbody>${salesRows}<tr><td colspan="4" class="total">Paid sales total</td><td class="num total">${money(t.paid)}</td></tr></tbody></table>
+    <h2>Discount codes</h2>
+    <table><thead><tr><th>Code</th><th class="num">Paid orders</th><th class="num">Discounted</th><th class="num">Sales (after discount)</th></tr></thead>
+      <tbody>${codeRows}</tbody></table>
     <h2>Expenses</h2>
     <table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th class="num">Amount</th></tr></thead>
       <tbody>${expRows}<tr><td colspan="3" class="total">Expenses total</td><td class="num total">${money(t.exp)}</td></tr></tbody></table>
@@ -2735,11 +2762,16 @@ $('rep-csv').addEventListener('click', () => {
   out.push(line(['Paid orders', t.count]))
   out.push('')
   out.push(line(['SALES']))
-  out.push(line(['Date', 'Customer', 'Email', 'Phone', 'Items', 'Status', 'Payment method', 'Street', 'City', 'State', 'Zip', 'Pickup', 'Amount']))
+  out.push(line(['Date', 'Customer', 'Email', 'Phone', 'Items', 'Status', 'Payment method', 'Street', 'City', 'State', 'Zip', 'Pickup', 'Discount code', 'Discount', 'Amount']))
   t.sales.forEach(e => {
-    out.push(line([e.entry_date, e.party, e.customer_email, e.phone, e.description, e.status, e.payment_method, e.street, e.city, e.state, e.zip, e.pickup ? 'Local pickup' : '', Number(e.amount) || 0]))
+    const d = discountOf(e)
+    out.push(line([e.entry_date, e.party, e.customer_email, e.phone, e.description, e.status, e.payment_method, e.street, e.city, e.state, e.zip, e.pickup ? 'Local pickup' : '', d ? d.code : '', d ? d.off : '', Number(e.amount) || 0]))
   })
-  out.push(line(['', '', '', '', '', '', '', '', '', '', '', 'Paid sales total', t.paid]))
+  out.push(line(['', '', '', '', '', '', '', '', '', '', '', '', '', 'Paid sales total', t.paid]))
+  out.push('')
+  out.push(line(['DISCOUNT CODES (paid orders)']))
+  out.push(line(['Code', 'Paid orders', 'Discounted', 'Sales (after discount)']))
+  discountSummary(t.sales).forEach(r => out.push(line([r.code, r.orders, r.discounted, r.sales])))
   out.push('')
   out.push(line(['EXPENSES']))
   out.push(line(['Date', 'Category', 'Description', 'Notes', 'Amount']))
