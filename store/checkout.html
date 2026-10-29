@@ -74,6 +74,16 @@ p.section-sub { font-size: 13px; color: var(--ink-mute); margin-bottom: 12px; }
 
 /* Totals */
 .totals { margin-top: 18px; }
+/* Discount code box */
+.discount-box { margin-top: 18px; }
+.discount-box label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--brand-dark); }
+.discount-box .discount-row { display: flex; gap: 8px; }
+.discount-box input { flex: 1; min-width: 0; text-transform: uppercase; }
+.discount-box button { flex-shrink: 0; }
+.discount-msg { font-size: 13px; margin-top: 6px; min-height: 1em; }
+.discount-msg.ok { color: #1f7a4d; }
+.discount-msg.bad { color: #b4232f; }
+.totals .row.discount-line span:last-child { color: #1f7a4d; }
 .totals .row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 15px; }
 .totals .row.grand { border-top: 2px solid var(--accent); margin-top: 8px; padding-top: 12px; font-size: 19px; font-weight: 700; color: var(--brand-dark); }
 .ship-nudge { display: none; margin-top: 4px; font-size: 13px; color: var(--brand-dark); text-align: right; }
@@ -263,8 +273,18 @@ input[readonly] { background: var(--hairline); color: var(--ink-soft); }
         <span>I'm local and will pick up my order (free shipping).<span class="pickup-note" id="pickup-note"></span></span>
       </label>
 
+      <!-- Discount code: codes live in settings.js (discounts) -->
+      <div class="discount-box" id="discount-box">
+        <label for="discount-code">Discount code</label>
+        <div class="discount-row">
+          <input type="text" id="discount-code" autocomplete="off" spellcheck="false" placeholder="Enter code">
+          <button type="button" class="btn ghost" id="discount-apply">Apply</button>
+        </div>
+        <p class="discount-msg" id="discount-msg" aria-live="polite"></p>
+      </div>
       <div class="totals">
         <div class="row"><span>Subtotal</span><span id="subtotal">$0</span></div>
+        <div class="row discount-line" id="discount-row" hidden><span>Discount (<span id="discount-label"></span>)</span><span id="discount">-$0</span></div>
         <div class="row"><span>Shipping</span><span id="shipping">$0</span></div>
         <div class="row grand"><span>Total</span><span id="total">$0</span></div>
       </div>
@@ -423,7 +443,28 @@ function shippingCost() {
   if (choice.startsWith("Expedited")) return EXPEDITED_COST;
   return sub >= FREE_SHIPPING_OVER ? 0 : SHIPPING_FLAT;
 }
-function orderTotal() { const sub = cartSubtotal(); return sub > 0 ? sub + shippingCost() : 0; }
+/* ---------- Discount codes (settings.js: discounts) ---------- */
+const DISCOUNT_KEY = "store_discount_code";
+let appliedDiscount = null;
+function findDiscount(code) {
+  const want = String(code || "").trim().toUpperCase();
+  if (!want) return null;
+  const list = Array.isArray(SETTINGS.discounts) ? SETTINGS.discounts : [];
+  const d = list.find(x => x && String(x.code || "").trim().toUpperCase() === want);
+  if (!d) return null;
+  if (d.ends && /^\d{4}-\d{2}-\d{2}$/.test(d.ends) && new Date() > new Date(d.ends + "T23:59:59")) return null;
+  return d;
+}
+function discountAmount() {
+  if (!appliedDiscount) return 0;
+  const sub = cartSubtotal();
+  if (sub <= 0 || sub < (Number(appliedDiscount.minOrder) || 0)) return 0;
+  const off = Number(appliedDiscount.percentOff) > 0
+    ? Math.round(sub * Number(appliedDiscount.percentOff)) / 100
+    : Number(appliedDiscount.amountOff) || 0;
+  return Math.min(Math.max(off, 0), sub);
+}
+function orderTotal() { const sub = cartSubtotal(); return sub > 0 ? sub - discountAmount() + shippingCost() : 0; }
 function cartHasOrderIn() { return cartLines().some(l => !l.item.stock || (l.item.left && l.qty > l.item.left)); }
 
 function updateTotals() {
@@ -431,6 +472,10 @@ function updateTotals() {
   document.getElementById("subtotal").textContent = "$" + sub;
   document.getElementById("shipping").textContent =
     (sub > 0 && isPickup()) ? "Pickup" : (sub > 0 && shippingCost() === 0) ? "Free" : "$" + shippingCost();
+  const off = discountAmount();
+  document.getElementById("discount-row").hidden = !(off > 0);
+  document.getElementById("discount").textContent = "-$" + off;
+  document.getElementById("discount-label").textContent = appliedDiscount ? String(appliedDiscount.code).toUpperCase() : "";
   document.getElementById("total").textContent = "$" + orderTotal();
   document.getElementById("order-in-note").classList.toggle("show", cartHasOrderIn());
   const nudge = document.getElementById("ship-nudge");
@@ -551,6 +596,8 @@ function buildOrder(form, customRequest) {
     shippingChoice: isPickup() ? "Local pickup" : shippingChoice(),
     shippingCost: shippingCost(),
     pickup: isPickup(),
+    discount: discountAmount(),
+    discountCode: discountAmount() > 0 && appliedDiscount ? String(appliedDiscount.code).toUpperCase() : "",
     total: orderTotal(),
     request: customRequest,
     referral: v("referral"),
@@ -817,5 +864,29 @@ panelEl.querySelector('[name="signin_code"]').addEventListener("keydown", e => {
 initSignIn();
 </script>
 
+<script>
+/* Discount code box: Apply checks the code against settings.js, an empty box removes it */
+(function () {
+  const box = document.getElementById("discount-code"), msg = document.getElementById("discount-msg");
+  function say(text, good) { msg.textContent = text; msg.className = "discount-msg " + (text ? (good ? "ok" : "bad") : ""); }
+  function apply(quiet) {
+    const code = box.value.trim();
+    if (!code) { appliedDiscount = null; try { sessionStorage.removeItem(DISCOUNT_KEY); } catch (e) {} say("", true); updateTotals(); return; }
+    const d = findDiscount(code);
+    if (!d) { appliedDiscount = null; try { sessionStorage.removeItem(DISCOUNT_KEY); } catch (e) {} if (!quiet) say("That code is not valid.", false); updateTotals(); return; }
+    appliedDiscount = d;
+    try { sessionStorage.setItem(DISCOUNT_KEY, String(d.code)); } catch (e) {}
+    const min = Number(d.minOrder) || 0;
+    if (min && cartSubtotal() < min) say("This code works on orders of $" + min + " or more.", false);
+    else say("Code " + String(d.code).toUpperCase() + " applied: " + (Number(d.percentOff) > 0 ? d.percentOff + "% off" : "$" + d.amountOff + " off") + ".", true);
+    updateTotals();
+  }
+  document.getElementById("discount-apply").addEventListener("click", () => apply(false));
+  // Enter in the code box applies the code instead of submitting the order
+  box.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); apply(false); } });
+  let saved = ""; try { saved = sessionStorage.getItem(DISCOUNT_KEY) || ""; } catch (e) {}
+  if (saved) { box.value = saved; apply(true); }
+})();
+</script>
 </body>
 </html>

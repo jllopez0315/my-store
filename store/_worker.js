@@ -251,8 +251,11 @@ function cleanOrder(b) {
 
   // Did the browser's totals add up? Not a reason to refuse (the owner
   // confirms every order by hand) but worth a flag in the owner's email.
+  // A discount code comes off the items, never below $0
+  const discount = Math.min(Math.max(num(b.discount) || 0, 0), subtotal);
+  const discountCode = discount > 0 ? str(b.discountCode, 40).toUpperCase() : "";
   const itemsSum = items.reduce((s, it) => s + it.qty * it.each, 0);
-  const totalsMatch = Math.abs(itemsSum - subtotal) < 0.01 && Math.abs(subtotal + shippingCost - total) < 0.01;
+  const totalsMatch = Math.abs(itemsSum - subtotal) < 0.01 && Math.abs(subtotal - discount + shippingCost - total) < 0.01;
   const initials = str(b.initials, MAX.initials).toUpperCase();
   if (!/^[A-Z]{1,4}$/.test(initials)) return {
     ok: false,
@@ -279,6 +282,8 @@ function cleanOrder(b) {
       customer,
       items,
       subtotal,
+      discount,
+      discountCode,
       shippingCost,
       total,
       totalsMatch,
@@ -442,7 +447,7 @@ function itemsTable(order) {
 function totalsTable(order) {
   if (!order.items.length) return "";
   const row = (k, v, bold) => "<tr><td style=\"padding:4px 0;text-align:right;color:#666;\">" + k + "</td><td style=\"padding:4px 0 4px 16px;text-align:right;" + (bold ? "font-weight:bold;font-size:17px;" : "") + "\">" + v + "</td></tr>";
-  return "<table style=\"border-collapse:collapse;margin:0 0 18px auto;\">" + row("Subtotal", "$" + money(order.subtotal)) + row("Shipping (" + escapeHtml(order.shippingChoice) + ")", order.shippingCost === 0 ? "Free" : "$" + money(order.shippingCost)) + row("Total", "$" + money(order.total), true) + "</table>";
+  return "<table style=\"border-collapse:collapse;margin:0 0 18px auto;\">" + row("Subtotal", "$" + money(order.subtotal)) + (order.discount > 0 ? row("Discount (" + escapeHtml(order.discountCode || "code") + ")", "-$" + money(order.discount)) : "") + row("Shipping (" + escapeHtml(order.shippingChoice) + ")", order.shippingCost === 0 ? "Free" : "$" + money(order.shippingCost)) + row("Total", "$" + money(order.total), true) + "</table>";
 }
 function itemsText(order) {
   if (!order.items.length) return "";
@@ -450,7 +455,7 @@ function itemsText(order) {
 }
 function totalsText(order) {
   if (!order.items.length) return "";
-  return "Subtotal: $" + money(order.subtotal) + "\nShipping (" + order.shippingChoice + "): " + (order.shippingCost === 0 ? "Free" : "$" + money(order.shippingCost)) + "\nTotal: $" + money(order.total) + "\n";
+  return "Subtotal: $" + money(order.subtotal) + (order.discount > 0 ? "\nDiscount (" + (order.discountCode || "code") + "): -$" + money(order.discount) : "") + "\nShipping (" + order.shippingChoice + "): " + (order.shippingCost === 0 ? "Free" : "$" + money(order.shippingCost)) + "\nTotal: $" + money(order.total) + "\n";
 }
 // One CSV row, every cell quoted so commas in addresses are safe
 function csvLine(cells) {
