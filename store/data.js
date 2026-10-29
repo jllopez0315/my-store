@@ -254,6 +254,9 @@ const STACKS = [
    sample: true adds the word "(sample)" beside the purity. Remove
               it from your real rows. */
 const COAS = [
+  { report: "Supplier report (Maddox Research)", compound: "RT30", size: "30mg",
+    batch: "2610210549", analyzed: "2026-10-22", purity: "99.95",
+    lab: "Freedom Diagnostics Testing", file: "coa/rt30-30mg.pdf" },
   { report: "Supplier report (Purple Direct)", compound: "Epithalon", size: "10mg",
     batch: "2610010548", analyzed: "2026-10-03", purity: "99.74",
     lab: "Freedom Diagnostics Testing", file: "coa/epithalon-10mg.pdf", fullPanel: true },
