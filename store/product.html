@@ -268,7 +268,7 @@ if (!item) {
       : item.awaitingReport
       ? '<p class="stock-line soon">Awaiting lab report</p>'
       : item.stock
-      ? '<p class="stock-line in">' + (item.left ? "In stock · only " + item.left + " left" : "In stock") + " · ships same day before 1pm EST</p>"
+      ? '<p class="stock-line in">' + (item.left ? "In stock · only " + item.left + " left" : item.liveQty > 0 ? "In stock · " + item.liveQty + " available" : "In stock") + " · ships same day before 1pm EST</p>"
       : '<p class="stock-line soon">Available to order · ships in 2 to 3 weeks</p>';
   }
   // Two kinds of note can sit under the buy button: the split-shipment

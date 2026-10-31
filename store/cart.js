@@ -77,7 +77,9 @@ function stockBadgeHTML(item) {
   if (item.soldOut) return '<span class="stock-badge soon">Out of stock</span>';
   if (item.awaitingReport) return '<span class="stock-badge soon">Awaiting lab report</span>';
   if (item.stock) {
-    const text = item.left ? "In stock, only " + item.left + " left" : "In stock";
+    // Counted in the admin: low shows "only N left", otherwise "N available"
+    const text = item.left ? "In stock, only " + item.left + " left"
+      : item.liveQty > 0 ? "In stock · " + item.liveQty + " available" : "In stock";
     return '<span class="stock-badge in">' + text + "</span>";
   }
   return '<span class="stock-badge soon">Ships in 2 to 3 weeks</span>';
