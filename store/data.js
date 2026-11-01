@@ -726,9 +726,11 @@ function setVials(setItem) {
      a "left" count plus an available-to-order row) it becomes ONE card.
      Buyers can order more than what's on hand; the extra ships later.
    - category is "vial", "kit", "set", or "supply" (used by the filters). */
+// Must make the same keys as the admin's Inventory screen ("+ New compound"
+// fills the item key with this same rule), or counts for names with "+" or
+// "&" (NAD+, CJC-1295 + Ipamorelin, Lipo-C + B12) never reach the store.
 function slugify(s) {
-  return String(s).toLowerCase().replace(/\+/g, "plus").replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 function itemId(p) {
   if (p.isStack) return "set-" + slugify(p.name);
