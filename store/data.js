@@ -63,7 +63,7 @@ const PRODUCTS = [
   { name: "PT-141",                      size: "10mg",   price: 60,  stock: true,  slug: "pt-141" },
   { name: "SS-31",                       size: "50mg",   price: 100, stock: false, slug: "ss-31" },
   { name: "Semax",                       size: "10mg",   price: 60,  stock: true,  slug: "semax" },
-  { name: "Selank",                      size: "10mg",   price: 60,  stock: false, slug: "selank" },
+  { name: "Selank",                      size: "10mg",   price: 60,  stock: true,  slug: "selank" },
   { name: "CJC-1295 + Ipamorelin",       size: "10mg",   price: 80,  stock: true,  slug: "cjc-1295-ipamorelin" },
   { name: "Kisspeptin",                  size: "10mg",   price: 60,  stock: true,  slug: "kisspeptin" },
   { name: "KPV",                         size: "10mg",   price: 60,  stock: true,  slug: "kpv" },
