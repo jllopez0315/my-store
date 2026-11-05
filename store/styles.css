@@ -829,3 +829,7 @@ html[data-theme="light"] .cart-line .thumb { background: #F6EAE7; }
 @keyframes ann-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (max-width: 480px) { .announce-bar { font-size: 11px; letter-spacing: 0.12em; } .announce-bar .ann-sep { margin: 0 16px; } }
 @media (prefers-reduced-motion: reduce) { .announce-bar .ann-track { animation: none; } }
+
+/* Sale banner (settings.js: saleBanner): black bar, bold white text */
+.announce-bar.sale { background: #000000; color: #ffffff; font-weight: 800; }
+.announce-bar.sale .ann-sep { color: #ffffff; }

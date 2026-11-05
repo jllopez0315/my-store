@@ -303,12 +303,33 @@ html.layout-center[data-theme="light"] .hero .veil { background: linear-gradient
 <!-- ============ ROTATING ANNOUNCEMENT BAR (home page) ============
      The free-shipping amount fills in from settings.js (shipping.freeOver).
      The words repeat so the loop is seamless; the copy is hidden from screen readers. -->
-<div class="announce-bar" role="region" aria-label="Store announcements">
+<div class="announce-bar" id="announce-bar" role="region" aria-label="Store announcements">
   <div class="ann-track">
     <div class="ann-group"><span class="ann-item">Free shipping over <span class="js-free-over">$250</span></span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Same-day shipping on in-stock orders by 1pm EST</span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Free shipping over <span class="js-free-over">$250</span></span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Same-day shipping on in-stock orders by 1pm EST</span><span class="ann-sep" aria-hidden="true">&#9671;</span></div>
     <div class="ann-group" aria-hidden="true"><span class="ann-item">Free shipping over <span class="js-free-over">$250</span></span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Same-day shipping on in-stock orders by 1pm EST</span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Free shipping over <span class="js-free-over">$250</span></span><span class="ann-sep" aria-hidden="true">&#9671;</span><span class="ann-item">Same-day shipping on in-stock orders by 1pm EST</span><span class="ann-sep" aria-hidden="true">&#9671;</span></div>
   </div>
 </div>
+<script>
+/* Sale banner: between SETTINGS.saleBanner.starts and .ends, the bar shows the
+   sale lines on black. Built with textContent only. */
+(function () {
+  var sb = (typeof SETTINGS !== "undefined" && SETTINGS.saleBanner) || null;
+  if (!sb || !Array.isArray(sb.lines) || !sb.lines.length) return;
+  var d = new Date(), today = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  if ((sb.starts && today < sb.starts) || (sb.ends && today > sb.ends)) return;
+  var bar = document.getElementById("announce-bar");
+  if (!bar) return;
+  bar.classList.add("sale");
+  bar.setAttribute("aria-label", "Sale announcement");
+  bar.querySelectorAll(".ann-group").forEach(function (g) {
+    while (g.firstChild) g.removeChild(g.firstChild);
+    for (var r = 0; r < 2; r++) sb.lines.forEach(function (line) {
+      var it = document.createElement("span"); it.className = "ann-item"; it.textContent = line; g.appendChild(it);
+      var sep = document.createElement("span"); sep.className = "ann-sep"; sep.setAttribute("aria-hidden", "true"); sep.textContent = "\u25C7"; g.appendChild(sep);
+    });
+  });
+})();
+</script>
 <div class="sticky-stack">
 <header class="site-header">
   <a class="wordmark" href="index.html" aria-label="Home">

@@ -217,13 +217,30 @@ const SETTINGS = {
      amountOff  = dollars off the order (use this OR percentOff)
      percentOff = percent off the items (0 when amountOff is used)
      minOrder   = smallest item subtotal the code works on (0 = any order)
+     starts     = first day the code works, "YYYY-MM-DD" ("" = right away)
      ends       = last day the code works, "YYYY-MM-DD" ("" = no end date)
      The discount comes off the items, never below $0. Shipping is not
      discounted, and free shipping is judged on the items before the
      discount. Anyone who knows a code can use it until it is removed. */
   discounts: [
-    { code: "DEANA15", amountOff: 15, percentOff: 0, minOrder: 0, ends: "" }
+    { code: "DEANA15", amountOff: 15, percentOff: 0, minOrder: 0, ends: "" },
+    { code: "BLACKFRIDAY20", amountOff: 0, percentOff: 20, minOrder: 0, starts: "2026-11-06", ends: "2026-11-27" }
   ],
+
+  /* ---------- SALE BANNER (home page) ----------
+     Between "starts" and "ends" (both days included), the scrolling bar at
+     the top of the home page shows these lines on a black bar instead of the
+     usual free-shipping lines. Outside those dates it goes back on its own.
+     Set lines to [] to turn it off. */
+  saleBanner: {
+    starts: "2026-11-06",
+    ends: "2026-11-27",
+    lines: [
+      "Black Friday sale: 20% off your entire order",
+      "Use code BLACKFRIDAY20 at checkout",
+      "Ends November 27"
+    ]
+  },
 
   /* ---------- PAYMENT ----------
      methods = the ways a buyer can pay, shown on the confirmation

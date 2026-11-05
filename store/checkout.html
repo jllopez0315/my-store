@@ -452,6 +452,7 @@ function findDiscount(code) {
   const list = Array.isArray(SETTINGS.discounts) ? SETTINGS.discounts : [];
   const d = list.find(x => x && String(x.code || "").trim().toUpperCase() === want);
   if (!d) return null;
+  if (d.starts && /^\d{4}-\d{2}-\d{2}$/.test(d.starts) && new Date() < new Date(d.starts + "T00:00:00")) return null;
   if (d.ends && /^\d{4}-\d{2}-\d{2}$/.test(d.ends) && new Date() > new Date(d.ends + "T23:59:59")) return null;
   return d;
 }
