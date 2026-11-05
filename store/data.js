@@ -256,6 +256,9 @@ const STACKS = [
    sample: true adds the word "(sample)" beside the purity. Remove
               it from your real rows. */
 const COAS = [
+  { report: "Supplier report (Purple Direct)", compound: "Selank", size: "10mg",
+    batch: "2610010639", analyzed: "2026-10-03", purity: "99.18",
+    lab: "Freedom Diagnostics Testing", file: "coa/selank-10mg-purple-direct.pdf", fullPanel: true },
   { report: "Supplier report (Purple Direct)", compound: "Wolverine (BPC-157/TB-500)", size: "10mg",
     batch: "2610010534", analyzed: "2026-10-03", purity: "99.60",
     lab: "Freedom Diagnostics Testing", file: "coa/wolverine-bpc-157-tb-500-10mg.pdf", fullPanel: true },
@@ -276,7 +279,7 @@ const COAS = [
     lab: "Kovera Labs", file: "coa/semax-10mg.pdf", fullPanel: true },
   { report: "Supplier report (Real Peptides)", compound: "Selank", size: "10mg",
     batch: "KVR-2026-4C7F48", analyzed: "2026-09-18", purity: "99.677",
-    lab: "Kovera Labs", file: "coa/selank-10mg.pdf", fullPanel: true },
+    lab: "Kovera Labs", file: "coa/selank-10mg.pdf", fullPanel: true, archived: true },
   { report: "Supplier report (Real Peptides)", compound: "SS-31", size: "50mg",
     batch: "KVR-2026-7E0BA9", analyzed: "2026-09-18", purity: "99.601",
     lab: "Kovera Labs", file: "coa/ss-31-50mg.pdf", fullPanel: true },
