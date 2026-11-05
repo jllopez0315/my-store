@@ -55,6 +55,7 @@ const PRODUCTS = [
   { name: "Tesamorelin",                 size: "10mg",   price: 60,  stock: true,  slug: "tesamorelin" },
   { name: "MOTS-C",                      size: "10mg",   price: 60,  stock: true,  slug: "mots-c" },
   { name: "Wolverine (BPC-157/TB-500)",  size: "20mg",   price: 80,  stock: true,  slug: "wolverine", sortAs: "BPC-157/TB-500" },
+  { name: "Wolverine (BPC-157/TB-500)",  size: "10mg",   price: 60,  stock: true,  slug: "wolverine-10mg", sortAs: "BPC-157/TB-500" },
   { name: "GHK-Cu",                      size: "100mg",  price: 60,  stock: true,  slug: "ghk-cu" },
   { name: "KLOW",                        size: "80mg",   price: 80,  stock: false, slug: "klow" },
   { name: "NAD+",                        size: "1000mg", price: 80,  stock: true,  slug: "nad" },
@@ -92,6 +93,7 @@ const KITS = [
   { name: "Tesamorelin",                 size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "MOTS-C",                      size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "Wolverine (BPC-157/TB-500)",  size: "20mg kit · 10 vials",    price: 640,  stock: true, sortAs: "BPC-157/TB-500" },
+  { name: "Wolverine (BPC-157/TB-500)",  size: "10mg kit · 10 vials",    price: 480,  stock: true, sortAs: "BPC-157/TB-500" },
   { name: "GHK-Cu",                      size: "100mg kit · 10 vials",   price: 480,  stock: true },
   { name: "KLOW",                        size: "80mg kit · 10 vials",    price: 640,  stock: false },
   { name: "NAD+",                        size: "1000mg kit · 10 vials",  price: 640,  stock: true },
@@ -254,6 +256,9 @@ const STACKS = [
    sample: true adds the word "(sample)" beside the purity. Remove
               it from your real rows. */
 const COAS = [
+  { report: "Supplier report (Purple Direct)", compound: "Wolverine (BPC-157/TB-500)", size: "10mg",
+    batch: "2610010534", analyzed: "2026-10-03", purity: "99.60",
+    lab: "Freedom Diagnostics Testing", file: "coa/wolverine-bpc-157-tb-500-10mg.pdf", fullPanel: true },
   { report: "Supplier report (Purple Direct)", compound: "Tesamorelin", size: "10mg",
     batch: "2610010660", analyzed: "2026-10-03", purity: "99.49",
     lab: "Freedom Diagnostics Testing", file: "coa/tesamorelin-10mg-purple-direct.pdf", fullPanel: true },
