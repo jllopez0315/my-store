@@ -227,11 +227,12 @@ const SETTINGS = {
     { code: "BLACKFRIDAY20", amountOff: 0, percentOff: 20, minOrder: 0, starts: "2026-11-06", ends: "2026-11-27" }
   ],
 
-  /* ---------- SALE BANNER (home page) ----------
-     Between "starts" and "ends" (both days included), the scrolling bar at
-     the top of the home page shows these lines on a black bar instead of the
-     usual free-shipping lines. Outside those dates it goes back on its own.
-     Set lines to [] to turn it off. */
+  /* ---------- SALE BANNER (every page) ----------
+     Between "starts" and "ends" (both days included), the home page's
+     scrolling bar shows these lines on black instead of the usual
+     free-shipping lines, and every other store page (not the entry gate)
+     gets the same black bar at the top. Outside those dates it all goes
+     back on its own. Set lines to [] to turn it off. */
   saleBanner: {
     starts: "2026-11-06",
     ends: "2026-11-27",

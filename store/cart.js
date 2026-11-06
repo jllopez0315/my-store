@@ -485,3 +485,36 @@ document.addEventListener("DOMContentLoaded", () => {
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 })();
+
+/* ============================================================
+   SALE BAR ON EVERY PAGE (settings.js: saleBanner)
+   Between saleBanner.starts and .ends (both days included), every page
+   that loads this file gets the black scrolling sale bar at the very top.
+   The home page draws its own bar (id="announce-bar"), so it is skipped
+   here. Outside the dates, nothing is added. Built with textContent only.
+   ============================================================ */
+(function () {
+  var sb = (typeof SETTINGS !== "undefined" && SETTINGS.saleBanner) || null;
+  if (!sb || !Array.isArray(sb.lines) || !sb.lines.length) return;
+  if (document.getElementById("announce-bar")) return;
+  var d = new Date(), today = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  if ((sb.starts && today < sb.starts) || (sb.ends && today > sb.ends)) return;
+  var bar = document.createElement("div");
+  bar.className = "announce-bar sale";
+  bar.id = "sale-bar";
+  bar.setAttribute("role", "region");
+  bar.setAttribute("aria-label", "Sale announcement");
+  var track = document.createElement("div"); track.className = "ann-track"; bar.appendChild(track);
+  for (var gi = 0; gi < 2; gi++) {
+    var g = document.createElement("div"); g.className = "ann-group";
+    if (gi === 1) g.setAttribute("aria-hidden", "true");
+    for (var r = 0; r < 2; r++) sb.lines.forEach(function (line) {
+      var it = document.createElement("span"); it.className = "ann-item"; it.textContent = line; g.appendChild(it);
+      var sep = document.createElement("span"); sep.className = "ann-sep"; sep.setAttribute("aria-hidden", "true"); sep.textContent = "◇"; g.appendChild(sep);
+    });
+    track.appendChild(g);
+  }
+  var stack = document.querySelector(".sticky-stack");
+  if (stack && stack.parentNode) stack.parentNode.insertBefore(bar, stack);
+  else document.body.insertBefore(bar, document.body.firstChild);
+})();
