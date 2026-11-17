@@ -340,8 +340,11 @@ if (!item) {
     middleHTML = '<table class="spec">' + supplyRows.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</table>";
   } else {
     // Vial: the spec table. Names and sizes only, no chemistry reference fields.
-    const specRows = [["Form", "Lyophilized powder"], ["Purity", "Third-party tested to verify 99%+ purity, documented per batch below"]];
-    specRows.push(["Storage", "Keep lyophilized vials cool, dry, and away from light"]);
+    const specRows = item.liquid
+      ? [["Form", "Liquid"], ["Testing", "Third-party tested for identity, endotoxin, microbes, and heavy metals, documented per batch below"]]
+      : [["Form", "Lyophilized powder"], ["Purity", "Third-party tested to verify 99%+ purity, documented per batch below"]];
+    if (item.storage) specRows.push(["Storage", esc(item.storage)]);
+    else if (!item.liquid) specRows.push(["Storage", "Keep lyophilized vials cool, dry, and away from light"]);
     if (item.researchedWith) specRows.push(["Researched with", researchedWithHTML(item)]);
     middleHTML = '<table class="spec">' + specRows.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</table>";
   }

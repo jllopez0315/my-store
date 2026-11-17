@@ -72,7 +72,7 @@ const PRODUCTS = [
   { name: "Cagrilintide",                size: "10mg",   price: 90,  stock: true,  slug: "cagrilintide" },
   { name: "Epithalon",                   size: "10mg",   price: 60,  stock: true,  slug: "epithalon" },
   { name: "Glutathione",                 size: "1500mg", price: 100, stock: true,  slug: "glutathione" },
-  { name: "Lipo-C + B12",                size: "216mg",  price: 60,  stock: false, slug: "lipo-c-b12" },
+  { name: "Lipo-C + B12",                size: "216mg",  price: 60,  stock: true,  slug: "lipo-c-b12", liquid: true },
   // supply: true files it under the Supplies filter.
   // liquid: true draws the vial filled with liquid instead of powder.
   // storage: shows as a Storage row on the product page (supplies only)
@@ -110,7 +110,7 @@ const KITS = [
   { name: "Cagrilintide",                size: "10mg kit · 10 vials",    price: 720,  stock: true },
   { name: "Epithalon",                   size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "Glutathione",                 size: "1500mg kit · 10 vials",  price: 800,  stock: true },
-  { name: "Lipo-C + B12",                size: "216mg kit · 10 vials",   price: 480,  stock: false },
+  { name: "Lipo-C + B12",                size: "216mg kit · 10 vials",   price: 480,  stock: false, liquid: true },
 ];
 
 /* ---------- 3b. BLURBS · one-line descriptions ----------
@@ -256,6 +256,11 @@ const STACKS = [
    sample: true adds the word "(sample)" beside the purity. Remove
               it from your real rows. */
 const COAS = [
+  // Liquid blend: the lab confirmed identity and ran the full safety panel
+  // but did not measure purity, so this row has no purity value.
+  { report: "Supplier report (Iron Aminos)", compound: "Lipo-C + B12", size: "216mg",
+    batch: "2610279087", analyzed: "2026-10-28",
+    lab: "Freedom Diagnostics Testing", file: "coa/lipo-c-b12-216mg-iron-aminos.pdf", fullPanel: true },
   { report: "Supplier report (Kerui)", compound: "KLOW", size: "80mg",
     batch: "2609250800", analyzed: "2026-09-27", purity: "99.67",
     lab: "Freedom Diagnostics Testing", file: "coa/klow-80mg-kerui.pdf" },
@@ -338,6 +343,7 @@ function coaReportHTML(c) {
 }
 // The Purity cell text, with the "(sample)" marker when set
 function coaPurityText(c) {
+  if (!c.purity) return "Identity only";
   return c.purity + "%" + (c.sample ? " (sample)" : "");
 }
 
