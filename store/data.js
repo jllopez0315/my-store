@@ -57,7 +57,7 @@ const PRODUCTS = [
   { name: "Wolverine (BPC-157/TB-500)",  size: "20mg",   price: 80,  stock: true,  slug: "wolverine", sortAs: "BPC-157/TB-500" },
   { name: "Wolverine (BPC-157/TB-500)",  size: "10mg",   price: 60,  stock: true,  slug: "wolverine-10mg", sortAs: "BPC-157/TB-500" },
   { name: "GHK-Cu",                      size: "100mg",  price: 60,  stock: true,  slug: "ghk-cu" },
-  { name: "KLOW",                        size: "80mg",   price: 80,  stock: false, slug: "klow" },
+  { name: "KLOW",                        size: "80mg",   price: 80,  stock: true,  slug: "klow" },
   { name: "NAD+",                        size: "1000mg", price: 80,  stock: true,  slug: "nad" },
   { name: "GLOW",                        size: "70mg",   price: 80,  stock: false, slug: "glow" },
   { name: "PT-141",                      size: "10mg",   price: 60,  stock: true,  slug: "pt-141" },
@@ -256,6 +256,9 @@ const STACKS = [
    sample: true adds the word "(sample)" beside the purity. Remove
               it from your real rows. */
 const COAS = [
+  { report: "Supplier report (Kerui)", compound: "KLOW", size: "80mg",
+    batch: "2609250800", analyzed: "2026-09-27", purity: "99.67",
+    lab: "Freedom Diagnostics Testing", file: "coa/klow-80mg-kerui.pdf" },
   { report: "Supplier report (Purple Direct)", compound: "Selank", size: "10mg",
     batch: "2610010639", analyzed: "2026-10-03", purity: "99.18",
     lab: "Freedom Diagnostics Testing", file: "coa/selank-10mg-purple-direct.pdf", fullPanel: true },
@@ -315,7 +318,7 @@ const COAS = [
     lab: "Kovera Labs", file: "coa/mots-c-10mg.pdf", fullPanel: true },
   { report: "Supplier report (Real Peptides)", compound: "KLOW", size: "80mg",
     batch: "KVR-2026-12DC38", analyzed: "2026-08-12", purity: "99.365",
-    lab: "Kovera Labs", file: "coa/klow-80mg.pdf", fullPanel: true },
+    lab: "Kovera Labs", file: "coa/klow-80mg.pdf", fullPanel: true, archived: true },
   { report: "Supplier report (Real Peptides)", compound: "Ipamorelin", size: "10mg",
     batch: "KVR-2026-B36321", analyzed: "2026-08-12", purity: "99.516",
     lab: "Kovera Labs", file: "coa/ipamorelin-10mg.pdf", fullPanel: true },
