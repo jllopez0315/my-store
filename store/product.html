@@ -342,7 +342,13 @@ if (!item) {
     // Vial: the spec table. Names and sizes only, no chemistry reference fields.
     const specRows = item.liquid
       ? [["Form", "Liquid"], ["Testing", "Third-party tested for identity, endotoxin, microbes, and heavy metals, documented per batch below"]]
-      : [["Form", "Lyophilized powder"], ["Purity", "Third-party tested to verify 99%+ purity, documented per batch below"]];
+      : [["Form", "Lyophilized powder"], ["Purity", (function () {
+          // Says the real number when the current report is below 99%
+          const low = COAS.find(c => !c.archived && c.compound === item.name && c.size === item.size && c.purity && parseFloat(c.purity) < 99);
+          return low
+            ? "Third-party tested. The current report measures " + low.purity + "% by HPLC, below the lab's 99% specification. Documented per batch below"
+            : "Third-party tested to verify 99%+ purity, documented per batch below";
+        })()]];
     if (item.storage) specRows.push(["Storage", esc(item.storage)]);
     else if (!item.liquid) specRows.push(["Storage", "Keep lyophilized vials cool, dry, and away from light"]);
     if (item.researchedWith) specRows.push(["Researched with", researchedWithHTML(item)]);
