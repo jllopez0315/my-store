@@ -73,7 +73,7 @@ const PRODUCTS = [
   { name: "Epithalon",                   size: "10mg",   price: 60,  stock: true,  slug: "epithalon" },
   { name: "Glutathione",                 size: "1500mg", price: 100, stock: true,  slug: "glutathione" },
   { name: "Lipo-C + B12",                size: "216mg",  price: 60,  stock: true,  slug: "lipo-c-b12", liquid: true },
-  { name: "HCG",                         size: "10000IU", price: 0, stock: true,  slug: "hcg" },
+  { name: "HCG",                         size: "10000IU", price: 80, stock: true,  slug: "hcg" },
   // supply: true files it under the Supplies filter.
   // liquid: true draws the vial filled with liquid instead of powder.
   // storage: shows as a Storage row on the product page (supplies only)
@@ -112,7 +112,7 @@ const KITS = [
   { name: "Epithalon",                   size: "10mg kit · 10 vials",    price: 480,  stock: true },
   { name: "Glutathione",                 size: "1500mg kit · 10 vials",  price: 800,  stock: true },
   { name: "Lipo-C + B12",                size: "216mg kit · 10 vials",   price: 480,  stock: false, liquid: true },
-  { name: "HCG",                         size: "10000IU kit · 10 vials", price: 0,    stock: false },
+  { name: "HCG",                         size: "10000IU kit · 10 vials", price: 640,  stock: false },
 ];
 
 /* ---------- 3b. BLURBS · one-line descriptions ----------
