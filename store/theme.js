@@ -274,9 +274,17 @@
   /* ---------- Apply the whole look (1 to 4) ----------
      Called once right now, before paint, and again if the database
      answers with a newer copy of the admin's choices. */
-  // Tab icon: the first letter of the store name on the brand color, drawn on the fly,
-  // so a renamed or recolored store never shows the stock icon.
+  // Tab icon: favicon.svg holds the E cut from the Elite logo, so the
+  // page keeps that file instead of drawing a letter on the fly.
+  var OWN_FAVICON = "favicon.svg";
   function applyFavicon() {
+    if (OWN_FAVICON) {
+      var own = document.querySelector("link[rel='icon']");
+      if (!own) { own = document.createElement("link"); own.rel = "icon"; (document.head || document.documentElement).appendChild(own); }
+      own.setAttribute("type", "image/svg+xml");
+      own.setAttribute("href", OWN_FAVICON);
+      return;
+    }
     var name = String(S.brand.name || "Store").trim() || "Store";
     var color = /^#[0-9a-f]{6}$/i.test(String(S.look.brandColor || "")) ? S.look.brandColor : "#1B2A41";
     var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='" + color + "'/><text x='16' y='22' text-anchor='middle' font-family='Georgia,serif' font-size='18' fill='#ffffff'>" + name[0].toUpperCase() + "</text></svg>";
