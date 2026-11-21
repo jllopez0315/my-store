@@ -59,7 +59,7 @@ const PRODUCTS = [
   { name: "GHK-Cu",                      size: "100mg",  price: 60,  stock: true,  slug: "ghk-cu" },
   { name: "KLOW",                        size: "80mg",   price: 80,  stock: true,  slug: "klow" },
   { name: "NAD+",                        size: "1000mg", price: 80,  stock: true,  slug: "nad" },
-  { name: "GLOW",                        size: "70mg",   price: 80,  stock: false, slug: "glow" },
+  { name: "GLOW",                        size: "70mg",   price: 80,  stock: true,  slug: "glow" },
   { name: "PT-141",                      size: "10mg",   price: 60,  stock: true,  slug: "pt-141" },
   { name: "SS-31",                       size: "50mg",   price: 100, stock: false, slug: "ss-31" },
   { name: "Semax",                       size: "10mg",   price: 60,  stock: true,  slug: "semax" },
@@ -256,6 +256,9 @@ const STACKS = [
    sample: true adds the word "(sample)" beside the purity. Remove
               it from your real rows. */
 const COAS = [
+  { report: "Supplier report (USA Made)", compound: "GLOW", size: "70mg",
+    batch: "27Aug2026-28", analyzed: "2026-08-24", purity: "99.4",
+    lab: "AxisPharm", file: "coa/glow-70mg-usa-made.pdf" },
   // Liquid blend: the lab confirmed identity and ran the full safety panel
   // but did not measure purity, so this row has no purity value.
   { report: "Supplier report (Iron Aminos)", compound: "Lipo-C + B12", size: "216mg",
@@ -329,7 +332,7 @@ const COAS = [
     lab: "Kovera Labs", file: "coa/ipamorelin-10mg.pdf", fullPanel: true },
   { report: "Supplier report (Real Peptides)", compound: "GLOW", size: "70mg",
     batch: "KVR-2026-515288", analyzed: "2026-08-12", purity: "99.787",
-    lab: "Kovera Labs", file: "coa/glow-70mg.pdf" },
+    lab: "Kovera Labs", file: "coa/glow-70mg.pdf", archived: true },
   { report: "Supplier report (Real Peptides)", compound: "GHK-Cu", size: "100mg",
     batch: "KVR-2026-BC8D16", analyzed: "2026-08-12", purity: "99.650",
     lab: "Kovera Labs", file: "coa/ghk-cu-100mg.pdf", fullPanel: true },
