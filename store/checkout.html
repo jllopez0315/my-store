@@ -456,7 +456,35 @@ function findDiscount(code) {
   if (d.ends && /^\d{4}-\d{2}-\d{2}$/.test(d.ends) && new Date() > new Date(d.ends + "T23:59:59")) return null;
   return d;
 }
-function discountAmount() {
+/* BOGO deal (settings.js: bogo). Every second single vial, priciest first, gets percentOff. */
+function bogoActive() {
+  const b = SETTINGS.bogo;
+  if (!b || !(Number(b.percentOff) > 0)) return false;
+  if (b.starts && /^\d{4}-\d{2}-\d{2}$/.test(b.starts) && new Date() < new Date(b.starts + "T00:00:00")) return false;
+  if (b.ends && /^\d{4}-\d{2}-\d{2}$/.test(b.ends) && new Date() > new Date(b.ends + "T23:59:59")) return false;
+  return true;
+}
+function bogoAmount() {
+  if (!bogoActive()) return 0;
+  const prices = [];
+  cartLines().forEach(l => {
+    const it = l.item;
+    if (it.isKit || it.isStack || it.supply || !(it.price > 0)) return;
+    for (let i = 0; i < l.qty; i++) prices.push(it.price);
+  });
+  prices.sort((a, b) => b - a);
+  let off = 0;
+  for (let i = 1; i < prices.length; i += 2) off += prices[i] * Number(SETTINGS.bogo.percentOff) / 100;
+  return Math.round(off);
+}
+/* The order gets the BOGO deal or the typed code, whichever saves more. */
+function bogoWins() { const b = bogoAmount(); return b > 0 && b >= codeAmount(); }
+function discountAmount() { return bogoWins() ? bogoAmount() : codeAmount(); }
+function discountLabel() {
+  if (bogoWins()) return String(SETTINGS.bogo.label || "BOGO").toUpperCase();
+  return codeAmount() > 0 && appliedDiscount ? String(appliedDiscount.code).toUpperCase() : "";
+}
+function codeAmount() {
   if (!appliedDiscount) return 0;
   const sub = cartSubtotal();
   if (sub <= 0 || sub < (Number(appliedDiscount.minOrder) || 0)) return 0;
@@ -476,7 +504,9 @@ function updateTotals() {
   const off = discountAmount();
   document.getElementById("discount-row").hidden = !(off > 0);
   document.getElementById("discount").textContent = "-$" + off;
-  document.getElementById("discount-label").textContent = appliedDiscount ? String(appliedDiscount.code).toUpperCase() : "";
+  document.getElementById("discount-label").textContent = discountLabel();
+  const dmsg = document.getElementById("discount-msg");
+  if (appliedDiscount && bogoWins()) { dmsg.textContent = "The BOGO deal saves more on this order, so it is used instead of your code."; dmsg.className = "discount-msg ok"; }
   document.getElementById("total").textContent = "$" + orderTotal();
   document.getElementById("order-in-note").classList.toggle("show", cartHasOrderIn());
   const nudge = document.getElementById("ship-nudge");
@@ -598,7 +628,7 @@ function buildOrder(form, customRequest) {
     shippingCost: shippingCost(),
     pickup: isPickup(),
     discount: discountAmount(),
-    discountCode: discountAmount() > 0 && appliedDiscount ? String(appliedDiscount.code).toUpperCase() : "",
+    discountCode: discountAmount() > 0 ? discountLabel() : "",
     total: orderTotal(),
     request: customRequest,
     referral: v("referral"),

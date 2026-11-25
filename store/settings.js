@@ -224,7 +224,7 @@ const SETTINGS = {
      discount. Anyone who knows a code can use it until it is removed. */
   discounts: [
     { code: "DEANA15", amountOff: 15, percentOff: 0, minOrder: 0, ends: "" },
-    { code: "BLACKFRIDAY20", amountOff: 0, percentOff: 20, minOrder: 0, starts: "2026-11-06", ends: "2026-11-27" }
+    { code: "BLACKFRIDAY20", amountOff: 0, percentOff: 20, minOrder: 0, starts: "2026-11-06", ends: "2026-11-24" }
   ],
 
   /* ---------- SALE BANNER (every page) ----------
@@ -237,11 +237,19 @@ const SETTINGS = {
     starts: "2026-11-06",
     ends: "2026-11-27",
     lines: [
-      "Black Friday sale: 20% off your entire order",
-      "Use code BLACKFRIDAY20 at checkout",
+      "Black Friday BOGO: buy one vial, get the second 50% off",
+      "Second vial of equal or lesser value. Applied automatically at checkout",
       "Ends November 27"
     ]
   },
+
+  /* ---------- BOGO DEAL (checkout, automatic) ----------
+     Between "starts" and "ends" (both days included), checkout takes
+     percentOff off every second single vial, pairing the priciest vials
+     first, so the cheaper vial of each pair is the discounted one.
+     Kits, research sets, and supplies do not count. An order gets either
+     this deal or a discount code, whichever saves more, never both. */
+  bogo: { label: "BOGO", starts: "2026-11-25", ends: "2026-11-27", percentOff: 50 },
 
   /* ---------- PAYMENT ----------
      methods = the ways a buyer can pay, shown on the confirmation
