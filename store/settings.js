@@ -235,11 +235,11 @@ const SETTINGS = {
      back on its own. Set lines to [] to turn it off. */
   saleBanner: {
     starts: "2026-11-06",
-    ends: "2026-11-27",
+    ends: "2026-11-30",
     lines: [
       "Black Friday BOGO: buy one vial, get the second 50% off",
       "Second vial of equal or lesser value. Applied automatically at checkout",
-      "Ends November 27"
+      "Ends November 30"
     ]
   },
 
@@ -249,7 +249,7 @@ const SETTINGS = {
      first, so the cheaper vial of each pair is the discounted one.
      Kits, research sets, and supplies do not count. An order gets either
      this deal or a discount code, whichever saves more, never both. */
-  bogo: { label: "BOGO", starts: "2026-11-25", ends: "2026-11-27", percentOff: 50 },
+  bogo: { label: "BOGO", starts: "2026-11-25", ends: "2026-11-30", percentOff: 50 },
 
   /* ---------- PAYMENT ----------
      methods = the ways a buyer can pay, shown on the confirmation
